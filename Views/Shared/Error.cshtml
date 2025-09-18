@@ -1,0 +1,63 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+    ViewBag.ShowBreadcrumb = false;
+}
+
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="text-center">
+            <i class="fas fa-exclamation-triangle text-red-500 text-6xl mb-6"></i>
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                @(ViewData["Title"] ?? "Oops! Something went wrong")
+            </h1>
+            <p class="text-lg text-gray-600 mb-8">
+                We apologize for the inconvenience. Please try again later.
+            </p>
+        </div>
+    </div>
+
+    <div class="sm:mx-auto sm:w-full sm:max-w-lg">
+        <div class="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
+            @if (Model?.ShowRequestId == true)
+            {
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                    <p class="text-sm text-gray-600">
+                        <strong>Request ID:</strong> @Model.RequestId
+                    </p>
+                </div>
+            }
+
+            <div class="flex flex-col space-y-4">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Home
+                </a>
+
+                <button onclick="window.history.back()" class="btn btn-outline">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Go Back
+                </button>
+
+                <button onclick="window.location.reload()" class="btn btn-gray">
+                    <i class="fas fa-refresh mr-2"></i>
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-refresh after 10 seconds (optional)
+        setTimeout(() => {
+            const refreshBtn = document.querySelector('[onclick="window.location.reload()"]');
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '<i class="fas fa-refresh mr-2 animate-spin"></i>Refreshing...';
+                refreshBtn.disabled = true;
+                window.location.reload();
+            }
+        }, 10000);
+    </script>
+}

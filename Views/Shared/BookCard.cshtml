@@ -1,0 +1,140 @@
+@model BookStoreMVC.Models.Entities.Book;
+
+<div
+    class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+    <!-- Book Image -->
+    <div class="relative overflow-hidden">
+        <img src="@(Model.ImageUrl ?? "https://via.placeholder.com/300x400/e5e7eb/6b7280?text=No+Image")"
+            alt="@Model.Title" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500">
+
+        <!-- Overlay Actions -->
+        <div
+            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+            <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 space-x-2">
+                <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Id"
+                    class="bg-white text-gray-900 p-3 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
+                    <i class="fas fa-eye"></i>
+                </a>
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button onclick="addToWishlist(@Model.Id)"
+                        class="bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-colors shadow-lg">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Sale Badge -->
+        @if (Model.DiscountPrice.HasValue && Model.DiscountPrice < Model.Price)
+        {
+            var discount = Math.Round((1 - (Model.DiscountPrice.Value / Model.Price)) * 100);
+            <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-semibold">
+                -@discount%
+            </div>
+        }
+
+        <!-- Stock Status -->
+        @if (Model.StockQuantity <= 0)
+        {
+            <div class="absolute top-2 right-2 bg-gray-500 text-white px-2 py-1 rounded-lg text-sm font-semibold">
+                Hết hàng
+            </div>
+        }
+        else if (Model.StockQuantity <= 10)
+        {
+            <div class="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-lg text-sm font-semibold">
+                Còn @Model.StockQuantity
+            </div>
+        }
+    </div>
+
+    <!-- Book Info -->
+    <div class="p-6">
+        <!-- Category -->
+        @if (Model.Category != null)
+        {
+            <div class="mb-2">
+                <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                    @Model.Category.NameCategory
+                </span>
+            </div>
+        }
+
+        <!-- Title -->
+        <h3 class="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+            <a asp-controller="Books" asp-action="Details" asp-route-id="@Model.Id">
+                @Model.Title
+            </a>
+        </h3>
+
+        <!-- Author -->
+        <p class="text-gray-600 mb-3 line-clamp-1">@Model.Author</p>
+
+        <!-- Rating -->
+        @if (Model.Reviews?.Any() == true)
+        {
+            var averageRating = Model.Reviews.Average(r => r.Rating);
+            var reviewCount = Model.Reviews.Count();
+
+            <div class="flex items-center mb-3">
+                <div class="flex items-center space-x-1">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="fas fa-star text-sm @(i <= averageRating ? "text-yellow-400" : "text-gray-300")"></i>
+                    }
+                </div>
+                <span class="text-sm text-gray-500 ml-2">@averageRating.ToString("F1") (@reviewCount)</span>
+            </div>
+        }
+
+        <!-- Price -->
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                @if (Model.DiscountPrice.HasValue && Model.DiscountPrice < Model.Price)
+                {
+                    <span class="text-xl font-bold text-red-600">@Model.DiscountPrice.Value.ToString("C0")</span>
+                    <span class="text-sm text-gray-500 line-through">@Model.Price.ToString("C0")</span>
+                }
+                else
+                {
+                    <span class="text-xl font-bold text-gray-900">@Model.Price.ToString("C0")</span>
+                }
+            </div>
+        </div>
+
+        <!-- Add to Cart Button -->
+        @if (Model.StockQuantity > 0)
+        {
+            <button onclick="addToCart(@Model.Id)"
+                class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors transform hover:scale-105 active:scale-95">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Thêm vào giỏ
+            </button>
+        }
+        else
+        {
+            <button disabled class="w-full bg-gray-400 text-white py-3 rounded-lg font-semibold cursor-not-allowed">
+                <i class="fas fa-times mr-2"></i>
+                Hết hàng
+            </button>
+        }
+    </div>
+</div>
+
+<style>
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>

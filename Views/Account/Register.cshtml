@@ -1,0 +1,429 @@
+@model BookStoreMVC.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Create Account";
+    ViewBag.ShowBreadcrumb = false;
+}
+
+<div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="text-center">
+            <a asp-controller="Home" asp-action="Index" class="inline-flex items-center space-x-2">
+                <i class="fas fa-book text-primary-600 text-3xl"></i>
+                <span class="font-bold text-2xl text-gray-900">BookStore</span>
+            </a>
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">Create Your Account</h2>
+            <p class="mt-2 text-gray-600">Join thousands of book lovers</p>
+        </div>
+    </div>
+
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
+            <form asp-action="Register" method="post" class="space-y-6">
+                <div asp-validation-summary="ModelOnly"
+                    class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 hidden"></div>
+
+                <!-- Full Name -->
+                <div>
+                    <label asp-for="FirstName" class="block text-sm font-medium text-gray-700 mb-1">
+                        Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input asp-for="FirstName" type="text" class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
+                                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter your full name">
+                    <span asp-validation-for="FirstName" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-1">
+                        Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <input asp-for="Email" type="email" class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
+                                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter your email address">
+                    <span asp-validation-for="Email" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Phone Number (Optional) -->
+                <div>
+                    <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-700 mb-1">
+                        Phone Number <span class="text-gray-400 text-xs">(optional)</span>
+                    </label>
+                    <input asp-for="PhoneNumber" type="tel" class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
+                                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        placeholder="Enter your phone number">
+                    <span asp-validation-for="PhoneNumber" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label asp-for="Password" class="block text-sm font-medium text-gray-700 mb-1">
+                        Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input asp-for="Password" type="password"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
+                                      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 pr-10"
+                            placeholder="Create a strong password">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-red-600 text-sm mt-1"></span>
+
+                    <!-- Password Strength Indicator -->
+                    <div class="mt-2">
+                        <div class="flex items-center space-x-1" id="password-strength">
+                            <div class="h-1 w-full bg-gray-200 rounded-full">
+                                <div class="h-1 bg-red-500 rounded-full transition-all duration-300" style="width: 0%">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1" id="password-strength-text">
+                            Password strength: <span class="font-medium">Enter password</span>
+                        </p>
+                    </div>
+
+                    <!-- Password Requirements -->
+                    <div class="mt-2 text-xs text-gray-500">
+                        <p class="mb-1">Password must contain:</p>
+                        <ul class="space-y-1">
+                            <li class="flex items-center" id="length-check">
+                                <i class="fas fa-times text-red-400 mr-2"></i>
+                                At least 8 characters
+                            </li>
+                            <li class="flex items-center" id="uppercase-check">
+                                <i class="fas fa-times text-red-400 mr-2"></i>
+                                One uppercase letter
+                            </li>
+                            <li class="flex items-center" id="lowercase-check">
+                                <i class="fas fa-times text-red-400 mr-2"></i>
+                                One lowercase letter
+                            </li>
+                            <li class="flex items-center" id="number-check">
+                                <i class="fas fa-times text-red-400 mr-2"></i>
+                                One number
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm Password <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <input asp-for="ConfirmPassword" type="password"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 
+                                      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 pr-10" placeholder="Confirm your password">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Date of Birth (Optional) -->
+                <div>
+                    <label asp-for="DateOfBirth" class="block text-sm font-medium text-gray-700 mb-1">
+                        Date of Birth <span class="text-gray-400 text-xs">(optional)</span>
+                    </label>
+                    <input asp-for="DateOfBirth" type="date" class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm 
+                                  focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <span asp-validation-for="DateOfBirth" class="text-red-600 text-sm mt-1"></span>
+                </div>
+
+                <!-- Marketing Preferences -->
+                <div class="space-y-3">
+                    <div class="flex items-start">
+                        <input asp-for="SubscribeToNewsletter" type="checkbox"
+                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-0.5">
+                        <label asp-for="SubscribeToNewsletter" class="ml-2 block text-sm text-gray-700">
+                            Subscribe to our newsletter for book recommendations and special offers
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <input asp-for="AgreeToTerms" type="checkbox"
+                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-0.5">
+                    <label asp-for="AgreeToTerms" class="ml-2 block text-sm text-gray-700">
+                        I agree to the
+                        <a asp-controller="Home" asp-action="Terms" target="_blank"
+                            class="text-primary-600 hover:text-primary-500 underline">Terms of Service</a>
+                        and
+                        <a asp-controller="Home" asp-action="Privacy" target="_blank"
+                            class="text-primary-600 hover:text-primary-500 underline">Privacy Policy</a>
+                        <span class="text-red-500">*</span>
+                    </label>
+                </div>
+                <span asp-validation-for="AgreeToTerms" class="text-red-600 text-sm"></span>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" id="register-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm 
+                                   text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 
+                                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500
+                                   disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span class="register-btn-text">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Create Account
+                        </span>
+                        <span class="register-btn-loading hidden">
+                            <i class="fas fa-spinner animate-spin mr-2"></i>
+                            Creating Account...
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Login Link -->
+                <div class="text-center">
+                    <span class="text-gray-600">Already have an account?</span>
+                    <a asp-action="Login" class="text-primary-600 hover:text-primary-500 font-medium ml-1">
+                        Sign in here
+                    </a>
+                </div>
+            </form>
+
+            <!-- Social Registration -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or register with</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button type="button" class="social-register-btn" data-provider="google">
+                        <i class="fab fa-google text-red-500 mr-2"></i>
+                        Google
+                    </button>
+                    <button type="button" class="social-register-btn" data-provider="facebook">
+                        <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                        Facebook
+                    </button>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-sm font-medium text-gray-900 mb-3">Why join BookStore?</h3>
+                <ul class="space-y-2 text-xs text-gray-600">
+                    <li class="flex items-center">
+                        <i class="fas fa-check text-green-500 mr-2"></i>
+                        Get personalized book recommendations
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check text-green-500 mr-2"></i>
+                        Track your reading progress
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check text-green-500 mr-2"></i>
+                        Access to exclusive deals and offers
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-check text-green-500 mr-2"></i>
+                        Fast and secure checkout
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Password visibility toggle
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function () {
+                    const input = this.previousElementSibling;
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            });
+
+            // Password strength checker
+            const passwordInput = document.querySelector('[name="Password"]');
+            const strengthBar = document.querySelector('#password-strength .bg-red-500');
+            const strengthText = document.querySelector('#password-strength-text span');
+            const lengthCheck = document.querySelector('#length-check i');
+            const uppercaseCheck = document.querySelector('#uppercase-check i');
+            const lowercaseCheck = document.querySelector('#lowercase-check i');
+            const numberCheck = document.querySelector('#number-check i');
+
+            function updateCheck(element, isValid) {
+                if (isValid) {
+                    element.classList.remove('fa-times', 'text-red-400');
+                    element.classList.add('fa-check', 'text-green-500');
+                } else {
+                    element.classList.remove('fa-check', 'text-green-500');
+                    element.classList.add('fa-times', 'text-red-400');
+                }
+            }
+
+            function checkPasswordStrength(password) {
+                let score = 0;
+                const checks = {
+                    length: password.length >= 8,
+                    uppercase: /[A-Z]/.test(password),
+                    lowercase: /[a-z]/.test(password),
+                    number: /[0-9]/.test(password)
+                };
+
+                updateCheck(lengthCheck, checks.length);
+                updateCheck(uppercaseCheck, checks.uppercase);
+                updateCheck(lowercaseCheck, checks.lowercase);
+                updateCheck(numberCheck, checks.number);
+
+                Object.values(checks).forEach(valid => {
+                    if (valid) score++;
+                });
+
+                let strength = 'Very Weak';
+                let color = 'bg-red-500';
+                let width = '20%';
+
+                if (score === 0) {
+                    strength = 'Enter password';
+                    width = '0%';
+                } else if (score === 1) {
+                    strength = 'Very Weak';
+                    color = 'bg-red-500';
+                    width = '25%';
+                } else if (score === 2) {
+                    strength = 'Weak';
+                    color = 'bg-orange-500';
+                    width = '50%';
+                } else if (score === 3) {
+                    strength = 'Good';
+                    color = 'bg-yellow-500';
+                    width = '75%';
+                } else if (score === 4) {
+                    strength = 'Strong';
+                    color = 'bg-green-500';
+                    width = '100%';
+                }
+
+                strengthBar.className = `h-1 ${color} rounded-full transition-all duration-300`;
+                strengthBar.style.width = width;
+                strengthText.textContent = strength;
+                strengthText.className = `font-medium ${score >= 3 ? 'text-green-600' : score >= 2 ? 'text-yellow-600' : 'text-red-600'}`;
+            }
+
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function () {
+                    checkPasswordStrength(this.value);
+                });
+            }
+
+            // Form submission
+            const form = document.querySelector('form');
+            const submitBtn = document.querySelector('#register-btn');
+            const btnText = document.querySelector('.register-btn-text');
+            const btnLoading = document.querySelector('.register-btn-loading');
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                btnText.classList.add('hidden');
+                btnLoading.classList.remove('hidden');
+            });
+
+            // Social registration buttons
+            document.querySelectorAll('.social-register-btn').forEach(btn => {
+                btn.classList.add('w-full', 'inline-flex', 'justify-center', 'py-2', 'px-4', 'border',
+                    'border-gray-300', 'rounded-lg', 'shadow-sm', 'bg-white', 'text-sm',
+                    'font-medium', 'text-gray-500', 'hover:bg-gray-50', 'transition-colors');
+
+                btn.addEventListener('click', function () {
+                    const provider = this.dataset.provider;
+                    // Implement social registration logic here
+                    console.log(`Register with ${provider}`);
+                });
+            });
+
+            // Show validation summary if there are errors
+            const validationSummary = document.querySelector('[asp-validation-summary]');
+            if (validationSummary && validationSummary.innerHTML.trim()) {
+                validationSummary.classList.remove('hidden');
+            }
+
+            // Email validation feedback
+            const emailInput = document.querySelector('[name="Email"]');
+            if (emailInput) {
+                emailInput.addEventListener('blur', function () {
+                    if (this.value && !this.validity.valid) {
+                        this.classList.add('border-red-500');
+                    } else if (this.value && this.validity.valid) {
+                        this.classList.remove('border-red-500');
+                        this.classList.add('border-green-500');
+                    }
+                });
+            }
+
+            // Confirm password validation
+            const confirmPasswordInput = document.querySelector('[name="ConfirmPassword"]');
+            if (confirmPasswordInput && passwordInput) {
+                confirmPasswordInput.addEventListener('input', function () {
+                    if (this.value && this.value !== passwordInput.value) {
+                        this.classList.add('border-red-500');
+                    } else if (this.value && this.value === passwordInput.value) {
+                        this.classList.remove('border-red-500');
+                        this.classList.add('border-green-500');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        /* Custom styles for better UX */
+        .social-register-btn:hover {
+            background-color: #f9fafb;
+        }
+
+        .social-register-btn:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #3b82f6;
+            ring-offset: 2px;
+        }
+
+        /* Smooth transitions for validation states */
+        input {
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        /* Loading animation */
+        @@keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+}

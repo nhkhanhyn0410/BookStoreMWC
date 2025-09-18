@@ -1,0 +1,447 @@
+@using BookStoreMVC.Models.Entities
+@model BookStoreMVC.Models.ViewModels.BookListViewModel;
+
+@{
+    ViewData["Title"] = "Danh sách sách";
+}
+
+<div class="bg-gray-50 min-h-screen">
+    <!-- Page Header -->
+    <div class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Danh sách sách</h1>
+                    <p class="mt-2 text-gray-600">Khám phá hàng nghìn đầu sách chất lượng</p>
+                </div>
+                
+                <!-- View Toggle -->
+                <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                    <span class="text-sm text-gray-500">Hiển thị:</span>
+                    <div class="flex bg-gray-100 rounded-lg p-1">
+                        <button id="grid-view" class="px-3 py-1 rounded-md bg-white shadow-sm text-gray-900 transition-colors">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button id="list-view" class="px-3 py-1 rounded-md text-gray-500 hover:text-gray-900 transition-colors">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Filters -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                        <i class="fas fa-filter mr-2 text-blue-600"></i>
+                        Bộ lọc
+                    </h3>
+
+                    <form id="filter-form" method="get">
+                        <!-- Search -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                            <div class="relative">
+                                <input type="text" name="search" value="@ViewBag.CurrentSearch" 
+                                       placeholder="Tên sách, tác giả..."
+                                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+                            <select name="categoryId" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">Tất cả danh mục</option>
+                                @if (ViewBag.Categories != null)
+                                {
+                                    @foreach (var category in (IEnumerable<Category>)ViewBag.Categories)
+                                    {   
+                                        var isSelected = ViewBag.CurrentCategory?.ToString() == category.Id.ToString();
+                                        <option value="@category.Id" selected="@(isSelected ? "selected" : null)">
+                                            @category.NameCategory
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Khoảng giá</label>
+                            <div class="space-y-3">
+                                <div class="flex space-x-2">
+                                    <input type="number" name="minPrice" value="@ViewBag.MinPrice" 
+                                           placeholder="Từ" min="0"
+                                           class="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <input type="number" name="maxPrice" value="@ViewBag.MaxPrice" 
+                                           placeholder="Đến" min="0"
+                                           class="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+                                
+                                <!-- Quick Price Filters -->
+                                <div class="space-y-2">
+                                    @{
+                                        var priceRanges = new[]
+                                        {
+                                            new { Label = "Dưới 100k", Min = "", Max = "100000" },
+                                            new { Label = "100k - 200k", Min = "100000", Max = "200000" },
+                                            new { Label = "200k - 500k", Min = "200000", Max = "500000" },
+                                            new { Label = "Trên 500k", Min = "500000", Max = "" }
+                                        };
+                                    }
+                                    
+                                    @foreach (var range in priceRanges)
+                                    {
+                                        <button type="button" onclick="setPriceRange('@range.Min', '@range.Max')"
+                                                class="w-full text-left px-3 py-2 text-sm bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                                            @range.Label
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stock Status -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tình trạng</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="inStock" value="true" 
+                                           @(ViewBag.InStock == true ? "checked" : "")
+                                           class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700">Còn hàng</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" name="onSale" value="true" 
+                                           @(ViewBag.OnSale == true ? "checked" : "")
+                                           class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    <span class="ml-2 text-sm text-gray-700">Đang giảm giá</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Sort -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
+                            <select name="sortBy" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="title" selected="@(ViewBag.CurrentSort == "title" ? "selected" : null)">Tên A-Z</option>
+                                <option value="title_desc" selected="@(ViewBag.CurrentSort == "title_desc" ? "selected" : null)">Tên Z-A</option>
+                                <option value="price" selected="@(ViewBag.CurrentSort == "price" ? "selected" : null)">Giá thấp đến cao</option>
+                                <option value="price_desc" selected="@(ViewBag.CurrentSort == "price_desc" ? "selected" : null)">Giá cao đến thấp</option>
+                                <option value="newest" selected="@(ViewBag.CurrentSort == "newest" ? "selected" : null)">Mới nhất</option>
+                                <option value="popular" selected="@(ViewBag.CurrentSort == "popular" ? "selected" : null)">Phổ biến nhất</option>
+
+                            </select>
+                        </div>
+
+                        <!-- Apply Filters -->
+                        <div class="space-y-2">
+                            <button type="submit" 
+                                    class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-search mr-2"></i>
+                                Áp dụng bộ lọc
+                            </button>
+                            <a href="@Url.Action("Index")" 
+                               class="w-full block text-center border border-gray-300 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-undo mr-2"></i>
+                                Xóa bộ lọc
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:w-3/4">
+                <!-- Results Info -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-gray-600">
+                                Hiển thị @((Model.PageNumber - 1) * Model.PageSize + 1) - @(Math.Min(Model.PageNumber * Model.PageSize, Model.TotalCount)) 
+                                trong tổng số @Model.TotalCount sách
+                            </span>
+                            @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch?.ToString()))
+                            {
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-500">Kết quả cho:</span>
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-lg text-sm font-medium">
+                                        "@ViewBag.CurrentSearch"
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Page Size -->
+                        <div class="mt-2 md:mt-0 flex items-center space-x-2">
+                            <span class="text-sm text-gray-500">Hiển thị:</span>
+                            <select onchange="changePageSize(this.value)" class="border border-gray-300 rounded px-2 py-1 text-sm">
+                                <option value="12" selected="@(Model.PageSize == 12)">12</option>
+                                <option value="24" selected="@(Model.PageSize == 24)">24</option>
+                                <option value="48" selected="@(Model.PageSize == 48)">48</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Books Grid -->
+                <div id="books-container">
+                    @if (Model.Books?.Any() == true)
+                    {
+                        <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            @foreach (var book in Model.Books)
+                            {
+                                <partial name="BookCard" model="book" />
+                            }
+                        </div>
+
+                        <!-- Books List View (Hidden by default) -->
+                        <div id="books-list" class="hidden space-y-4 mb-8">
+                            @foreach (var book in Model.Books)
+                            {
+                                <div class="bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row gap-6">
+                                    <div class="md:w-48 flex-shrink-0">
+                                        <img src="@(book.ImageUrl ?? "https://via.placeholder.com/300x400")" 
+                                             alt="@book.Title" 
+                                             class="w-full h-64 md:h-48 object-cover rounded-lg">
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                                    <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id" 
+                                                       class="hover:text-blue-600 transition-colors">
+                                                        @book.Title
+                                                    </a>
+                                                </h3>
+                                                <p class="text-gray-600 mb-2">@book.Author</p>
+                                                @if (book.Category != null)
+                                                {
+                                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                                        @book.Category.NameCategory
+                                                    </span>
+                                                }
+                                            </div>
+                                            <div class="text-right">
+                                                @if (book.DiscountPrice.HasValue && book.DiscountPrice < book.Price)
+                                                {
+                                                    <div class="text-2xl font-bold text-red-600">@book.DiscountPrice.Value.ToString("C0")</div>
+                                                    <div class="text-sm text-gray-500 line-through">@book.Price.ToString("C0")</div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="text-2xl font-bold text-gray-900">@book.Price.ToString("C0")</div>
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                        @if (!string.IsNullOrEmpty(book.Description))
+                                        {
+                                            <p class="text-gray-600 mb-4 line-clamp-3">@book.Description</p>
+                                        }
+                                        
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-4">
+                                                @if (book.Reviews?.Any() == true)
+                                                {
+                                                    var averageRating = book.Reviews.Average(r => r.Rating);
+                                                    <div class="flex items-center space-x-1">
+                                                        @for (int i = 1; i <= 5; i++)
+                                                        {
+                                                            <i class="fas fa-star text-sm @(i <= averageRating ? "text-yellow-400" : "text-gray-300")"></i>
+                                                        }
+                                                        <span class="text-sm text-gray-500 ml-1">(@book.Reviews.Count())</span>
+                                                    </div>
+                                                }
+                                                
+                                                <span class="text-sm text-gray-500">
+                                                    @if (book.StockQuantity <= 0)
+                                                    {
+                                                        <span class="text-red-500">Hết hàng</span>
+                                                    }
+                                                    else if (book.StockQuantity <= 10)
+                                                    {
+                                                        <span class="text-yellow-500">Còn @book.StockQuantity</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-green-500">Còn hàng</span>
+                                                    }
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="flex items-center space-x-2">
+                                                @if (User.Identity.IsAuthenticated)
+                                                {
+                                                    <button onclick="addToWishlist(@book.Id)" 
+                                                            class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                                                        <i class="fas fa-heart"></i>
+                                                    </button>
+                                                }
+                                                
+                                                @if (book.StockQuantity > 0)
+                                                {
+                                                    <button onclick="addToCart(@book.Id)" 
+                                                            class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                                        <i class="fas fa-shopping-cart mr-2"></i>
+                                                        Thêm vào giỏ
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button disabled 
+                                                            class="bg-gray-400 text-white px-6 py-2 rounded-lg font-semibold cursor-not-allowed">
+                                                        Hết hàng
+                                                    </button>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- No Results -->
+                        <div class="text-center py-16">
+                            <div class="max-w-md mx-auto">
+                                <i class="fas fa-search text-6xl text-gray-300 mb-6"></i>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">Không tìm thấy sách nào</h3>
+                                <p class="text-gray-600 mb-6">Hãy thử thay đổi tiêu chí tìm kiếm hoặc bộ lọc</p>
+                                <a href="@Url.Action("Index")" 
+                                   class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                    Xem tất cả sách
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="flex justify-center">
+                        <nav class="flex items-center space-x-2">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <a href="@Url.Action("Index", new { 
+                                    page = Model.PageNumber - 1, 
+                                    search = ViewBag.CurrentSearch,
+                                    categoryId = ViewBag.CurrentCategory,
+                                    sortBy = ViewBag.CurrentSort,
+                                    minPrice = ViewBag.MinPrice,
+                                    maxPrice = ViewBag.MaxPrice,
+                                    inStock = ViewBag.InStock,
+                                    onSale = ViewBag.OnSale,
+                                    pageSize = Model.PageSize
+                                })" 
+                                   class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            }
+
+                            @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+                            {
+                                <a href="@Url.Action("Index", new { 
+                                    page = i, 
+                                    search = ViewBag.CurrentSearch,
+                                    categoryId = ViewBag.CurrentCategory,
+                                    sortBy = ViewBag.CurrentSort,
+                                    minPrice = ViewBag.MinPrice,
+                                    maxPrice = ViewBag.MaxPrice,
+                                    inStock = ViewBag.InStock,
+                                    onSale = ViewBag.OnSale,
+                                    pageSize = Model.PageSize
+                                })" 
+                                   class="px-3 py-2 text-sm font-medium @(i == Model.PageNumber ? "bg-blue-600 text-white" : "text-gray-500 hover:text-gray-700 hover:bg-gray-100") rounded-md transition-colors">
+                                    @i
+                                </a>
+                            }
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <a href="@Url.Action("Index", new { 
+                                    page = Model.PageNumber + 1, 
+                                    search = ViewBag.CurrentSearch,
+                                    categoryId = ViewBag.CurrentCategory,
+                                    sortBy = ViewBag.CurrentSort,
+                                    minPrice = ViewBag.MinPrice,
+                                    maxPrice = ViewBag.MaxPrice,
+                                    inStock = ViewBag.InStock,
+                                    onSale = ViewBag.OnSale,
+                                    pageSize = Model.PageSize
+                                })" 
+                                   class="px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            }
+                        </nav>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // View toggle functionality
+        document.getElementById('grid-view').addEventListener('click', function() {
+            document.getElementById('books-grid').classList.remove('hidden');
+            document.getElementById('books-list').classList.add('hidden');
+            this.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+            this.classList.remove('text-gray-500');
+            document.getElementById('list-view').classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+            document.getElementById('list-view').classList.add('text-gray-500');
+        });
+
+        document.getElementById('list-view').addEventListener('click', function() {
+            document.getElementById('books-list').classList.remove('hidden');
+            document.getElementById('books-grid').classList.add('hidden');
+            this.classList.add('bg-white', 'shadow-sm', 'text-gray-900');
+            this.classList.remove('text-gray-500');
+            document.getElementById('grid-view').classList.remove('bg-white', 'shadow-sm', 'text-gray-900');
+            document.getElementById('grid-view').classList.add('text-gray-500');
+        });
+
+        // Price range helper
+        function setPriceRange(min, max) {
+            document.querySelector('input[name="minPrice"]').value = min;
+            document.querySelector('input[name="maxPrice"]').value = max;
+        }
+
+        // Page size change
+        function changePageSize(size) {
+            const url = new URL(window.location);
+            url.searchParams.set('pageSize', size);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+
+        // Auto-submit form when filters change
+        document.querySelectorAll('#filter-form select, #filter-form input[type="checkbox"]').forEach(element => {
+            element.addEventListener('change', function() {
+                document.getElementById('filter-form').submit();
+            });
+        });
+
+        // Load cart count
+        loadCartCount();
+    </script>
+}
+
+<style>
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>

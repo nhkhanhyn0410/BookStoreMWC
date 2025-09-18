@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+@section Breadcrumb {
+    <a asp-controller="Home" asp-action="Index" class="text-primary-600 hover:text-primary-700">Home</a>
+    <i class="fas fa-chevron-right text-gray-400"></i>
+    <span class="text-gray-600">Privacy Policy</span>
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-sm p-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Privacy Policy</h1>
+
+        <div class="prose max-w-none">
+            <p class="text-gray-600 mb-6">
+                Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")
+            </p>
+
+            <h2 class="text-2xl font-semibold text-gray-900 mt-8 mb-4">Information We Collect</h2>
+            <p class="text-gray-600 mb-4">
+                We collect information you provide directly to us, such as when you create an account,
+                make a purchase, or contact us for support.
+            </p>
+
+            <h2 class="text-2xl font-semibold text-gray-900 mt-8 mb-4">How We Use Your Information</h2>
+            <ul class="list-disc pl-6 text-gray-600 mb-6">
+                <li>Process and fulfill your orders</li>
+                <li>Communicate with you about your account or orders</li>
+                <li>Send you promotional communications (with your consent)</li>
+                <li>Improve our services and user experience</li>
+            </ul>
+
+            <h2 class="text-2xl font-semibold text-gray-900 mt-8 mb-4">Data Security</h2>
+            <p class="text-gray-600 mb-4">
+                We implement appropriate security measures to protect your personal information
+                against unauthorized access, alteration, disclosure, or destruction.
+            </p>
+
+            <h2 class="text-2xl font-semibold text-gray-900 mt-8 mb-4">Contact Us</h2>
+            <p class="text-gray-600 mb-4">
+                If you have any questions about this Privacy Policy, please contact us at:
+            </p>
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-700">
+                    <strong>Email:</strong> privacy@bookstore.com<br>
+                    <strong>Phone:</strong> (555) 123-4567<br>
+                    <strong>Address:</strong> 123 Book Street, Library City, LC 12345
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
