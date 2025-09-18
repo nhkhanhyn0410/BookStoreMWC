@@ -1,0 +1,107 @@
+<nav class="flex items-center justify-between py-4">
+    <div class="flex items-center space-x-8">
+        <a asp-controller="Home" asp-action="Index"
+            class="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+            Trang chủ
+        </a>
+
+        <div class="relative group">
+            <button class="flex items-center text-gray-700 hover:text-primary-600 font-medium transition-colors">
+                Danh mục sách
+                <i class="fas fa-chevron-down ml-1 text-xs"></i>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div
+                class="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Left Column -->
+                        <div class="space-y-2">
+                            <a href="#"
+                                class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-colors rounded-md">
+                                <i class="fas fa-book mr-3 text-blue-500"></i>
+                                <div>
+                                    <div class="font-medium">Văn học</div>
+                                    <div class="text-xs text-gray-500">Tiểu thuyết, Thơ...</div>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-colors rounded-md">
+                                <i class="fas fa-flask mr-3 text-green-500"></i>
+                                <div>
+                                    <div class="font-medium">Khoa học</div>
+                                    <div class="text-xs text-gray-500">Vật lý, Hóa học...</div>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-colors rounded-md">
+                                <i class="fas fa-laptop-code mr-3 text-purple-500"></i>
+                                <div>
+                                    <div class="font-medium">Công nghệ</div>
+                                    <div class="text-xs text-gray-500">Lập trình, AI...</div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-2">
+                            <a href="#"
+                                class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-colors rounded-md">
+                                <i class="fas fa-child mr-3 text-yellow-500"></i>
+                                <div>
+                                    <div class="font-medium">Thiếu nhi</div>
+                                    <div class="text-xs text-gray-500">Truyện tranh, Giáo dục...</div>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-colors rounded-md">
+                                <i class="fas fa-chart-line mr-3 text-red-500"></i>
+                                <div>
+                                    <div class="font-medium">Kinh tế</div>
+                                    <div class="text-xs text-gray-500">Quản trị, Marketing...</div>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-colors rounded-md">
+                                <i class="fas fa-history mr-3 text-indigo-500"></i>
+                                <div>
+                                    <div class="font-medium">Lịch sử</div>
+                                    <div class="text-xs text-gray-500">Việt Nam, Thế giới...</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 mt-4 pt-4">
+                        <a asp-controller="Books" asp-action="Index"
+                            class="flex items-center justify-center px-4 py-2 bg-primary-50 text-primary-600 rounded-lg font-medium hover:bg-primary-100 transition-colors">
+                            <i class="fas fa-th-large mr-2"></i>
+                            Xem tất cả danh mục
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a asp-controller="Books" asp-action="Featured"
+            class="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+            Sách nổi bật
+        </a>
+
+        <a href="#" class="text-gray-700 hover:text-primary-600 font-medium transition-colors flex items-center">
+            <i class="fas fa-tags mr-1 text-red-500"></i>
+            Khuyến mãi
+        </a>
+
+        <a asp-controller="Home" asp-action="About"
+            class="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+            Giới thiệu
+        </a>
+
+        <a asp-controller="Home" asp-action="Contact"
+            class="text-gray-700 hover:text-primary-600 font-medium transition-colors">
+            Liên hệ
+        </a>
+    </div>
+</nav>

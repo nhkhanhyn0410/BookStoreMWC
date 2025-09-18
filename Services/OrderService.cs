@@ -1,3 +1,4 @@
+// Services/IOrderService.cs & OrderService.cs
 using Microsoft.EntityFrameworkCore;
 using BookStoreMVC.Data;
 using BookStoreMVC.Models.Entities;
@@ -7,16 +8,14 @@ namespace BookStoreMVC.Services
 {
     public interface IOrderService
     {
-        Task<Order?> CreateOrderAsync(string userId, OrderCreateViewModel model);
-        Task<Order?> GetOrderByIdAsync(int orderId);
-        Task<Order?> GetOrderByIdAsync(int orderId, string userId);
-        Task<IEnumerable<Order>> GetOrdersByUserAsync(string userId);
-        Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task<OrderViewModel?> CreateOrderAsync(string userId, OrderCreateViewModel model);
+        Task<OrderViewModel?> GetOrderByIdAsync(int orderId, string? userId = null);
+        Task<(IEnumerable<OrderViewModel> Orders, int TotalCount)> GetOrdersAsync(OrderListViewModel model, string? userId = null);
         Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status);
-        Task<bool> UpdatePaymentStatusAsync(int orderId, PaymentStatus status);
         Task<bool> CancelOrderAsync(int orderId, string userId);
-        Task<string> GenerateOrderNumberAsync();
-        Task<(int TotalOrders, decimal TotalRevenue, decimal AverageOrderValue)> GetOrderStatisticsAsync();
+        Task<(decimal TotalRevenue, int TotalOrders, decimal AverageOrderValue)> GetOrderStatisticsAsync();
+        Task<Dictionary<string, decimal>> GetMonthlyRevenueAsync(int months = 12);
+        Task<Dictionary<OrderStatus, int>> GetOrdersByStatusAsync();
     }
 
     public class OrderService : IOrderService
@@ -35,7 +34,7 @@ namespace BookStoreMVC.Services
             _logger = logger;
         }
 
-        public async Task<Order?> CreateOrderAsync(string userId, OrderCreateViewModel model)
+        public async Task<OrderViewModel?> CreateOrderAsync(string userId, OrderCreateViewModel model)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -44,81 +43,80 @@ namespace BookStoreMVC.Services
                 // Get cart items
                 var cart = await _cartService.GetCartAsync(userId);
                 if (cart.IsEmpty)
-                {
-                    return null;
-                }
+                    throw new InvalidOperationException("Cart is empty");
 
-                // Validate stock for all items
+                // Validate stock
                 foreach (var item in cart.Items)
                 {
                     var book = await _context.Books.FindAsync(item.BookId);
                     if (book == null || book.StockQuantity < item.Quantity)
-                    {
-                        throw new InvalidOperationException($"Insufficient stock for book: {item.Book.Title}");
-                    }
+                        throw new InvalidOperationException($"Insufficient stock for {item.Book.Title}");
                 }
 
-                // Generate order number
-                var orderNumber = await GenerateOrderNumberAsync();
+                // Create shipping info
+                var shippingInfo = new ShippingInfo
+                {
+                    FirstName = model.ShippingFirstName,
+                    LastName = model.ShippingLastName,
+                    Address = model.ShippingAddress,
+                    City = model.ShippingCity,
+                    PostalCode = model.ShippingPostalCode,
+                    Country = model.ShippingCountry,
+                    Phone = model.ShippingPhone
+                };
+
+                _context.ShippingInfos.Add(shippingInfo);
+                await _context.SaveChangesAsync();
 
                 // Create order
                 var order = new Order
                 {
                     UserId = userId,
-                    OrderNumber = orderNumber,
+                    ShippingInfoId = shippingInfo.Id,
                     Status = OrderStatus.Pending,
-                    PaymentStatus = PaymentStatus.Pending,
-
                     SubTotal = cart.SubTotal,
-                    ShippingCost = cart.ShippingCost,
                     Tax = cart.Tax,
-                    Discount = cart.PromoDiscount,
+                    Discount = 0,
                     Total = cart.Total,
-
-                    ShippingFirstName = model.ShippingFirstName,
-                    ShippingLastName = model.ShippingLastName,
-                    ShippingAddress = model.ShippingAddress,
-                    ShippingCity = model.ShippingCity,
-                    ShippingPostalCode = model.ShippingPostalCode,
-                    ShippingCountry = model.ShippingCountry,
-                    ShippingPhone = model.ShippingPhone,
-                    Notes = model.Notes,
-
-                    OrderDate = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow
                 };
 
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 
                 // Create order items and update stock
-                var orderItems = new List<OrderItem>();
-
-                foreach (var cartItem in cart.Items)
+                foreach (var item in cart.Items)
                 {
                     var orderItem = new OrderItem
                     {
                         OrderId = order.Id,
-                        BookId = cartItem.BookId,
-                        Quantity = cartItem.Quantity,
-                        UnitPrice = cartItem.Book.FinalPrice,
-                        Total = cartItem.TotalPrice,
-                        BookTitle = cartItem.Book.Title,
-                        BookAuthor = cartItem.Book.Author,
-                        BookImageUrl = cartItem.Book.ImageUrl
+                        BookId = item.BookId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        Total = item.TotalPrice
                     };
 
-                    orderItems.Add(orderItem);
+                    _context.OrderItems.Add(orderItem);
 
-                    // Update stock
-                    var book = await _context.Books.FindAsync(cartItem.BookId);
-                    if (book != null)
-                    {
-                        book.StockQuantity -= cartItem.Quantity;
-                        book.UpdatedAt = DateTime.UtcNow;
-                    }
+                    // Update book stock
+                    var book = await _context.Books.FindAsync(item.BookId);
+                    book!.StockQuantity -= item.Quantity;
                 }
 
-                _context.OrderItems.AddRange(orderItems);
+                // Create payment record
+                var payment = new Payment
+                {
+                    OrderId = order.Id,
+                    Method = model.PaymentMethod,
+                    TransactionId = model.TransactionId,
+                    Amount = order.Total,
+                    Status = PaymentStatus.Pending,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Payments.Add(payment);
+                order.PaymentId = payment.Id;
+
                 await _context.SaveChangesAsync();
 
                 // Clear cart
@@ -126,10 +124,7 @@ namespace BookStoreMVC.Services
 
                 await transaction.CommitAsync();
 
-                _logger.LogInformation("Order created successfully: {OrderNumber} for user {UserId}",
-                    orderNumber, userId);
-
-                return order;
+                return await GetOrderByIdAsync(order.Id);
             }
             catch (Exception ex)
             {
@@ -139,194 +134,168 @@ namespace BookStoreMVC.Services
             }
         }
 
-        public async Task<Order?> GetOrderByIdAsync(int orderId)
+        public async Task<OrderViewModel?> GetOrderByIdAsync(int orderId, string? userId = null)
         {
-            return await _context.Orders
+            var query = _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.ShippingInfo)
+                .Include(o => o.Payment)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Book)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
+                        .ThenInclude(b => b.Category)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(o => o.UserId == userId);
+
+            var order = await query.FirstOrDefaultAsync(o => o.Id == orderId);
+
+            return order != null ? MapToViewModel(order) : null;
         }
 
-        public async Task<Order?> GetOrderByIdAsync(int orderId, string userId)
+        public async Task<(IEnumerable<OrderViewModel> Orders, int TotalCount)> GetOrdersAsync(OrderListViewModel model, string? userId = null)
         {
-            return await _context.Orders
+            var query = _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.ShippingInfo)
+                .Include(o => o.Payment)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Book)
-                .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
-        }
+                .AsQueryable();
 
-        public async Task<IEnumerable<Order>> GetOrdersByUserAsync(string userId)
-        {
-            return await _context.Orders
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Book)
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.OrderDate)
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(o => o.UserId == userId);
+
+            // Apply filters
+            if (model.StatusFilter.HasValue)
+                query = query.Where(o => o.Status == model.StatusFilter);
+
+            if (model.StartDate.HasValue)
+                query = query.Where(o => o.CreatedAt >= model.StartDate);
+
+            if (model.EndDate.HasValue)
+                query = query.Where(o => o.CreatedAt <= model.EndDate);
+
+            // Apply sorting
+            query = model.SortBy.ToLower() switch
+            {
+                "created" => query.OrderBy(o => o.CreatedAt),
+                "created_desc" => query.OrderByDescending(o => o.CreatedAt),
+                "total" => query.OrderBy(o => o.Total),
+                "total_desc" => query.OrderByDescending(o => o.Total),
+                "status" => query.OrderBy(o => o.Status),
+                _ => query.OrderByDescending(o => o.CreatedAt)
+            };
+
+            var totalCount = await query.CountAsync();
+
+            var orders = await query
+                .Skip((model.PageNumber - 1) * model.PageSize)
+                .Take(model.PageSize)
                 .ToListAsync();
-        }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
-        {
-            return await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Book)
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
+            return (orders.Select(MapToViewModel), totalCount);
         }
 
         public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)
         {
-            try
-            {
-                var order = await _context.Orders.FindAsync(orderId);
-                if (order == null)
-                {
-                    return false;
-                }
+            var order = await _context.Orders.FindAsync(orderId);
+            if (order == null) return false;
 
-                order.Status = status;
+            order.Status = status;
+            await _context.SaveChangesAsync();
 
-                // Update relevant dates based on status
-                switch (status)
-                {
-                    case OrderStatus.Shipped:
-                        order.ShippedDate = DateTime.UtcNow;
-                        break;
-                    case OrderStatus.Delivered:
-                        order.DeliveredDate = DateTime.UtcNow;
-                        if (!order.ShippedDate.HasValue)
-                        {
-                            order.ShippedDate = DateTime.UtcNow;
-                        }
-                        break;
-                }
-
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Order {OrderId} status updated to {Status}", orderId, status);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating order status for order {OrderId}", orderId);
-                return false;
-            }
-        }
-
-        public async Task<bool> UpdatePaymentStatusAsync(int orderId, PaymentStatus status)
-        {
-            try
-            {
-                var order = await _context.Orders.FindAsync(orderId);
-                if (order == null)
-                {
-                    return false;
-                }
-
-                order.PaymentStatus = status;
-
-                // If payment is successful, update order status to processing
-                if (status == PaymentStatus.Paid && order.Status == OrderStatus.Pending)
-                {
-                    order.Status = OrderStatus.Processing;
-                }
-
-                await _context.SaveChangesAsync();
-
-                _logger.LogInformation("Order {OrderId} payment status updated to {PaymentStatus}",
-                    orderId, status);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating payment status for order {OrderId}", orderId);
-                return false;
-            }
+            _logger.LogInformation("Order {OrderId} status updated to {Status}", orderId, status);
+            return true;
         }
 
         public async Task<bool> CancelOrderAsync(int orderId, string userId)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Book)
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
 
-            try
-            {
-                var order = await _context.Orders
-                    .Include(o => o.OrderItems)
-                        .ThenInclude(oi => oi.Book)
-                    .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
-
-                if (order == null || order.Status != OrderStatus.Pending)
-                {
-                    return false;
-                }
-
-                // Restore stock for all order items
-                foreach (var orderItem in order.OrderItems)
-                {
-                    if (orderItem.Book != null)
-                    {
-                        orderItem.Book.StockQuantity += orderItem.Quantity;
-                        orderItem.Book.UpdatedAt = DateTime.UtcNow;
-                    }
-                }
-
-                // Update order status
-                order.Status = OrderStatus.Cancelled;
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                _logger.LogInformation("Order {OrderId} cancelled by user {UserId}", orderId, userId);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                _logger.LogError(ex, "Error cancelling order {OrderId} for user {UserId}", orderId, userId);
+            if (order == null || order.Status != OrderStatus.Pending)
                 return false;
+
+            order.Status = OrderStatus.Cancelled;
+
+            // Restore book stock
+            foreach (var item in order.OrderItems)
+            {
+                item.Book.StockQuantity += item.Quantity;
             }
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task<string> GenerateOrderNumberAsync()
+        private OrderViewModel MapToViewModel(Order order)
         {
-            var date = DateTime.UtcNow;
-            var dateString = date.ToString("yyyyMMdd");
-
-            // Get the count of orders for today
-            var ordersToday = await _context.Orders
-                .Where(o => o.OrderDate.Date == date.Date)
-                .CountAsync();
-
-            var sequenceNumber = (ordersToday + 1).ToString("D4");
-
-            return $"ORD-{dateString}-{sequenceNumber}";
+            return new OrderViewModel
+            {
+                Id = order.Id,
+                UserId = order.UserId,
+                Status = order.Status,
+                SubTotal = order.SubTotal,
+                Tax = order.Tax,
+                Discount = order.Discount,
+                Total = order.Total,
+                CreatedAt = order.CreatedAt,
+                User = order.User,
+                ShippingInfo = order.ShippingInfo,
+                Payment = order.Payment,
+                OrderItems = order.OrderItems.Select(oi => new OrderItemViewModel
+                {
+                    Id = oi.Id,
+                    BookId = oi.BookId,
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.UnitPrice,
+                    Total = oi.Total,
+                    BookTitle = oi.Book.Title,
+                    BookAuthor = oi.Book.Author,
+                    Book = oi.Book
+                }).ToList()
+            };
         }
 
-        public async Task<(int TotalOrders, decimal TotalRevenue, decimal AverageOrderValue)> GetOrderStatisticsAsync()
+        public async Task<(decimal TotalRevenue, int TotalOrders, decimal AverageOrderValue)> GetOrderStatisticsAsync()
         {
-            try
-            {
-                var orders = await _context.Orders
-                    .Where(o => o.Status != OrderStatus.Cancelled)
-                    .ToListAsync();
+            var completedOrders = await _context.Orders
+                .Where(o => o.Status == OrderStatus.Delivered)
+                .ToListAsync();
 
-                var totalOrders = orders.Count;
-                var totalRevenue = orders.Sum(o => o.Total);
-                var averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+            var totalRevenue = completedOrders.Sum(o => o.Total);
+            var totalOrders = completedOrders.Count;
+            var averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-                return (totalOrders, totalRevenue, averageOrderValue);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting order statistics");
-                return (0, 0, 0);
-            }
+            return (totalRevenue, totalOrders, averageOrderValue);
+        }
+
+        public async Task<Dictionary<string, decimal>> GetMonthlyRevenueAsync(int months = 12)
+        {
+            var startDate = DateTime.UtcNow.AddMonths(-months);
+
+            var monthlyRevenue = await _context.Orders
+                .Where(o => o.Status == OrderStatus.Delivered && o.CreatedAt >= startDate)
+                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                .Select(g => new
+                {
+                    Date = new DateTime(g.Key.Year, g.Key.Month, 1),
+                    Revenue = g.Sum(o => o.Total)
+                })
+                .OrderBy(x => x.Date)
+                .ToDictionaryAsync(x => x.Date.ToString("MMM yyyy"), x => x.Revenue);
+
+            return monthlyRevenue;
+        }
+
+        public async Task<Dictionary<OrderStatus, int>> GetOrdersByStatusAsync()
+        {
+            return await _context.Orders
+                .GroupBy(o => o.Status)
+                .ToDictionaryAsync(g => g.Key, g => g.Count());
         }
     }
 }

@@ -1,126 +1,231 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using BookStoreMVC.Models.Entities;
 using BookStoreMVC.Models.ViewModels;
+using BookStoreMVC.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace BookStoreMVC.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
+        private readonly IUserService _userService;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger<AccountController> _logger;
 
         public AccountController(
+            IUserService userService,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             ILogger<AccountController> logger)
         {
+            _userService = userService;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
         }
 
-        [HttpGet]
-        public IActionResult Login(string? returnUrl = null)
+        public async Task<IActionResult> Index()
         {
-            if (User.Identity?.IsAuthenticated == true)
+            try
             {
-                return RedirectToAction("Index", "Home");
-            }
+                var userId = _userManager.GetUserId(User)!;
+                var dashboard = await _userService.GetUserDashboardAsync(userId);
 
-            ViewData["ReturnUrl"] = returnUrl;
+                ViewBag.PageTitle = "My Account";
+                return View(dashboard);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading user dashboard");
+                return View(new UserDashboardViewModel());
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User)!;
+                var profile = await _userService.GetUserProfileAsync(userId);
+
+                if (profile == null)
+                {
+                    return NotFound();
+                }
+
+                ViewBag.PageTitle = "My Profile";
+                return View(profile);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading user profile");
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(UserProfileViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var userId = _userManager.GetUserId(User)!;
+                await _userService.UpdateUserProfileAsync(userId, model);
+
+                TempData["SuccessMessage"] = "Profile updated successfully!";
+                return RedirectToAction(nameof(Profile));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user profile");
+                ModelState.AddModelError(string.Empty, "An error occurred while updating your profile.");
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            ViewBag.PageTitle = "Change Password";
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(
-                    model.Email,
-                    model.Password,
-                    model.RememberMe,
-                    lockoutOnFailure: false);
-
-                if (result.Succeeded)
+                if (!ModelState.IsValid)
                 {
-                    _logger.LogInformation("User {Email} logged in", model.Email);
-
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    {
-                        return Redirect(returnUrl);
-                    }
-
-                    return RedirectToAction("Index", "Home");
-                }
-
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning("User {Email} account locked out", model.Email);
-                    ModelState.AddModelError(string.Empty, "This account has been locked out, please try again later.");
                     return View(model);
                 }
 
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(user);
+                    TempData["SuccessMessage"] = "Password changed successfully!";
+                    return RedirectToAction(nameof(Profile));
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during login for user {Email}", model.Email);
-                ModelState.AddModelError(string.Empty, "An error occurred during login. Please try again.");
+                _logger.LogError(ex, "Error changing password");
+                ModelState.AddModelError(string.Empty, "An error occurred while changing your password.");
                 return View(model);
             }
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register(string? returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
-            if (User.Identity?.IsAuthenticated == true)
+            if (_signInManager.IsSignedIn(User))
             {
                 return RedirectToAction("Index", "Home");
             }
 
             ViewData["ReturnUrl"] = returnUrl;
+            ViewBag.PageTitle = "Login";
             return View();
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+        {
+            try
+            {
+                ViewData["ReturnUrl"] = returnUrl;
+
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(
+                    model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl ?? "/");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during login");
+                ModelState.AddModelError(string.Empty, "An error occurred during login.");
+                return View(model);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Register(string? returnUrl = null)
+        {
+            if (_signInManager.IsSignedIn(User))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewData["ReturnUrl"] = returnUrl;
+            ViewBag.PageTitle = "Register";
+            return View();
+        }
+
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
         {
-            ViewData["ReturnUrl"] = returnUrl;
-
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
             try
             {
+                ViewData["ReturnUrl"] = returnUrl;
+
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
                 var user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
-                    Address = model.Address,
-                    City = model.City,
-                    PostalCode = model.PostalCode,
-                    Country = model.Country,
-                    EmailConfirmed = true, // Auto-confirm for demo
-                    IsActive = true,
+                    Name = model.Name,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -128,168 +233,101 @@ namespace BookStoreMVC.Controllers
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User {Email} created a new account", user.Email);
+                    _logger.LogInformation("User created a new account with password.");
 
-                    // Add user to Customer role
+                    // Add to Customer role
                     await _userManager.AddToRoleAsync(user, "Customer");
 
-                    // Sign in the user
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    TempData["SuccessMessage"] = "Registration successful! Welcome to BookStore!";
 
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    {
-                        return Redirect(returnUrl);
-                    }
-
-                    return RedirectToAction("Index", "Home");
+                    return LocalRedirect(returnUrl ?? "/");
                 }
-
-                foreach (var error in result.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
 
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during registration for email {Email}", model.Email);
-                ModelState.AddModelError(string.Empty, "An error occurred during registration. Please try again.");
+                _logger.LogError(ex, "Error during registration");
+                ModelState.AddModelError(string.Empty, "An error occurred during registration.");
                 return View(model);
             }
         }
 
         [HttpPost]
-        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            try
-            {
-                await _signInManager.SignOutAsync();
-                _logger.LogInformation("User logged out");
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during logout");
-                return RedirectToAction("Index", "Home");
-            }
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out.");
+            return RedirectToAction("Index", "Home");
         }
+    }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Profile()
-        {
-            try
-            {
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null)
-                {
-                    return NotFound();
-                }
+    // ViewModel for authentication
+    public class LoginViewModel
+    {
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
 
-                var model = new RegisterViewModel
-                {
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email!,
-                    PhoneNumber = user.PhoneNumber,
-                    Address = user.Address,
-                    City = user.City,
-                    PostalCode = user.PostalCode,
-                    Country = user.Country
-                };
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = string.Empty;
 
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading user profile");
-                return RedirectToAction("Index", "Home");
-            }
-        }
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
 
-        [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Profile(RegisterViewModel model)
-        {
-            try
-            {
-                var user = await _userManager.GetUserAsync(User);
-                if (user == null)
-                {
-                    return NotFound();
-                }
+    public class RegisterViewModel
+    {
+        [Required]
+        [StringLength(100)]
+        [Display(Name = "Full Name")]
+        public string Name { get; set; } = string.Empty;
 
-                // Remove password validation for profile update
-                ModelState.Remove("Password");
-                ModelState.Remove("ConfirmPassword");
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
 
-                if (!ModelState.IsValid)
-                {
-                    return View(model);
-                }
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = string.Empty;
 
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.PhoneNumber = model.PhoneNumber;
-                user.Address = model.Address;
-                user.City = model.City;
-                user.PostalCode = model.PostalCode;
-                user.Country = model.Country;
-                user.UpdatedAt = DateTime.UtcNow;
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
 
-                var result = await _userManager.UpdateAsync(user);
+    public class ChangePasswordViewModel
+    {
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Current password")]
+        public string CurrentPassword { get; set; } = string.Empty;
 
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("User {UserId} updated their profile", user.Id);
-                    TempData["SuccessMessage"] = "Your profile has been updated successfully.";
-                    return RedirectToAction(nameof(Profile));
-                }
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "New password")]
+        public string NewPassword { get; set; } = string.Empty;
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating user profile");
-                ModelState.AddModelError(string.Empty, "An error occurred while updating your profile. Please try again.");
-                return View(model);
-            }
-        }
-
-        [HttpGet]
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
-        // AJAX endpoints
-        [HttpPost]
-        public async Task<IActionResult> CheckEmailAvailability(string email)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(email))
-                {
-                    return Json(new { available = false });
-                }
-
-                var user = await _userManager.FindByEmailAsync(email);
-                return Json(new { available = user == null });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error checking email availability for {Email}", email);
-                return Json(new { available = false });
-            }
-        }
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm new password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 }

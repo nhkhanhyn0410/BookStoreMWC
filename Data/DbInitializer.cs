@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BookStoreMVC.Models.Entities;
 
+
 namespace BookStoreMVC.Data
 {
     public static class DbInitializer
@@ -25,11 +26,14 @@ namespace BookStoreMVC.Data
                 // Create admin user
                 await CreateAdminUser(userManager);
 
+                // Create sample categories
+                await SeedCategories(context);
+
+                // Create sample books
+                await SeedBooks(context);
+
                 // Create sample users
                 await CreateSampleUsers(userManager);
-
-                // Seed additional data if needed
-                await SeedAdditionalData(context);
 
                 logger.LogInformation("Database initialization completed successfully.");
             }
@@ -59,22 +63,18 @@ namespace BookStoreMVC.Data
             const string adminPassword = "Admin123!";
 
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
             if (adminUser == null)
             {
                 adminUser = new User
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    FirstName = "Admin",
-                    LastName = "User",
+                    Name = "Administrator",
                     EmailConfirmed = true,
-                    IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
 
                 var result = await userManager.CreateAsync(adminUser, adminPassword);
-
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -86,30 +86,26 @@ namespace BookStoreMVC.Data
         {
             var sampleUsers = new[]
             {
-                new { Email = "john.doe@example.com", FirstName = "John", LastName = "Doe" },
-                new { Email = "jane.smith@example.com", FirstName = "Jane", LastName = "Smith" },
-                new { Email = "mike.johnson@example.com", FirstName = "Mike", LastName = "Johnson" }
+                new { Email = "john.doe@example.com", Name = "John Doe", Password = "User123!" },
+                new { Email = "jane.smith@example.com", Name = "Jane Smith", Password = "User123!" },
+                new { Email = "bob.johnson@example.com", Name = "Bob Johnson", Password = "User123!" }
             };
 
             foreach (var userData in sampleUsers)
             {
-                var user = await userManager.FindByEmailAsync(userData.Email);
-
-                if (user == null)
+                var existingUser = await userManager.FindByEmailAsync(userData.Email);
+                if (existingUser == null)
                 {
-                    user = new User
+                    var user = new User
                     {
                         UserName = userData.Email,
                         Email = userData.Email,
-                        FirstName = userData.FirstName,
-                        LastName = userData.LastName,
+                        Name = userData.Name,
                         EmailConfirmed = true,
-                        IsActive = true,
                         CreatedAt = DateTime.UtcNow
                     };
 
-                    var result = await userManager.CreateAsync(user, "Customer123!");
-
+                    var result = await userManager.CreateAsync(user, userData.Password);
                     if (result.Succeeded)
                     {
                         await userManager.AddToRoleAsync(user, "Customer");
@@ -118,153 +114,49 @@ namespace BookStoreMVC.Data
             }
         }
 
-        private static async Task SeedAdditionalData(ApplicationDbContext context)
+        private static async Task SeedCategories(ApplicationDbContext context)
         {
-            // Seed categories trước
-            if (!context.Categories.Any())
+            if (await context.Categories.AnyAsync())
+                return;
+
+            var categories = new[]
             {
-                var categories = new List<Category>
+                new Category { Name = "Fiction", Description = "Fictional books and novels", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "Non-Fiction", Description = "Non-fictional books", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "Science", Description = "Science and technology books", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "History", Description = "Historical books", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "Biography", Description = "Biographies and memoirs", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "Technology", Description = "Technology and programming books", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "Children", Description = "Books for children", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new Category { Name = "Romance", Description = "Romance novels", IsActive = true, CreatedAt = DateTime.UtcNow }
+            };
+
+            context.Categories.AddRange(categories);
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task SeedBooks(ApplicationDbContext context)
         {
-            new Category { NameCategory = "Programming" },
-            new Category { NameCategory = "Fiction" },
-            new Category { NameCategory = "Self-help" },
-            new Category { NameCategory = "Fantasy" },
-            new Category { NameCategory = "Mystery" }
-        };
+            if (await context.Books.AnyAsync())
+                return;
 
-                context.Categories.AddRange(categories);
-                await context.SaveChangesAsync();
-            }
+            var categories = await context.Categories.ToListAsync();
+            var random = new Random();
 
-            // Lấy categories ra để gán cho Book
-            var categoriesDict = context.Categories.ToDictionary(c => c.NameCategory, c => c.Id);
-
-            if (!context.Books.Any())
+            var books = new[]
             {
-                var additionalBooks = new List<Book>
-        {
-            new Book
-            {
-                Title = "Clean Code",
-                Author = "Robert C. Martin",
-                Size = "9780132350884",
-                Description = "A Handbook of Agile Software Craftsmanship",
-                Price = 29.99m,
-                DiscountPrice = 24.99m,
-                CategoryId = categoriesDict["Programming"],
-                Publisher = "Prentice Hall",
-                PageCount = 464,
-                Language = "English",
-                StockQuantity = 20,
-                IsActive = true,
-                ImageUrl = "/images/books/clean-code.jpg"
-            },
-            new Book
-            {
-                Title = "The Alchemist",
-                Author = "Paulo Coelho",
-                Size = "9780062315007",
-                Description = "A magical story about Santiago, an Andalusian shepherd boy",
-                Price = 14.99m,
-                CategoryId = categoriesDict["Fiction"],
-                Publisher = "HarperOne",
-                PageCount = 163,
-                Language = "English",
-                StockQuantity = 60,
-                IsActive = true,
-                ImageUrl = "/images/books/alchemist.jpg"
-            },
-            new Book
-            {
-                Title = "Think and Grow Rich",
-                Author = "Napoleon Hill",
-                Size = "9781585424331",
-                Description = "The classic guide to wealth and success",
-                Price = 12.99m,
-                DiscountPrice = 9.99m,
-                CategoryId = categoriesDict["Self-help"],
-                Publisher = "TarcherPerigee",
-                PageCount = 320,
-                Language = "English",
-                StockQuantity = 35,
-                IsActive = true,
-                ImageUrl = "/images/books/think-grow-rich.jpg"
-            },
-            new Book
-            {
-                Title = "Harry Potter and the Philosopher's Stone",
-                Author = "J.K. Rowling",
-                Size = "9780439708180",
-                Description = "The first book in the Harry Potter series",
-                Price = 15.99m,
-                CategoryId = categoriesDict["Fantasy"],
-                Publisher = "Scholastic",
-                PageCount = 309,
-                Language = "English",
-                StockQuantity = 100,
-                IsActive = true,
-                ImageUrl = "/images/books/harry-potter-1.jpg"
-            },
-            new Book
-            {
-                Title = "The Da Vinci Code",
-                Author = "Dan Brown",
-                Size = "9780307474278",
-                Description = "A mystery thriller novel",
-                Price = 16.99m,
-                DiscountPrice = 13.99m,
-                CategoryId = categoriesDict["Mystery"],
-                Publisher = "Anchor",
-                PageCount = 689,
-                Language = "English",
-                StockQuantity = 45,
-                IsActive = true,
-                ImageUrl = "/images/books/da-vinci-code.jpg"
-            }
-        };
+                new Book { Title = "The Great Gatsby", Author = "F. Scott Fitzgerald", Price = 12.99m, StockQuantity = 50, CategoryId = categories[0].Id, Publisher = "Scribner", Language = "English", PageCount = 180, Description = "A classic American novel", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "To Kill a Mockingbird", Author = "Harper Lee", Price = 14.99m, DiscountPrice = 11.99m, StockQuantity = 30, CategoryId = categories[0].Id, Publisher = "J.B. Lippincott & Co.", Language = "English", PageCount = 281, Description = "A gripping tale of racial injustice", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "A Brief History of Time", Author = "Stephen Hawking", Price = 18.99m, StockQuantity = 25, CategoryId = categories[2].Id, Publisher = "Bantam", Language = "English", PageCount = 256, Description = "An exploration of cosmology", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "Clean Code", Author = "Robert C. Martin", Price = 45.99m, DiscountPrice = 39.99m, StockQuantity = 40, CategoryId = categories[5].Id, Publisher = "Prentice Hall", Language = "English", PageCount = 464, Description = "A handbook of agile software craftsmanship", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "Steve Jobs", Author = "Walter Isaacson", Price = 16.99m, StockQuantity = 20, CategoryId = categories[4].Id, Publisher = "Simon & Schuster", Language = "English", PageCount = 656, Description = "The exclusive biography", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "Pride and Prejudice", Author = "Jane Austen", Price = 10.99m, StockQuantity = 35, CategoryId = categories[7].Id, Publisher = "Penguin Classics", Language = "English", PageCount = 432, Description = "A romantic novel", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "The Lean Startup", Author = "Eric Ries", Price = 19.99m, StockQuantity = 45, CategoryId = categories[1].Id, Publisher = "Crown Business", Language = "English", PageCount = 336, Description = "How today's entrepreneurs use continuous innovation", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new Book { Title = "Harry Potter and the Sorcerer's Stone", Author = "J.K. Rowling", Price = 13.99m, DiscountPrice = 10.99m, StockQuantity = 60, CategoryId = categories[6].Id, Publisher = "Scholastic", Language = "English", PageCount = 309, Description = "The first Harry Potter book", IsActive = true, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+            };
 
-                context.Books.AddRange(additionalBooks);
-                await context.SaveChangesAsync();
-            }
-
-            // Add sample reviews
-            if (!context.Reviews.Any())
-            {
-                var users = await context.Users.Where(u => u.Email != "admin@bookstore.com").ToListAsync();
-                var books = await context.Books.Take(5).ToListAsync();
-
-                if (users.Any() && books.Any())
-                {
-                    var reviews = new List<Review>();
-                    var random = new Random();
-
-                    foreach (var book in books)
-                    {
-                        for (int i = 0; i < random.Next(1, 4); i++)
-                        {
-                            var user = users[random.Next(users.Count)];
-
-                            if (!reviews.Any(r => r.BookId == book.Id && r.UserId == user.Id))
-                            {
-                                reviews.Add(new Review
-                                {
-                                    BookId = book.Id,
-                                    UserId = user.Id,
-                                    Rating = random.Next(3, 6),
-                                    Title = $"Great book review for {book.Title}",
-                                    Comment = "This is a sample review comment. The book was really interesting and well-written.",
-                                    IsVerifiedPurchase = true,
-                                    IsApproved = true,
-                                    CreatedAt = DateTime.UtcNow.AddDays(-random.Next(1, 30))
-                                });
-                            }
-                        }
-                    }
-
-                    context.Reviews.AddRange(reviews);
-                    await context.SaveChangesAsync();
-                }
-            }
+            context.Books.AddRange(books);
+            await context.SaveChangesAsync();
         }
     }
 }

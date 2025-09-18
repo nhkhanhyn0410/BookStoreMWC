@@ -1,4 +1,8 @@
+// Controllers/BooksController.cs
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BookStoreMVC.Models.Entities;
 using BookStoreMVC.Models.ViewModels;
 using BookStoreMVC.Services;
 
@@ -7,11 +11,19 @@ namespace BookStoreMVC.Controllers
     public class BooksController : Controller
     {
         private readonly IBookService _bookService;
+        private readonly IReviewService _reviewService;
+        private readonly UserManager<User> _userManager;
         private readonly ILogger<BooksController> _logger;
 
-        public BooksController(IBookService bookService, ILogger<BooksController> logger)
+        public BooksController(
+            IBookService bookService,
+            IReviewService reviewService,
+            UserManager<User> userManager,
+            ILogger<BooksController> logger)
         {
             _bookService = bookService;
+            _reviewService = reviewService;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -19,27 +31,21 @@ namespace BookStoreMVC.Controllers
         {
             try
             {
-                // Set default values
-                model.PageSize = Math.Max(1, Math.Min(model.PageSize, 50)); // Limit page size
-                model.PageNumber = Math.Max(1, model.PageNumber);
-
-                // Get books with filters and pagination
                 var (books, totalCount) = await _bookService.GetBooksAsync(model);
 
                 model.Books = books;
                 model.TotalCount = totalCount;
                 model.Categories = await _bookService.GetCategoriesAsync();
 
-                // Add breadcrumb data
-                ViewBag.CategoryName = model.CategoryId.HasValue
-                    ? (await _bookService.GetCategoryByIdAsync(model.CategoryId.Value))?.NameCategory
-                    : null;
+                ViewBag.PageTitle = !string.IsNullOrEmpty(model.SearchTerm)
+                    ? $"Search Results for '{model.SearchTerm}'"
+                    : "All Books";
 
                 return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading books index page");
+                _logger.LogError(ex, "Error loading books page");
                 return View(new BookListViewModel());
             }
         }
@@ -48,24 +54,16 @@ namespace BookStoreMVC.Controllers
         {
             try
             {
-                var book = await _bookService.GetBookByIdWithReviewsAsync(id);
-                if (book == null)
+                var userId = _userManager.GetUserId(User);
+                var model = await _bookService.GetBookDetailsAsync(id, userId);
+
+                if (model?.Book == null)
                 {
                     return NotFound();
                 }
 
-                // SEO: Redirect if title doesn't match
-                var expectedTitle = book.Title.ToLower().Replace(" ", "-");
-                if (!string.IsNullOrEmpty(title) && title != expectedTitle)
-                {
-                    return RedirectToAction(nameof(Details), new { id, title = expectedTitle });
-                }
-
-                // Get related books
-                var relatedBooks = await _bookService.GetRelatedBooksAsync(id, 4);
-                ViewBag.RelatedBooks = relatedBooks;
-
-                return View(book);
+                ViewBag.PageTitle = model.Book.Title;
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -97,7 +95,7 @@ namespace BookStoreMVC.Controllers
                 model.Categories = await _bookService.GetCategoriesAsync();
 
                 ViewBag.Category = category;
-                ViewBag.PageTitle = $"{category.NameCategory} Books";
+                ViewBag.PageTitle = $"{category.Name} Books";
 
                 return View("Index", model);
             }
@@ -119,7 +117,7 @@ namespace BookStoreMVC.Controllers
 
                 var model = new BookListViewModel
                 {
-                    SearchIerm = searchTerm,
+                    SearchTerm = searchTerm,
                     PageNumber = page,
                     PageSize = 12
                 };
@@ -141,6 +139,38 @@ namespace BookStoreMVC.Controllers
             }
         }
 
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(int bookId, ReviewCreateViewModel model)
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User)!;
+
+                if (!ModelState.IsValid)
+                {
+                    return RedirectToAction(nameof(Details), new { id = bookId });
+                }
+
+                await _reviewService.CreateReviewAsync(userId, model);
+                TempData["SuccessMessage"] = "Your review has been submitted successfully!";
+
+                return RedirectToAction(nameof(Details), new { id = bookId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction(nameof(Details), new { id = bookId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding review for book {BookId}", bookId);
+                TempData["ErrorMessage"] = "An error occurred while submitting your review.";
+                return RedirectToAction(nameof(Details), new { id = bookId });
+            }
+        }
+
         // AJAX endpoints
         [HttpGet]
         public async Task<IActionResult> FilterBooks(BookListViewModel model)
@@ -159,16 +189,16 @@ namespace BookStoreMVC.Controllers
                         author = b.Author,
                         price = b.Price,
                         discountPrice = b.DiscountPrice,
-                        finalPrice = b.FinalPrice,
-                        imageUrl = b.ImageUrl,
-                        rating = b.AverageRating,
-                        reviewCount = b.ReviewCount,
+                        displayPrice = b.DisplayPrice,
                         hasDiscount = b.HasDiscount,
-                        isInStock = b.IsInStock,
-                        stockStatus = b.StockStatus
+                        discountPercentage = b.DiscountPercentage,
+                        averageRating = b.AverageRating,
+                        reviewCount = b.ReviewCount,
+                        inStock = b.InStock,
+                        category = b.Category?.Name
                     }),
                     totalCount,
-                    totalPages = (int)Math.Ceiling((double)totalCount / model.PageSize)
+                    totalPages = model.TotalPages
                 };
 
                 return Json(result);
@@ -176,27 +206,37 @@ namespace BookStoreMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error filtering books");
-                return Json(new { success = false, message = "Error loading books" });
+                return Json(new { success = false, message = "An error occurred while filtering books." });
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> QuickView(int id)
+        public async Task<IActionResult> QuickSearch(string term)
         {
             try
             {
-                var book = await _bookService.GetBookByIdAsync(id);
-                if (book == null)
+                if (string.IsNullOrEmpty(term) || term.Length < 2)
                 {
-                    return NotFound();
+                    return Json(new { success = false, message = "Search term too short" });
                 }
 
-                return PartialView("_QuickViewPartial", book);
+                var books = await _bookService.SearchBooksAsync(term, 10);
+
+                var result = books.Select(b => new
+                {
+                    id = b.Id,
+                    title = b.Title,
+                    author = b.Author,
+                    displayPrice = b.DisplayPrice,
+                    category = b.Category?.Name
+                });
+
+                return Json(new { success = true, books = result });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading quick view for book ID: {BookId}", id);
-                return NotFound();
+                _logger.LogError(ex, "Error in quick search");
+                return Json(new { success = false, message = "Search failed" });
             }
         }
     }

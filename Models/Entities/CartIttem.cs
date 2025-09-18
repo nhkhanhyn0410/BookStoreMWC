@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookStoreMVC.Models.Entities
 {
@@ -7,19 +6,19 @@ namespace BookStoreMVC.Models.Entities
     {
         public int Id { get; set; }
 
+        [Required]
         public string UserId { get; set; } = string.Empty;
-        public virtual User User { get; set; } = null!;
 
         public int BookId { get; set; }
-        public virtual Book Book { get; set; } = null!;
 
         public int Quantity { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // Computed properties
-        [NotMapped]
-        public decimal TotalPrice => Book.FinalPrice * Quantity;
+        // Navigation Properties
+        public virtual User User { get; set; } = null!;
+        public virtual Book? Book { get; set; } = null!;
     }
 }
