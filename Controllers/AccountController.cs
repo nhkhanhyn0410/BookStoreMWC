@@ -80,7 +80,7 @@ namespace BookStoreMVC.Controllers
                 }
 
                 var userId = _userManager.GetUserId(User)!;
-                await _userService.UpdateUserProfileAsync(userId, model);
+                await _userService.GetUserProfileAsync(userId);
 
                 TempData["SuccessMessage"] = "Profile updated successfully!";
                 return RedirectToAction(nameof(Profile));
@@ -139,6 +139,53 @@ namespace BookStoreMVC.Controllers
             {
                 _logger.LogError(ex, "Error changing password");
                 ModelState.AddModelError(string.Empty, "An error occurred while changing your password.");
+                return View(model);
+            }
+        }
+
+        public async Task<IActionResult> EditProfile()
+        {
+            var userId = _userManager.GetUserId(User)!;
+            var profile = await _userService.GetUserProfileAsync(userId);
+            if (profile == null) return NotFound();
+
+            var editModel = new EditProfileViewModel
+            {
+                Name = profile.Name,
+                Email = profile.Email,
+                PhoneNumber = profile.PhoneNumber
+            };
+
+            return View(editModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var userId = _userManager.GetUserId(User)!;
+                var success = await _userService.UpdateUserProfileAsync(userId, model);
+
+                if (!success)
+                {
+                    ModelState.AddModelError("", "Unable to update profile.");
+                    return View(model);
+                }
+
+                TempData["SuccessMessage"] = "Profile updated successfully!";
+                return RedirectToAction(nameof(Profile)); // sau khi update thì quay lại trang Profile
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user profile");
+                ModelState.AddModelError(string.Empty, "An error occurred while updating your profile.");
                 return View(model);
             }
         }
@@ -225,7 +272,7 @@ namespace BookStoreMVC.Controllers
                 {
                     UserName = model.Email,
                     Email = model.Email,
-                    Name = model.Name,
+                    Name = model.FullName,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -261,6 +308,8 @@ namespace BookStoreMVC.Controllers
             }
         }
 
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -269,65 +318,40 @@ namespace BookStoreMVC.Controllers
             _logger.LogInformation("User logged out.");
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                // Không tiết lộ là email này chưa đăng ký (tránh lộ thông tin)
+                TempData["InfoMessage"] = "If this email exists in our system, a reset link has been sent.";
+                return RedirectToAction(nameof(ForgotPassword));
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action("ResetPassword", "Account",
+                new { userId = user.Id, token = token }, protocol: Request.Scheme);
+
+            // TODO: gửi email callbackUrl cho user
+            TempData["SuccessMessage"] = "A password reset link has been sent to your email.";
+            return RedirectToAction(nameof(ForgotPassword));
+        }
     }
 
     // ViewModel for authentication
-    public class LoginViewModel
-    {
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = string.Empty;
 
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; } = string.Empty;
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
-    }
-
-    public class RegisterViewModel
-    {
-        [Required]
-        [StringLength(100)]
-        [Display(Name = "Full Name")]
-        public string Name { get; set; } = string.Empty;
-
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; } = string.Empty;
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-    }
-
-    public class ChangePasswordViewModel
-    {
-        [Required]
-        [DataType(DataType.Password)]
-        [Display(Name = "Current password")]
-        public string CurrentPassword { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "New password")]
-        public string NewPassword { get; set; } = string.Empty;
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
-        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-    }
 }

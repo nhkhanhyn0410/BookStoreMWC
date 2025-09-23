@@ -28,8 +28,11 @@ namespace BookStoreMVC
             // Cấu hình thực thể User (mở rộng IdentityUser) / Dùng để cấu hình các trường còn thiếu trong bảng user
             builder.Entity<User>(entity =>
             {
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100); // Bắt buộc phải có dữ liệu (NOT NULL) / Giới hạn tối đa 100 ký tự
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");// Khi Insert mà không truyền giá trị cho CreatedAt // => SQL Server sẽ tự gán thời gian hiện tại (theo UTC)
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100); // Bắt buộc phải có dữ liệu (NOT NULL) / Giới hạn tối đa 100 ký tự
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");// Khi Insert mà không truyền giá trị cho CreatedAt // => SQL Server sẽ tự gán thời gian hiện tại (theo UTC)
             });
 
             // Cấu hình thực thể Category 

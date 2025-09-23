@@ -1,0 +1,227 @@
+@* Views/Books/Featured.cshtml
+@model FeaturedBooksViewModel
+@{
+    ViewData["Title"] = "Sách nổi bật";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <!-- Breadcrumb -->
+    @await Html.PartialAsync("_Breadcrumb", new List<(string, string)> {
+    ("Trang chủ", Url.Action("Index", "Home")),
+        ("Sách", Url.Action("Index", "Books")),
+        ("Sách nổi bật", "")
+        })
+
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-4 mb-3">
+                <i class="fas fa-star text-warning"></i> Sách nổi bật
+            </h1>
+            <p class="lead text-muted">
+                Những cuốn sách được lựa chọn đặc biệt dành cho bạn
+            </p>
+        </div>
+    </div>
+
+    <!-- Featured Categories -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <ul class="nav nav-pills justify-content-center" id="featuredTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all"
+                        type="button" role="tab">
+                        Tất cả (@Model.AllBooks.Count)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="bestseller-tab" data-bs-toggle="pill" data-bs-target="#bestseller"
+                        type="button" role="tab">
+                        Bán chạy (@Model.Bestsellers.Count)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="newest-tab" data-bs-toggle="pill" data-bs-target="#newest"
+                        type="button" role="tab">
+                        Mới nhất (@Model.NewReleases.Count)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="recommended-tab" data-bs-toggle="pill" data-bs-target="#recommended"
+                        type="button" role="tab">
+                        Đề xuất (@Model.Recommended.Count)
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="featuredTabsContent">
+        <!-- All Featured Books -->
+        <div class="tab-pane fade show active" id="all" role="tabpanel">
+            <div class="row">
+                @foreach (var book in Model.AllBooks)
+                {
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                        @await Html.PartialAsync("_BookCard", book)
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Bestsellers -->
+        <div class="tab-pane fade" id="bestseller" role="tabpanel">
+            <div class="row">
+                @for (int i = 0; i < Model.Bestsellers.Count; i++)
+                {
+                    var book = Model.Bestsellers[i];
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="position-relative">
+                            <!-- Bestseller Rank -->
+                            <div class="position-absolute top-0 start-0 z-index-1">
+                                <span class="badge badge-danger bestseller-rank">
+                                    #@(i + 1)
+                                </span>
+                            </div>
+                            @await Html.PartialAsync("_BookCard", book)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- New Releases -->
+        <div class="tab-pane fade" id="newest" role="tabpanel">
+            <div class="row">
+                @foreach (var book in Model.NewReleases)
+                {
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="position-relative">
+                            <!-- New Badge -->
+                            <div class="position-absolute top-0 end-0 z-index-1">
+                                <span class="badge badge-success new-badge">
+                                    <i class="fas fa-fire"></i> MỚI
+                                </span>
+                            </div>
+                            @await Html.PartialAsync("_BookCard", book)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Recommended -->
+        <div class="tab-pane fade" id="recommended" role="tabpanel">
+            <div class="row">
+                @foreach (var book in Model.Recommended)
+                {
+                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="position-relative">
+                            <!-- Recommended Badge -->
+                            <div class="position-absolute top-0 start-0 z-index-1">
+                                <span class="badge badge-info recommended-badge">
+                                    <i class="fas fa-thumbs-up"></i> ĐỀ XUẤT
+                                </span>
+                            </div>
+                            @await Html.PartialAsync("_BookCard", book)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Special Promotions -->
+    @if (Model.SpecialOffers.Any())
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4 text-center">
+                    <i class="fas fa-gift text-danger"></i> Ưu đãi đặc biệt
+                </h3>
+                <div class="row">
+                    @foreach (var offer in Model.SpecialOffers)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card border-danger shadow-sm special-offer-card h-100">
+                                <div class="card-header bg-danger text-white text-center">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-percent"></i> @offer.Title
+                                    </h5>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="discount-badge mb-3">
+                                        <span class="display-4 font-weight-bold text-danger">
+                                            @offer.DiscountPercent%
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">GIẢM GIÁ</small>
+                                    </div>
+                                    <p class="card-text">@offer.Description</p>
+                                    <div class="row">
+                                        @foreach (var book in offer.Books.Take(2))
+                                        {
+                                            <div class="col-6">
+                                                <a asp-action="Details" asp-route-id="@book.Id">
+                                                    <img src="@(book.CoverImage ?? "/images/books/default-book-cover.jpg")"
+                                                        alt="@book.Title" class="img-fluid rounded mb-2">
+                                                    <h6 class="small text-dark">@book.Title</h6>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a asp-action="Index" asp-route-promotion="@offer.Id" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-shopping-cart"></i> Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .z-index-1 {
+        z-index: 1;
+    }
+
+    .bestseller-rank {
+        margin: 10px;
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+
+    .new-badge,
+    .recommended-badge {
+        margin: 10px;
+        font-size: 0.7em;
+        font-weight: bold;
+    }
+
+    .special-offer-card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .special-offer-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .discount-badge {
+        border: 3px dashed #dc3545;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+</style> *@

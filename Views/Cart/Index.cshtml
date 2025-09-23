@@ -1,0 +1,505 @@
+@* Views/Cart/Index.cshtml *@
+@model BookStore.Models.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <!-- Breadcrumb -->
+    @await Html.PartialAsync("_Breadcrumb", new List<(string, string)> {
+        ("Trang chủ", Url.Action("Index", "Home")),
+        ("Giỏ hàng", "")
+    })
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-shopping-cart"></i> Giỏ hàng của bạn
+                @if (Model.Items.Any())
+                {
+                    <span class="text-muted">(@Model.Items.Count sản phẩm)</span>
+                }
+            </h2>
+        </div>
+    </div>
+
+    @if (Model.Items.Any())
+    {
+        <div class="row">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0">Sản phẩm trong giỏ</h5>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="clearCart()">
+                                    <i class="fas fa-trash"></i> Xóa tất cả
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="cart-item border-bottom p-3" data-item-id="@item.BookId">
+                                <div class="row align-items-center">
+                                    <!-- Book Image -->
+                                    <div class="col-md-2 col-3">
+                                        <img src="@(item.Book.CoverImage ?? "/images/books/default-book-cover.jpg")" 
+                                             alt="@item.Book.Title" class="img-fluid rounded">
+                                    </div>
+                                    
+                                    <!-- Book Info -->
+                                    <div class="col-md-4 col-9">
+                                        <h6 class="mb-1">
+                                            <a asp-controller="Books" asp-action="Details" asp-route-id="@item.BookId" 
+                                               class="text-decoration-none text-dark">
+                                                @item.Book.Title
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-1">Tác giả: @item.Book.Author</p>
+                                        <p class="text-muted small mb-1">Danh mục: @item.Book.CategoryName</p>
+                                        @if (item.Book.Stock < 10 && item.Book.Stock > 0)
+                                        {
+                                            <p class="text-warning small mb-0">
+                                                <i class="fas fa-exclamation-triangle"></i> 
+                                                Chỉ còn @item.Book.Stock cuốn
+                                            </p>
+                                        }
+                                        else if (item.Book.Stock == 0)
+                                        {
+                                            <p class="text-danger small mb-0">
+                                                <i class="fas fa-times-circle"></i> 
+                                                Hết hàng
+                                            </p>
+                                        }
+                                    </div>
+                                    
+                                    <!-- Price -->
+                                    <div class="col-md-2 col-6 text-center">
+                                        <div class="price">
+                                            <strong class="text-success">
+                                                @item.Book.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                            </strong>
+                                            @if (item.Book.OriginalPrice > item.Book.Price)
+                                            {
+                                                <br>
+                                                <small class="text-muted text-decoration-line-through">
+                                                    @item.Book.OriginalPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Quantity -->
+                                    <div class="col-md-2 col-6">
+                                        <div class="input-group input-group-sm">
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    onclick="updateQuantity(@item.BookId, @(item.Quantity - 1))"
+                                                    @(item.Quantity <= 1 ? "disabled" : "")>
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" class="form-control text-center" 
+                                                   value="@item.Quantity" min="1" max="@item.Book.Stock"
+                                                   onchange="updateQuantity(@item.BookId, this.value)"
+                                                   @(item.Book.Stock == 0 ? "disabled" : "")>
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    onclick="updateQuantity(@item.BookId, @(item.Quantity + 1))"
+                                                    @(item.Quantity >= item.Book.Stock || item.Book.Stock == 0 ? "disabled" : "")>
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Subtotal -->
+                                    <div class="col-md-1 col-6 text-center">
+                                        <strong class="text-primary">
+                                            @item.Subtotal.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                        </strong>
+                                    </div>
+                                    
+                                    <!-- Remove Button -->
+                                    <div class="col-md-1 col-6 text-center">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                onclick="removeFromCart(@item.BookId)" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Coupon Code -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h6 class="mb-3">
+                            <i class="fas fa-ticket-alt"></i> Mã giảm giá
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="couponCode" 
+                                           placeholder="Nhập mã giảm giá" value="@Model.CouponCode">
+                                    <button class="btn btn-outline-primary" type="button" onclick="applyCoupon()">
+                                        Áp dụng
+                                    </button>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.CouponCode))
+                            {
+                                <div class="col-md-6">
+                                    <div class="alert alert-success mb-0 py-2">
+                                        <i class="fas fa-check"></i> 
+                                        Đã áp dụng mã "@Model.CouponCode" 
+                                        (-@Model.DiscountAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN")))
+                                        <button type="button" class="btn-close btn-sm" onclick="removeCoupon()"></button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Continue Shopping -->
+                <div class="mb-4">
+                    <a asp-controller="Books" asp-action="Index" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+                    </a>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calculator"></i> Tóm tắt đơn hàng
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col">Tạm tính (@Model.TotalItems sản phẩm):</div>
+                            <div class="col-auto">
+                                @Model.Subtotal.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                            </div>
+                        </div>
+                        
+                        @if (Model.DiscountAmount > 0)
+                        {
+                            <div class="row mb-2 text-success">
+                                <div class="col">Giảm giá:</div>
+                                <div class="col-auto">
+                                    -@Model.DiscountAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                </div>
+                            </div>
+                        }
+                        
+                        <div class="row mb-2">
+                            <div class="col">Phí vận chuyển:</div>
+                            <div class="col-auto">
+                                @if (Model.ShippingFee > 0)
+                                {
+                                    @Model.ShippingFee.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                }
+                                else
+                                {
+                                    <span class="text-success">Miễn phí</span>
+                                }
+                            </div>
+                        </div>
+                        
+                        @if (Model.Tax > 0)
+                        {
+                            <div class="row mb-2">
+                                <div class="col">Thuế:</div>
+                                <div class="col-auto">
+                                    @Model.Tax.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                </div>
+                            </div>
+                        }
+                        
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <strong>Tổng cộng:</strong>
+                            </div>
+                            <div class="col-auto">
+                                <strong class="text-success h5">
+                                    @Model.Total.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                </strong>
+                            </div>
+                        </div>
+
+                        @if (Model.SavedAmount > 0)
+                        {
+                            <div class="alert alert-success py-2 mb-3">
+                                <small>
+                                    <i class="fas fa-piggy-bank"></i>
+                                    Bạn tiết kiệm được @Model.SavedAmount.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                </small>
+                            </div>
+                        }
+
+                        <!-- Shipping Info -->
+                        <div class="shipping-info mb-3">
+                            <h6 class="mb-2">
+                                <i class="fas fa-shipping-fast"></i> Thông tin giao hàng
+                            </h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="shipping" id="standard" checked>
+                                <label class="form-check-label" for="standard">
+                                    <strong>Giao hàng tiêu chuẩn (2-3 ngày)</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        @if (Model.Subtotal >= 500000)
+                                        {
+                                            <span class="text-success">Miễn phí</span>
+                                        }
+                                        else
+                                        {
+                                            <span>30,000đ</span>
+                                        }
+                                    </small>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="shipping" id="express">
+                                <label class="form-check-label" for="express">
+                                    <strong>Giao hàng nhanh (1-2 ngày)</strong>
+                                    <br>
+                                    <small class="text-muted">50,000đ</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg" onclick="proceedToCheckout()"
+                                    @(Model.HasOutOfStockItems ? "disabled" : "")>
+                                <i class="fas fa-credit-card"></i> Thanh toán
+                            </button>
+                        </div>
+
+                        @if (Model.HasOutOfStockItems)
+                        {
+                            <div class="alert alert-warning mt-3 py-2">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Có sản phẩm hết hàng trong giỏ. Vui lòng cập nhật trước khi thanh toán.
+                                </small>
+                            </div>
+                        }
+
+                        <!-- Security Info -->
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-lock"></i> Thanh toán an toàn & bảo mật
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Books -->
+                @if (Model.RecommendedBooks.Any())
+                {
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-lightbulb"></i> Có thể bạn quan tâm
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var book in Model.RecommendedBooks.Take(3))
+                            {
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <img src="@(book.CoverImage ?? "/images/books/default-book-cover.jpg")" 
+                                             alt="@book.Title" class="img-fluid rounded">
+                                    </div>
+                                    <div class="col-8">
+                                        <h6 class="mb-1">
+                                            <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id" 
+                                               class="text-decoration-none text-dark">
+                                                @book.Title
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-1">@book.Author</p>
+                                        <p class="text-success font-weight-bold mb-1">
+                                            @book.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                        </p>
+                                        <button onclick="addToCart(@book.Id)" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-plus"></i> Thêm
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Empty Cart -->
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+            <h3>Giỏ hàng của bạn đang trống</h3>
+            <p class="text-muted mb-4">
+                Hãy thêm một số sách vào giỏ hàng để bắt đầu mua sắm!
+            </p>
+            <a asp-controller="Books" asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="fas fa-book"></i> Khám phá sách
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+function updateQuantity(bookId, quantity) {
+    if (quantity < 1) return;
+    
+    fetch('/Cart/UpdateQuantity', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            bookId: bookId,
+            quantity: parseInt(quantity)
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            Swal.fire('Lỗi!', data.message || 'Không thể cập nhật số lượng.', 'error');
+        }
+    })
+    .catch(error => {
+        Swal.fire('Lỗi!', 'Có lỗi xảy ra khi cập nhật giỏ hàng.', 'error');
+    });
+}
+
+function removeFromCart(bookId) {
+    Swal.fire({
+        title: 'Xác nhận xóa',
+        text: 'Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/Cart/Remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ bookId: bookId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    Swal.fire('Lỗi!', data.message, 'error');
+                }
+            });
+        }
+    });
+}
+
+function clearCart() {
+    Swal.fire({
+        title: 'Xác nhận xóa tất cả',
+        text: 'Bạn có chắc chắn muốn xóa tất cả sản phẩm trong giỏ hàng?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Xóa tất cả',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/Cart/Clear', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    Swal.fire('Lỗi!', data.message, 'error');
+                }
+            });
+        }
+    });
+}
+
+function applyCoupon() {
+    const couponCode = document.getElementById('couponCode').value.trim();
+    if (!couponCode) {
+        Swal.fire('Lỗi!', 'Vui lòng nhập mã giảm giá.', 'error');
+        return;
+    }
+
+    fetch('/Cart/ApplyCoupon', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ couponCode: couponCode })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire('Thành công!', 'Đã áp dụng mã giảm giá.', 'success')
+                .then(() => location.reload());
+        } else {
+            Swal.fire('Lỗi!', data.message, 'error');
+        }
+    });
+}
+
+function removeCoupon() {
+    fetch('/Cart/RemoveCoupon', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function proceedToCheckout() {
+    window.location.href = '@Url.Action("Checkout", "Cart")';
+}
+
+// Update shipping method
+document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const shippingMethod = this.id;
+        fetch('/Cart/UpdateShipping', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ shippingMethod: shippingMethod })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+</script>

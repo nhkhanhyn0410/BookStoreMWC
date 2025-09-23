@@ -1,0 +1,280 @@
+@* ===================================================================== *@
+@* Views/Admin/Orders/Index.cshtml *@
+@model AdminOrdersViewModel
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
+        </h1>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Chờ xử lý
+                            </div>
+                            @* <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingOrders</div> *@
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Đang xử lý
+                            </div>
+                            @* <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ProcessingOrders</div> *@
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-cog fa-spin fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Hoàn thành
+                            </div>
+                            @* <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CompletedOrders</div> *@
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Đã hủy
+                            </div>
+                            @* <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.CancelledOrders</div> *@
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-2">
+                    <input type="text" name="search" class="form-control" placeholder="Mã đơn hàng..."
+                        @* value="@Model.SearchTerm"> *@
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">Tất cả trạng thái</option>
+                        @* <option value="Pending" selected="@(Model.SelectedStatus == "Pending")">Chờ xử lý</option> *@
+                        @* <option value="Processing" selected="@(Model.SelectedStatus == "Processing")">Đang xử lý *@
+                        @* </option> *@
+                        @* <option value="Shipped" selected="@(Model.SelectedStatus == "Shipped")">Đã gửi</option> *@
+                        @* <option value="Delivered" selected="@(Model.SelectedStatus == "Delivered")">Đã giao</option> *@
+                        @* <option value="Cancelled" selected="@(Model.SelectedStatus == "Cancelled")">Đã hủy</option> *@
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    @* <input type="date" name="fromDate" class="form-control"
+                        value="@Model.FromDate?.ToString("yyyy-MM-dd")"> *@
+                </div>
+                <div class="col-md-2">
+                    @* <input type="date" name="toDate" class="form-control" value="@Model.ToDate?.ToString("yyyy-MM-dd")"> *@
+                </div>
+                <div class="col-md-2">
+                    <select name="sortBy" class="form-select">
+                        @* <option value="OrderDate" selected="@(Model.SortBy == "OrderDate")">Ngày đặt</option>
+                        <option value="Total" selected="@(Model.SortBy == "Total")">Tổng tiền</option>
+                        <option value="Status" selected="@(Model.SortBy == "Status")">Trạng thái</option> *@
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Tìm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                @* Danh sách đơn hàng (@Model.TotalCount đơn hàng) *@
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã ĐH</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Sản phẩm</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th width="150">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @* @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td class="font-weight-bold">
+                                    <a asp-action="Details" asp-route-id="@order.Id" class="text-decoration-none">
+                                        #@order.Id
+                                    </a>
+                                </td>
+                                <td>
+                                    <div>@order.CustomerName</div>
+                                    <small class="text-muted">@order.CustomerEmail</small>
+                                </td>
+                                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@order.ItemCount sản phẩm</td>
+                                <td class="font-weight-bold text-success">
+                                    @order.Total.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                </td>
+                                <td>
+                                    <span class="badge badge-@(GetStatusBadgeClass(order.Status))">
+                                        @GetStatusText(order.Status)
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-info"
+                                            title="Chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (order.Status == "Pending")
+                                        {
+                                            <button type="button" class="btn btn-sm btn-success"
+                                                onclick="updateOrderStatus(@order.Id, 'Processing')" title="Xử lý">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                        }
+                                        @if (order.Status == "Processing")
+                                        {
+                                            <button type="button" class="btn btn-sm btn-primary"
+                                                onclick="updateOrderStatus(@order.Id, 'Shipped')" title="Gửi hàng">
+                                                <i class="fas fa-shipping-fast"></i>
+                                            </button>
+                                        }
+                                        @if (order.Status != "Cancelled" && order.Status != "Delivered")
+                                        {
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="updateOrderStatus(@order.Id, 'Cancelled')" title="Hủy đơn">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        } *@
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "warning",
+            "Processing" => "info",
+            "Shipped" => "primary",
+            "Delivered" => "success",
+            "Cancelled" => "danger",
+            _ => "secondary"
+        };
+    }
+
+    private string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Chờ xử lý",
+            "Processing" => "Đang xử lý",
+            "Shipped" => "Đã gửi",
+            "Delivered" => "Đã giao",
+            "Cancelled" => "Đã hủy",
+            _ => status
+        };
+    }
+}
+
+<script>
+    function updateOrderStatus(orderId, newStatus) {
+        const statusText = {
+            'Processing': 'xử lý',
+            'Shipped': 'gửi hàng',
+            'Delivered': 'hoàn thành',
+            'Cancelled': 'hủy'
+        };
+
+        Swal.fire({
+            title: `Xác nhận ${statusText[newStatus]} đơn hàng`,
+            text: `Bạn có chắc chắn muốn ${statusText[newStatus]} đơn hàng #${orderId}?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/Admin/Orders/UpdateStatus`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ orderId: orderId, status: newStatus })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Thành công!', `Đã ${statusText[newStatus]} đơn hàng.`, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+</script>

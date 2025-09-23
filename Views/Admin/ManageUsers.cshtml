@@ -1,0 +1,207 @@
+@* Views/Admin/Users/Index.cshtml *@
+@model AdminUsersViewModel
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-users"></i> Quản lý người dùng
+        </h1>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="@Model.SearchTerm">
+                </div>
+                <div class="col-md-2">
+                    <select name="role" class="form-select">
+                        <option value="">Tất cả vai trò</option>
+                        @* <option value="Admin" selected="@(Model.SelectedRole == "Admin")">Admin</option> *@
+                        @* <option value="Customer" selected="@(Model.SelectedRole == "Customer")">Khách hàng</option> *@
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">Tất cả trạng thái</option>
+                        @* <option value="Active" selected="@(Model.SelectedStatus == "Active")">Hoạt động</option> *@
+                        @* <option value="Locked" selected="@(Model.SelectedStatus == "Locked")">Bị khóa</option> *@
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Làm mới
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            @* <h6 class="m-0 font-weight-bold text-primary">
+                Danh sách người dùng (@Model.TotalCount người dùng)
+            </h6> *@
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th width="60">Avatar</th>
+                            <th>Thông tin</th>
+                            <th>Email</th>
+                            <th>Vai trò</th>
+                            <th>Tham gia</th>
+                            <th>Đơn hàng</th>
+                            <th>Trạng thái</th>
+                            <th width="120">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                @* <td>
+                                    <img src="@(user.Avatar ?? "/images/users/default-avatar.png")" 
+                                         alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                </td> *@
+                                <td>
+                                    <div class="font-weight-bold">@user.UserName</div>
+                                    <small class="text-muted">ID: @user.Id</small>
+                                </td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <span class="badge badge-@(user.Role == "Admin" ? "danger" : "primary")">
+                                        @(user.Role == "Admin" ? "Quản trị" : "Khách hàng")
+                                    </span>
+                                </td>
+                                @* <td>@user.JoinDate.ToString("dd/MM/yyyy")</td> *@
+                                <td class="text-center">
+                                    @* <span class="badge badge-info">@user.OrderCount</span> *@
+                                </td>
+                                @* <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge badge-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Bị khóa</span>
+                                    }
+                                </td> *@
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-info" 
+                                                onclick="viewUser(@user.Id)" title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        @* @if (user.IsActive)
+                                        {
+                                            <button type="button" class="btn btn-sm btn-warning" 
+                                                    onclick="lockUser(@user.Id, '@user.FullName')" title="Khóa tài khoản">
+                                                <i class="fas fa-lock"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-sm btn-success" 
+                                                    onclick="unlockUser(@user.Id, '@user.FullName')" title="Mở khóa">
+                                                <i class="fas fa-unlock"></i>
+                                            </button>
+                                        } *@
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Detail Modal -->
+<div class="modal fade" id="userDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết người dùng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="userDetailContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function viewUser(userId) {
+    fetch(`/Admin/Users/Details/${userId}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('userDetailContent').innerHTML = html;
+            var modal = new bootstrap.Modal(document.getElementById('userDetailModal'));
+            modal.show();
+        });
+}
+
+function lockUser(userId, userName) {
+    Swal.fire({
+        title: 'Xác nhận khóa tài khoản',
+        text: `Bạn có chắc chắn muốn khóa tài khoản "${userName}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Khóa',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/Admin/Users/Lock/${userId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Đã khóa!', 'Tài khoản đã được khóa.', 'success')
+                            .then(() => location.reload());
+                    }
+                });
+        }
+    });
+}
+
+function unlockUser(userId, userName) {
+    Swal.fire({
+        title: 'Xác nhận mở khóa',
+        text: `Bạn có chắc chắn muốn mở khóa tài khoản "${userName}"?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Mở khóa',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/Admin/Users/Unlock/${userId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Đã mở khóa!', 'Tài khoản đã được mở khóa.', 'success')
+                            .then(() => location.reload());
+                    }
+                });
+        }
+    });
+}
+</script>
+

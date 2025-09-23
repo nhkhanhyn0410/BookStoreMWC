@@ -1,0 +1,154 @@
+@model UserProfileViewModel
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="profile-avatar mb-3">
+                        @* <img src="@(Model. ?? "/images/users/default-avatar.png")"  *@
+                        @* alt="Avatar" class="rounded-circle" width="100" height="100"> *@
+                    </div>
+                    <h5 class="card-title">@Model.Name</h5>
+                    <p class="text-muted">@Model.Email</p>
+                    <div class="d-grid gap-2">
+                        <a asp-action="EditProfile" asp-controller="Account" class="btn btn-primary btn-sm">Chỉnh
+                            sửa</a>
+                        @* <a asp-action="ChangePassword" asp-controller="Account"
+                            class="btn btn-outline-secondary btn-sm">Đổi mật khẩu</a> *@
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">Thống kê</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Đơn hàng:</span>
+                        <strong>@Model.TotalOrders</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sách yêu thích:</span>
+                        <strong>@Model.WishlistCount</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Đánh giá:</span>
+                        <strong>@Model.ReviewsCount</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Thông tin cá nhân</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Họ tên</label>
+                                <p class="form-control-plaintext">@Model.Name</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Email</label>
+                                <p class="form-control-plaintext">@Model.Email</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Số điện thoại</label>
+                                <p class="form-control-plaintext">@(Model.PhoneNumber ?? "Chưa cập nhật")</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Ngày sinh</label>
+                                @* <p class="form-control-plaintext">@(Model.?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</p> *@
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Giới tính</label>
+                                @* <p class="form-control-plaintext">@(Model.Gender ?? "Chưa cập nhật")</p> *@
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Ngày tham gia</label>
+                                @* <p class="form-control-plaintext">@Model.JoinDate.ToString("dd/MM/yyyy")</p> *@
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6>Địa chỉ</h6>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Địa chỉ</label>
+                                @* <p class="form-control-plaintext">@(Model.Equals ?? "Chưa cập nhật")</p> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Đơn hàng gần đây</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentOrders?.Any() == true)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Trạng thái</th>
+                                        <th>Tổng tiền</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.RecentOrders)
+                                    {
+                                        <tr>
+                                            @* <td>#@order.OrderId</td>
+                                            <td>@order.OrderDate.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <span class="badge bg-@order.StatusColor">@order.Status</span>
+                                            </td>
+                                            <td>@order.Total.ToString("C")</td>
+                                            <td>
+                                                <a asp-controller="Orders" asp-action="Details" asp-route-id="@order.OrderId" 
+                                                   class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                                            </td> *@
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center">
+                            <a asp-controller="Orders" asp-action="History" class="btn btn-outline-primary">
+                                Xem tất cả đơn hàng
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-shopping-bag fa-3x mb-3"></i>
+                            <p>Bạn chưa có đơn hàng nào</p>
+                            <a asp-controller="Books" asp-action="Index" class="btn btn-primary">Mua sách ngay</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

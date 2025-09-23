@@ -1,5 +1,516 @@
-﻿@model BookStoreMVC.Models.ViewModels.HomeViewModel
+﻿@* Views/Home/Index.cshtml *@
+@model HomeViewModel
 @{
-    ViewData["Title"] = "Home";
-
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<!-- Hero Banner -->
+<section class="hero-banner">
+    <div class="container-fluid px-0">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                @for (int i = 0; i < Model.Banners.Count; i++)
+                {
+                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="@i"
+                        class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"></button>
+                }
+            </div>
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.Banners.Count; i++)
+                {
+                    var banner = Model.Banners[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <img src="@banner.ImageUrl" class="d-block w-100 hero-image" alt="@banner.Title">
+                        <div class="carousel-caption d-none d-md-block">
+                            <div class="hero-content">
+                                <h1 class="display-4 fw-bold text-white mb-3">@banner.Title</h1>
+                                <p class="lead text-white mb-4">@banner.Description</p>
+                                @if (!string.IsNullOrEmpty(banner.ActionUrl))
+                                {
+                                    <a href="@banner.ActionUrl" class="btn btn-primary btn-lg">
+                                        @banner.ActionText
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Search Bar -->
+<section class="search-section py-4 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                @await Html.PartialAsync("_SearchBox")
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="categories-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-bookmark text-primary"></i> Danh mục sách
+                </h2>
+                <p class="text-muted">Khám phá những thể loại sách đa dạng</p>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var category in Model.FeaturedCategories)
+            {
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                    <a asp-controller="Books" asp-action="Category" asp-route-categoryId="@category.Id"
+                        class="text-decoration-none">
+                        <div class="category-card h-100 text-center">
+                            <div class="category-icon mb-3">
+                                <img src="@(category.Image ?? "/images/categories/default-category.jpg")"
+                                    alt="@category.Name" class="img-fluid rounded-circle category-image">
+                            </div>
+                            <h5 class="category-name text-dark">@category.Name</h5>
+                            <p class="text-muted small">@category.BookCount sách</p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <a asp-controller="Books" asp-action="Index" class="btn btn-outline-primary">
+                    <i class="fas fa-th"></i> Xem tất cả danh mục
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Books -->
+<section class="featured-books py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-star text-warning"></i> Sách nổi bật
+                </h2>
+                <p class="text-muted">Những cuốn sách được yêu thích nhất</p>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var book in Model.FeaturedBooks)
+            {
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    @await Html.PartialAsync("_BookCard", book)
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <a asp-controller="Books" asp-action="Featured" class="btn btn-warning">
+                    <i class="fas fa-star"></i> Xem tất cả sách nổi bật
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- New Releases -->
+<section class="new-releases py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-fire text-danger"></i> Sách mới
+                </h2>
+                <p class="text-muted">Những cuốn sách mới nhất vừa ra mắt</p>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var book in Model.NewReleases)
+            {
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="position-relative">
+                        <span class="badge badge-danger new-badge">
+                            <i class="fas fa-fire"></i> MỚI
+                        </span>
+                        @await Html.PartialAsync("_BookCard", book)
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <a asp-controller="Books" asp-action="Index" asp-route-sortBy="newest" class="btn btn-danger">
+                    <i class="fas fa-fire"></i> Xem tất cả sách mới
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bestsellers -->
+<section class="bestsellers py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">
+                    <i class="fas fa-trophy text-success"></i> Sách bán chạy
+                </h2>
+                <p class="text-muted">Top những cuốn sách được mua nhiều nhất</p>
+            </div>
+        </div>
+        <div class="row">
+            @for (int i = 0; i < Model.Bestsellers.Count; i++)
+            {
+                var book = Model.Bestsellers[i];
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="position-relative">
+                        <span class="badge badge-success bestseller-rank">
+                            #@(i + 1)
+                        </span>
+                        @await Html.PartialAsync("_BookCard", book)
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <a asp-controller="Books" asp-action="Index" asp-route-sortBy="popular" class="btn btn-success">
+                    <i class="fas fa-trophy"></i> Xem tất cả sách bán chạy
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Special Offers -->
+@if (Model.SpecialOffers.Any())
+{
+    <section class="special-offers py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title">
+                        <i class="fas fa-gift text-info"></i> Ưu đãi đặc biệt
+                    </h2>
+                    <p class="text-muted">Những chương trình khuyến mãi hấp dẫn</p>
+                </div>
+            </div>
+            <div class="row">
+                @foreach (var offer in Model.SpecialOffers)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card border-info shadow-sm h-100 special-offer-card">
+                            <div class="card-header bg-info text-white text-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-percent"></i> @offer.Title
+                                </h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="offer-badge mb-3">
+                                    <span class="display-4 font-weight-bold text-info">
+                                        @offer.DiscountPercent%
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">GIẢM GIÁ</small>
+                                </div>
+                                <p class="card-text">@offer.Description</p>
+                                <p class="text-muted small">
+                                    <i class="fas fa-clock"></i>
+                                    Có hiệu lực đến @offer.EndDate.ToString("dd/MM/yyyy")
+                                </p>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a asp-controller="Books" asp-action="Index" asp-route-promotion="@offer.Id"
+                                    class="btn btn-info">
+                                    <i class="fas fa-shopping-cart"></i> Mua ngay
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Why Choose Us -->
+<section class="features py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Tại sao chọn chúng tôi?</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shipping-fast fa-3x text-primary"></i>
+                    </div>
+                    <h5>Giao hàng nhanh</h5>
+                    <p class="text-muted">Giao hàng toàn quốc trong 1-3 ngày. Miễn phí vận chuyển cho đơn hàng trên
+                        500,000đ</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-success"></i>
+                    </div>
+                    <h5>Thanh toán an toàn</h5>
+                    <p class="text-muted">Hỗ trợ nhiều phương thức thanh toán an toàn. Bảo mật thông tin 100%</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-undo-alt fa-3x text-warning"></i>
+                    </div>
+                    <h5>Đổi trả dễ dàng</h5>
+                    <p class="text-muted">Chính sách đổi trả trong 7 ngày. Hoàn tiền 100% nếu sản phẩm lỗi</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-headset fa-3x text-info"></i>
+                    </div>
+                    <h5>Hỗ trợ 24/7</h5>
+                    <p class="text-muted">Đội ngũ chăm sóc khách hàng tận tình. Sẵn sàng hỗ trợ mọi lúc</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics -->
+<section class="stats py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-6 mb-4">
+                <div class="stat-item">
+                    <h2 class="stat-number" data-target="@Model.Statistics.TotalBooks">0</h2>
+                    <p class="stat-label">Cuốn sách</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6 mb-4">
+                <div class="stat-item">
+                    <h2 class="stat-number" data-target="@Model.Statistics.TotalCustomers">0</h2>
+                    <p class="stat-label">Khách hàng</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6 mb-4">
+                <div class="stat-item">
+                    <h2 class="stat-number" data-target="@Model.Statistics.TotalOrders">0</h2>
+                    <p class="stat-label">Đơn hàng</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6 mb-4">
+                <div class="stat-item">
+                    <h2 class="stat-number" data-target="@Model.Statistics.YearsInBusiness">0</h2>
+                    <p class="stat-label">Năm kinh nghiệm</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h3>
+                    <i class="fas fa-envelope"></i> Đăng ký nhận tin
+                </h3>
+                <p class="mb-0">Nhận thông báo về sách mới và các ưu đãi đặc biệt</p>
+            </div>
+            <div class="col-lg-6">
+                <form id="newsletterForm" class="d-flex">
+                    <input type="email" class="form-control me-2" placeholder="Nhập email của bạn" required>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Đăng ký
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-image {
+        height: 500px;
+        object-fit: cover;
+    }
+
+    .hero-content {
+        background: rgba(0, 0, 0, 0.4);
+        padding: 2rem;
+        border-radius: 10px;
+    }
+
+    .category-card {
+        padding: 1.5rem;
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .category-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+    }
+
+    .new-badge,
+    .bestseller-rank {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1;
+        font-size: 0.7em;
+    }
+
+    .special-offer-card {
+        transition: transform 0.3s ease;
+    }
+
+    .special-offer-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .offer-badge {
+        border: 3px dashed #17a2b8;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .feature-card {
+        padding: 2rem 1rem;
+    }
+
+    .feature-icon {
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    @media
+    (max-width: 768px) {
+        .hero-image {
+            height: 300px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<script>
+    // Counter animation
+    function animateCounter(element) {
+        const target = parseInt(element.getAttribute('data-target'));
+        const increment = target / 100;
+        let current = 0;
+
+        const timer = setInterval(() => {
+            current += increment;
+            element.textContent = Math.floor(current).toLocaleString();
+
+            if (current >= target) {
+                element.textContent = target.toLocaleString();
+                clearInterval(timer);
+            }
+        }, 20);
+    }
+
+    // Trigger counter animation when in view
+    const observerOptions = {
+        threshold: 0.7
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counters = entry.target.querySelectorAll('.stat-number');
+                counters.forEach(counter => {
+                    if (counter.textContent === '0') {
+                        animateCounter(counter);
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    observer.observe(document.querySelector('.stats'));
+
+    // Newsletter form
+    document.getElementById('newsletterForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const email = this.querySelector('input[type="email"]').value;
+
+        fetch('/Home/Subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: 'Cảm ơn bạn đã đăng ký nhận tin.',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    this.reset();
+                } else {
+                    Swal.fire('Lỗi!', data.message, 'error');
+                }
+            });
+    });
+</script>

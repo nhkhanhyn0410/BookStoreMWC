@@ -5,9 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"dotnet watch run\" \"npm run watch-css\"",
-    "watch-css": "tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/site.css --watch",
-    "build-css": "tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/site.css --minify",
-    "css:build": "npx tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/styles.css --minify"
+    "watch-css": "tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/output.css --watch",
+    "build-css": "tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/output.css --minify",
+    "css:build": "npx tailwindcss -i ./wwwroot/css/site.css -o ./wwwroot/css/output.css --minify"
   },
   "keywords": [],
   "author": "",

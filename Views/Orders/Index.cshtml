@@ -1,0 +1,370 @@
+@* Views/Orders/Index.cshtml *@
+@model BookStore.Models.ViewModels.OrdersIndexViewModel
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <!-- Breadcrumb -->
+    @await Html.PartialAsync("_Breadcrumb", new List<(string, string)> {
+    ("Trang chủ", Url.Action("Index", "Home")),
+        ("Tài khoản", Url.Action("Profile", "Account")),
+        ("Đơn hàng", "")
+        })
+
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-shopping-bag"></i> Đơn hàng của tôi
+            </h2>
+        </div>
+    </div>
+
+    <!-- Order Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Trạng thái đơn hàng</label>
+                            <select name="status" class="form-select">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="Pending" selected="@(Model.FilterStatus == "Pending")">Chờ xử lý</option>
+                                <option value="Processing" selected="@(Model.FilterStatus == "Processing")">Đang xử lý
+                                </option>
+                                <option value="Shipped" selected="@(Model.FilterStatus == "Shipped")">Đã gửi</option>
+                                <option value="Delivered" selected="@(Model.FilterStatus == "Delivered")">Đã giao
+                                </option>
+                                <option value="Cancelled" selected="@(Model.FilterStatus == "Cancelled")">Đã hủy
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Từ ngày</label>
+                            <input type="date" name="fromDate" class="form-control"
+                                value="@Model.FromDate?.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Đến ngày</label>
+                            <input type="date" name="toDate" class="form-control"
+                                value="@Model.ToDate?.ToString("yyyy-MM-dd")">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tìm kiếm</label>
+                            <input type="text" name="search" class="form-control" placeholder="Mã đơn hàng, tên sách..."
+                                value="@Model.SearchTerm">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Tìm
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Summary Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <h4 class="text-primary">@Model.Statistics.TotalOrders</h4>
+                    <p class="mb-0">Tổng đơn hàng</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card border-warning">
+                <div class="card-body text-center">
+                    <h4 class="text-warning">@Model.Statistics.PendingOrders</h4>
+                    <p class="mb-0">Chờ xử lý</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <h4 class="text-success">@Model.Statistics.CompletedOrders</h4>
+                    <p class="mb-0">Hoàn thành</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-3">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <h4 class="text-info">@Model.Statistics.TotalSpent.ToString("C0", new
+                                                System.Globalization.CultureInfo("vi-VN"))</h4>
+                    <p class="mb-0">Tổng chi tiêu</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders List -->
+    @if (Model.Orders.Any())
+    {
+        <div class="orders-list">
+            @foreach (var order in Model.Orders)
+            {
+                <div class="card mb-3 order-card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="mb-0">
+                                    <strong>Đơn hàng #@order.Id</strong>
+                                    <span class="badge badge-@GetStatusBadgeClass(order.Status) ms-2">
+                                        @GetStatusText(order.Status)
+                                    </span>
+                                </h6>
+                                <small class="text-muted">
+                                    Đặt hàng: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                                </small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <h5 class="text-success mb-0">
+                                    @order.Total.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                </h5>
+                                <small class="text-muted">@order.ItemCount sản phẩm</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Order Items Preview -->
+                            <div class="col-md-8">
+                                <div class="order-items">
+                                    @foreach (var item in order.Items.Take(3))
+                                    {
+                                        <div class="d-flex align-items-center mb-2">
+                                            <img src="@(item.Book.CoverImage ?? "/images/books/default-book-cover.jpg")"
+                                                alt="@item.Book.Title" class="order-item-image me-3">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">@item.Book.Title</h6>
+                                                <small class="text-muted">
+                                                    @item.Book.Author • SL: @item.Quantity •
+                                                    @item.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                                </small>
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (order.Items.Count > 3)
+                                    {
+                                        <small class="text-muted">
+                                            <i class="fas fa-plus"></i> Và @(order.Items.Count - 3) sản phẩm khác
+                                        </small>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Order Actions -->
+                            <div class="col-md-4">
+                                <div class="d-flex flex-column gap-2">
+                                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i> Xem chi tiết
+                                    </a>
+
+                                    @if (order.Status == "Delivered" || order.Status == "Shipped")
+                                    {
+                                        <a asp-action="Tracking" asp-route-id="@order.Id" class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-map-marker-alt"></i> Theo dõi
+                                        </a>
+                                    }
+
+                                    @if (order.Status == "Delivered")
+                                    {
+                                        <a asp-action="Invoice" asp-route-id="@order.Id" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-file-invoice"></i> Hóa đơn
+                                        </a>
+                                    }
+
+                                    @if (order.Status == "Pending")
+                                    {
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            onclick="cancelOrder(@order.Id)">
+                                            <i class="fas fa-times"></i> Hủy đơn
+                                        </button>
+                                    }
+
+                                    @if (order.Status == "Delivered" && !order.HasReviews)
+                                    {
+                                        <a asp-controller="Reviews" asp-action="Create" asp-route-orderId="@order.Id"
+                                            class="btn btn-outline-warning btn-sm">
+                                            <i class="fas fa-star"></i> Đánh giá
+                                        </a>
+                                    }
+
+                                    @if (order.CanReorder)
+                                    {
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="reorder(@order.Id)">
+                                            <i class="fas fa-redo"></i> Mua lại
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Info -->
+                        @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                        {
+                            <div class="row mt-3 pt-3 border-top">
+                                <div class="col-12">
+                                    <small class="text-muted">
+                                        <i class="fas fa-shipping-fast"></i>
+                                        Mã vận đơn: <strong>@order.TrackingNumber</strong>
+                                        @if (order.EstimatedDelivery.HasValue)
+                                        {
+                                            <span class="ms-3">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                Dự kiến giao: @order.EstimatedDelivery.Value.ToString("dd/MM/yyyy")
+                                            </span>
+                                        }
+                                    </small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            @await Html.PartialAsync("_Pagination", Model)
+        }
+    }
+    else
+    {
+        <!-- No Orders -->
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-bag fa-5x text-muted mb-4"></i>
+            <h3>Bạn chưa có đơn hàng nào</h3>
+            <p class="text-muted mb-4">
+                Hãy khám phá và đặt mua những cuốn sách yêu thích của bạn!
+            </p>
+            <a asp-controller="Books" asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="fas fa-book"></i> Mua sách ngay
+            </a>
+        </div>
+    }
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "warning",
+            "Processing" => "info",
+            "Shipped" => "primary",
+            "Delivered" => "success",
+            "Cancelled" => "danger",
+            _ => "secondary"
+        };
+    }
+
+    private string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Chờ xử lý",
+            "Processing" => "Đang xử lý",
+            "Shipped" => "Đã gửi",
+            "Delivered" => "Đã giao",
+            "Cancelled" => "Đã hủy",
+            _ => status
+        };
+    }
+}
+
+<script>
+    function cancelOrder(orderId) {
+        Swal.fire({
+            title: 'Xác nhận hủy đơn hàng',
+            text: 'Bạn có chắc chắn muốn hủy đơn hàng này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Hủy đơn hàng',
+            cancelButtonText: 'Không'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/Orders/Cancel/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Đã hủy!', 'Đơn hàng đã được hủy thành công.', 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+
+    function reorder(orderId) {
+        fetch(`/Orders/Reorder/${orderId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: 'Đã thêm các sản phẩm vào giỏ hàng.',
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: 'Đi tới giỏ hàng',
+                        cancelButtonText: 'Tiếp tục mua sắm'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/Cart';
+                        }
+                    });
+                } else {
+                    Swal.fire('Lỗi!', data.message, 'error');
+                }
+            });
+    }
+</script>
+
+<style>
+    .order-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-item-image {
+        width: 50px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .orders-list .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .badge {
+        font-size: 0.75em;
+    }
+</style>

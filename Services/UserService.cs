@@ -10,11 +10,13 @@ namespace BookStoreMVC.Services
     public interface IUserService
     {
         Task<UserProfileViewModel?> GetUserProfileAsync(string userId);
-        Task<UserProfileViewModel> UpdateUserProfileAsync(string userId, UserProfileViewModel model);
+        Task<bool> UpdateUserProfileAsync(string userId, EditProfileViewModel model);
         Task<UserDashboardViewModel> GetUserDashboardAsync(string userId);
         Task<IEnumerable<User>> GetRecentUsersAsync(int count = 10);
         Task<int> GetTotalUsersCountAsync();
         Task<Dictionary<string, int>> GetUserRegistrationsAsync(int months = 12);
+
+
     }
 
     public class UserService : IUserService
@@ -109,21 +111,18 @@ namespace BookStoreMVC.Services
             };
         }
 
-        public async Task<UserProfileViewModel> UpdateUserProfileAsync(string userId, UserProfileViewModel model)
+        public async Task<bool> UpdateUserProfileAsync(string userId, EditProfileViewModel model)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                throw new ArgumentException("User not found", nameof(userId));
+            if (user == null) return false;
 
             user.Name = model.Name;
             user.Email = model.Email;
+            user.UserName = model.Email; // đồng bộ UserName với Email
             user.PhoneNumber = model.PhoneNumber;
 
             var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-                throw new InvalidOperationException("Failed to update user profile");
-
-            return await GetUserProfileAsync(userId) ?? throw new InvalidOperationException();
+            return result.Succeeded;
         }
 
         public async Task<UserDashboardViewModel> GetUserDashboardAsync(string userId)

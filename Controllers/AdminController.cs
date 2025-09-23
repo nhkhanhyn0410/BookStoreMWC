@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using BookStoreMVC.Models.Entities;
 using BookStoreMVC.Models.ViewModels;
 using BookStoreMVC.Services;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace BookStoreMVC.Controllers
 {
@@ -17,6 +19,7 @@ namespace BookStoreMVC.Controllers
         private readonly IUserService _userService;
         private readonly IFileUploadService _fileUploadService;
         private readonly ILogger<AdminController> _logger;
+        private readonly UserManager<User> _userManager;
 
         public AdminController(
             IDashboardService dashboardService,
@@ -717,6 +720,49 @@ namespace BookStoreMVC.Controllers
                 _logger.LogError(ex, "Error exporting report of type: {Type}", type);
                 return Json(new { success = false, message = "Error exporting report" });
             }
+        }
+
+        #endregion
+
+        #region Users Manage
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ManageUsers(string? search, int page = 1)
+        {
+            var allUsers = _userManager.Users.ToList();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                allUsers = allUsers
+                    .Where(u => u.UserName!.Contains(search) || u.Email!.Contains(search))
+                    .ToList();
+            }
+
+            int pageSize = 10;
+            var totalUsers = allUsers.Count;
+            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            var usersPage = allUsers
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var model = new AdminUsersViewModel
+            {
+                SearchTerm = search,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                Users = usersPage.Select(u => new UserItemViewModel
+                {
+                    Id = u.Id,
+                    UserName = u.UserName!,
+                    Email = u.Email!,
+                    Role = string.Join(",", _userManager.GetRolesAsync(u).Result),
+                    IsLocked = u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow
+                }).ToList()
+            };
+
+            return View(model);
         }
 
         #endregion

@@ -1,0 +1,324 @@
+@* ===================================================================== *@
+@* Views/Books/Details.cshtml *@
+@model BookDetailsViewModel
+@{
+    ViewData["Title"] = Model.Book.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <!-- Breadcrumb -->
+    @* @await Html.PartialAsync("_Breadcrumb", new List<(string, string)> {
+    ("Trang chủ", Url.Action("Index", "Home")),
+        ("Sách", Url.Action("Index", "Books")),
+        (Model.Book.CategoryName, Url.Action("Category", "Books", new { categoryId = Model.Book.CategoryId })),
+        (Model.Book.Title, "")
+        }) *@
+
+    <div class="row">
+        <!-- Book Image -->
+        <div class="col-md-4 mb-4">
+            <div class="sticky-top" style="top: 20px;">
+                <div class="card shadow-sm">
+                    @* <img src="@(Model.Book.CoverImage ?? "/images/books/default-book-cover.jpg")"
+                        alt="@Model.Book.Title" class="card-img-top book-cover-large"> *@
+                    <div class="card-body text-center">
+                        @* @if (Model.Book.Stock > 0)
+                        {
+                            <button onclick="addToCart(@Model.Book.Id)" class="btn btn-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
+                            </button>
+                            <button onclick="addToWishlist(@Model.Book.Id)" class="btn btn-outline-danger w-100 mb-2">
+                                <i class="fas fa-heart"></i> Thêm vào yêu thích
+                            </button>
+                            <button onclick="buyNow(@Model.Book.Id)" class="btn btn-success w-100">
+                                <i class="fas fa-bolt"></i> Mua ngay
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary btn-lg w-100 mb-2" disabled>
+                                <i class="fas fa-times"></i> Hết hàng
+                            </button>
+                            <button onclick="notifyWhenAvailable(@Model.Book.Id)" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-bell"></i> Báo khi có hàng
+                            </button>
+                        } *@
+
+                        <div class="social-share mt-3">
+                            <p class="text-muted mb-2">Chia sẻ:</p>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u=@Url.ActionLink("Details", "Books", new { id = Model.Book.Id })"
+                                class="btn btn-outline-primary btn-sm me-1" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://twitter.com/intent/tweet?url=@Url.ActionLink("Details", "Books", new { id = Model.Book.Id })&text=@Model.Book.Title"
+                                class="btn btn-outline-info btn-sm me-1" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <button onclick="copyLink()" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Book Details -->
+        <div class="col-md-8">
+            <!-- Main Info -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h3 mb-2">@Model.Book.Title</h1>
+                            <p class="text-muted mb-1">
+                                Tác giả: <strong>@Model.Book.Author</strong>
+                            </p>
+                            <p class="text-muted mb-3">
+                                Nhà xuất bản: <strong>@Model.Book.Publisher</strong>
+                            </p>
+                        </div>
+                        @* @if (Model.Book.IsFeatured)
+                        {
+                            <span class="badge badge-warning">
+                                <i class="fas fa-star"></i> Nổi bật
+                            </span>
+                        } *@
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rating me-3">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="fas fa-star @(i <= Model.Book.AverageRating ? "text-warning" : "text-muted")"></i>
+                            }
+                            <span class="ms-1">
+                                @Model.Book.AverageRating.ToString("0.0")
+                                (@Model.Book.ReviewCount đánh giá)
+                            </span>
+                        </div>
+                        @* @if (Model.Book.SoldCount > 0)
+                        {
+                            <span class="badge badge-success ms-2">
+                                Đã bán: @Model.Book.SoldCount
+                            </span>
+                        } *@
+                    </div>
+
+                    <!-- Price -->
+                    <div class="price-section mb-4">
+                        <h2 class="text-success mb-0">
+                            @Model.Book.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                        </h2>
+                        @* @if (Model.Book.OriginalPrice > Model.Book.Price)
+                        {
+                            <span class="text-muted text-decoration-line-through me-2">
+                                @Model.Book.OriginalPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                            </span>
+                            <span class="badge badge-danger">
+                                Giảm @(((Model.Book.OriginalPrice - Model.Book.Price) / Model.Book.OriginalPrice * 100):0}%
+                            </span>
+                        } *@
+                    </div>
+
+                    <!-- Stock Info -->
+                    <div class="stock-info mb-4">
+                        @* @if (Model.Book. > 0)
+                        {
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i>
+                                Còn hàng (@Model.Book.Stock cuốn)
+                            </div>
+                        } *@
+                        else
+                        {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle"></i>
+                            Hết hàng
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Description -->
+                    <div class="description mb-4">
+                        <h5>Mô tả sản phẩm</h5>
+                        <p class="text-justify">@Html.Raw(Model.Book.Description)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Specifications -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Thông tin chi tiết
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="font-weight-bold">ISBN:</td>
+                                    @* <td>@Model.Book.ISBN</td> *@
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Danh mục:</td>
+                                    <td>
+                                        <a asp-action="Category" asp-route-categoryId="@Model.Book.CategoryId">
+                                            @* @Model.Book.CategoryName *@
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Ngôn ngữ:</td>
+                                    <td>@Model.Book.Language</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="font-weight-bold">Số trang:</td>
+                                    @* <td>@Model.Book.Pages trang</td> *@
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Năm xuất bản:</td>
+                                    @* <td>@Model.Book.PublishedYear</td> *@
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Lượt xem:</td>
+                                    @* <td>@Model.Book.ViewCount</td> *@
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            @* @if (Model.Book.Tags != null && Model.Book.Tags.Any())
+            {
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h6 class="mb-3">Từ khóa:</h6>
+                        @foreach (var tag in Model.Book.Tags)
+                        {
+                            <span class="badge badge-secondary me-1 mb-1">@tag</span>
+                        }
+                    </div>
+                </div>
+            } *@
+        </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="bookTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    @* <button class="nav-link active" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                        type="button" role="tab">
+                        Đánh giá (@Model.Reviews.Count)
+                    </button> *@
+                </li>
+                <li class="nav-item" role="presentation">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="related-tab" data-bs-toggle="tab" data-bs-target="#related"
+                        type="button" role="tab">
+                        Sách liên quan
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content mt-3" id="bookTabsContent">
+                <!-- Reviews Tab -->
+                @* <div class="tab-pane fade show active" id="reviews" role="tabpanel">
+                    @await Html.PartialAsync("BookReviews", Model.Reviews)
+                </div> *@
+
+                <!-- Related Books Tab -->
+                <div class="tab-pane fade" id="related" role="tabpanel">
+                    <div class="row">
+                        @foreach (var book in Model.RelatedBooks)
+                        {
+                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                @await Html.PartialAsync("_BookCard", book)
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* <script>
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href).then(function () {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                icon: 'success',
+                title: 'Đã copy link!'
+            });
+        });
+    }
+
+    function buyNow(bookId) {
+        addToCart(bookId, function () {
+            window.location.href = '@Url.Action("Checkout", "Cart")';
+        });
+    }
+
+    function notifyWhenAvailable(bookId) {
+        Swal.fire({
+            title: 'Thông báo khi có hàng',
+            text: 'Chúng tôi sẽ gửi email thông báo khi sách có hàng trở lại.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Đăng ký',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Books/NotifyWhenAvailable', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bookId: bookId })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Thành công!', 'Chúng tôi sẽ thông báo khi sách có hàng.', 'success');
+                        } else {
+                            Swal.fire('Lỗi!', data.message, 'error');
+                        }
+                    });
+            }
+        });
+    }
+
+    // Update view count
+    fetch('/Books/UpdateViewCount/@Model.Book.Id', { method: 'POST' });
+</script>
+
+@<style>
+    .book-cover-large {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .rating i {
+        font-size: 1.1em;
+    }
+
+    .social-share .btn {
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+    }
+</style> *@

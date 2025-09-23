@@ -1,0 +1,209 @@
+@* Views/Books/Category.cshtml
+@model BookViewModel
+@{
+    ViewData["Title"] = $"Danh mục: {Model.Category.Name}";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <!-- Breadcrumb -->
+    @await Html.PartialAsync("_Breadcrumb", new List<(string, string)> {
+    ("Trang chủ", Url.Action("Index", "Home")),
+        ("Sách", Url.Action("Index", "Books")),
+        (Model.Category.Name, "")
+        })
+
+    <!-- Category Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="category-header">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        @if (!string.IsNullOrEmpty(Model.Category.Image))
+                        {
+                            <img src="@Model.Category.Image" alt="@Model.Category.Name"
+                                class="img-fluid rounded category-image">
+                        }
+                    </div>
+                    <div class="col-md-10">
+                        <h1 class="display-5 mb-2">@Model.Category.Name</h1>
+                        <p class="lead text-muted mb-3">@Model.Category.Description</p>
+                        <p class="text-muted">
+                            <i class="fas fa-book"></i> @Model.TotalBooks sách
+                            • <i class="fas fa-eye"></i> @Model.Category.ViewCount lượt xem
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Sort -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <!-- Quick Filters -->
+                <div class="btn-group btn-group-sm me-3" role="group">
+                    <input type="radio" class="btn-check" name="filter" id="all" @(Model.Filter == "all" ? "checked" :
+                                                                                                         "") onchange="applyFilter('all')">
+                    <label class="btn btn-outline-primary" for="all">Tất cả</label>
+
+                    <input type="radio" class="btn-check" name="filter" id="bestseller" @(Model.Filter == "bestseller" ?
+                                                                                                                "checked" : "") onchange="applyFilter('bestseller')">
+                    <label class="btn btn-outline-primary" for="bestseller">Bán chạy</label>
+
+                    <input type="radio" class="btn-check" name="filter" id="newest" @(Model.Filter == "newest" ?
+                                                                                                            "checked" : "") onchange="applyFilter('newest')">
+                    <label class="btn btn-outline-primary" for="newest">Mới nhất</label>
+
+                    <input type="radio" class="btn-check" name="filter" id="featured" @(Model.Filter == "featured" ?
+                                                                                                              "checked" : "") onchange="applyFilter('featured')">
+                    <label class="btn btn-outline-primary" for="featured">Nổi bật</label>
+                </div>
+
+                <!-- Price Range -->
+                <div class="dropdown me-3">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown">
+                        <i class="fas fa-dollar-sign"></i> Giá
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" onclick="applyPriceFilter(0, 100000)">Dưới 100,000đ</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#" onclick="applyPriceFilter(100000, 300000)">100,000đ -
+                                300,000đ</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="applyPriceFilter(300000, 500000)">300,000đ -
+                                500,000đ</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="applyPriceFilter(500000, 1000000)">500,000đ -
+                                1,000,000đ</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="applyPriceFilter(1000000, 0)">Trên 1,000,000đ</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex align-items-center justify-content-end">
+                <label class="me-2">Sắp xếp:</label>
+                <select class="form-select form-select-sm" style="width: auto;" onchange="updateSort(this.value)">
+                    <option value="default" selected="@(Model.SortBy == "default")">Mặc định</option>
+                    <option value="name-asc" selected="@(Model.SortBy == "name-asc")">Tên A-Z</option>
+                    <option value="name-desc" selected="@(Model.SortBy == "name-desc")">Tên Z-A</option>
+                    <option value="price-asc" selected="@(Model.SortBy == "price-asc")">Giá thấp đến cao</option>
+                    <option value="price-desc" selected="@(Model.SortBy == "price-desc")">Giá cao đến thấp</option>
+                    <option value="rating" selected="@(Model.SortBy == "rating")">Đánh giá cao</option>
+                    <option value="newest" selected="@(Model.SortBy == "newest")">Mới nhất</option>
+                    <option value="bestseller" selected="@(Model.SortBy == "bestseller")">Bán chạy</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    @if (Model.Books.Any())
+    {
+        <div class="row">
+            @foreach (var book in Model.Books)
+            {
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+                    @await Html.PartialAsync("_BookCard", book)
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            @await Html.PartialAsync("_Pagination", Model)
+        }
+    }
+    else
+    {
+        <!-- No Books -->
+        <div class="text-center py-5">
+            <i class="fas fa-book-open fa-5x text-muted mb-4"></i>
+            <h3>Chưa có sách nào trong danh mục này</h3>
+            <p class="text-muted mb-4">
+                Danh mục "@Model.Category.Name" hiện tại chưa có sách nào.
+            </p>
+            <a asp-action="Index" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Xem tất cả sách
+            </a>
+        </div>
+    }
+
+    <!-- Related Categories -->
+    @if (Model.RelatedCategories.Any())
+    {
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4 class="mb-3">Danh mục liên quan</h4>
+                <div class="row">
+                    @foreach (var category in Model.RelatedCategories)
+                    {
+                        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-3">
+                            <a asp-action="Category" asp-route-categoryId="@category.Id" class="text-decoration-none">
+                                <div class="card h-100 border-0 shadow-sm category-card">
+                                    @if (!string.IsNullOrEmpty(category.Image))
+                                    {
+                                        <img src="@category.Image" alt="@category.Name" class="card-img-top category-thumb">
+                                    }
+                                    <div class="card-body text-center p-2">
+                                        <h6 class="card-title mb-1 text-dark">@category.Name</h6>
+                                        <small class="text-muted">@category.BookCount sách</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function applyFilter(filter) {
+        const url = new URL(window.location);
+        url.searchParams.set('filter', filter);
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    }
+
+    function applyPriceFilter(minPrice, maxPrice) {
+        const url = new URL(window.location);
+        if (minPrice > 0) url.searchParams.set('minPrice', minPrice);
+        if (maxPrice > 0) url.searchParams.set('maxPrice', maxPrice);
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    }
+
+    function updateSort(sortValue) {
+        const url = new URL(window.location);
+        url.searchParams.set('sortBy', sortValue);
+        url.searchParams.set('page', '1');
+        window.location.href = url.toString();
+    }
+
+    // Update category view count
+    fetch('/Books/UpdateCategoryViewCount/@Model.Category.Id', { method: 'POST' });
+</script>
+
+<style>
+    .category-image {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .category-card:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .category-thumb {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+    }
+</style> *@
