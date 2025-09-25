@@ -27,7 +27,8 @@ namespace BookStoreMVC.Controllers
             IOrderService orderService,
             IUserService userService,
             IFileUploadService fileUploadService,
-            ILogger<AdminController> logger)
+            ILogger<AdminController> logger,
+            UserManager<User> userManager)
         {
             _dashboardService = dashboardService;
             _bookService = bookService;
@@ -724,48 +725,7 @@ namespace BookStoreMVC.Controllers
 
         #endregion
 
-        #region Users Manage
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ManageUsers(string? search, int page = 1)
-        {
-            var allUsers = _userManager.Users.ToList();
-
-            if (!string.IsNullOrEmpty(search))
-            {
-                allUsers = allUsers
-                    .Where(u => u.UserName!.Contains(search) || u.Email!.Contains(search))
-                    .ToList();
-            }
-
-            int pageSize = 10;
-            var totalUsers = allUsers.Count;
-            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
-
-            var usersPage = allUsers
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            var model = new AdminUsersViewModel
-            {
-                SearchTerm = search,
-                CurrentPage = page,
-                TotalPages = totalPages,
-                Users = usersPage.Select(u => new UserItemViewModel
-                {
-                    Id = u.Id,
-                    UserName = u.UserName!,
-                    Email = u.Email!,
-                    Role = string.Join(",", _userManager.GetRolesAsync(u).Result),
-                    IsLocked = u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow
-                }).ToList()
-            };
-
-            return View(model);
-        }
-
-        #endregion
 
         #region Settings
 

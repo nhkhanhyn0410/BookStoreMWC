@@ -1,0 +1,432 @@
+@* Views/Admin/CreateBook.cshtml *@
+@model BookStoreMVC.Models.ViewModels.BookViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Thêm sách mới";
+    ViewBag.PageTitle = "Thêm sách mới";
+    ViewBag.ActiveMenu = "Books";
+}
+
+<!-- Page Header -->
+<div class="mb-6">
+    <nav class="flex" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="@Url.Action("Dashboard", "Admin")"
+                    class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600">
+                    <i class="fas fa-home mr-2"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                    <a href="@Url.Action("Books", "Admin")"
+                        class="ml-1 text-sm font-medium text-gray-700 hover:text-primary-600">
+                        Quản lý sách
+                    </a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                    <span class="ml-1 text-sm font-medium text-gray-500">Thêm sách mới</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<form asp-action="CreateBook" method="post" enctype="multipart/form-data" id="create-book-form">
+    @Html.AntiForgeryToken()
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <!-- Basic Information -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-book text-primary-600 mr-2"></i>
+                        Thông tin cơ bản
+                    </h3>
+                </div>
+                <div class="p-6 space-y-6">
+                    <!-- Title -->
+                    <div>
+                        <label asp-for="Title" class="block text-sm font-medium text-gray-700 mb-1">
+                            Tên sách <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="Title" type="text" required
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Nhập tên sách...">
+                        <span asp-validation-for="Title" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Author -->
+                    <div>
+                        <label asp-for="Author" class="block text-sm font-medium text-gray-700 mb-1">
+                            Tác giả <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="Author" type="text" required
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Nhập tên tác giả...">
+                        <span asp-validation-for="Author" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- ISBN and Publisher -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            @* <label asp-for="ISBN" class="block text-sm font-medium text-gray-700 mb-1">
+                                ISBN
+                            </label>
+                            <input asp-for="ISBN" type="text"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                placeholder="978-0000000000">
+                            <span asp-validation-for="ISBN" class="text-red-500 text-sm"></span> *@
+                        </div>
+                        <div>
+                            <label asp-for="Publisher" class="block text-sm font-medium text-gray-700 mb-1">
+                                Nhà xuất bản
+                            </label>
+                            <input asp-for="Publisher" type="text"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                placeholder="Nhập tên nhà xuất bản...">
+                            <span asp-validation-for="Publisher" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <!-- Publication Date and Pages -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            @* <label asp-for="PublicationDate" class="block text-sm font-medium text-gray-700 mb-1">
+                                Ngày xuất bản
+                            </label>
+                            <input asp-for="PublicationDate" type="date"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500">
+                            <span asp-validation-for="PublicationDate" class="text-red-500 text-sm"></span> *@
+                        </div>
+                        <div>
+                            <label asp-for="PageCount" class="block text-sm font-medium text-gray-700 mb-1">
+                                Số trang
+                            </label>
+                            <input asp-for="PageCount" type="number" min="1"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                placeholder="0">
+                            <span asp-validation-for="PageCount" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-1">
+                            Mô tả
+                        </label>
+                        <textarea asp-for="Description" rows="4"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Nhập mô tả về nội dung sách..."></textarea>
+                        <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
+                        <p class="text-sm text-gray-500 mt-1">Mô tả ngắn gọn về nội dung và đặc điểm của sách.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing and Inventory -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-tag text-green-600 mr-2"></i>
+                        Giá và kho hàng
+                    </h3>
+                </div>
+                <div class="p-6 space-y-6">
+                    <!-- Price and Discount -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-1">
+                                Giá gốc <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <input asp-for="Price" type="number" step="0.01" min="0" required
+                                    class="block w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                    placeholder="0.00">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">₫</span>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Price" class="text-red-500 text-sm"></span>
+                        </div>
+                        <div>
+                            <label asp-for="DiscountPrice" class="block text-sm font-medium text-gray-700 mb-1">
+                                Giá khuyến mãi
+                            </label>
+                            <div class="relative">
+                                <input asp-for="DiscountPrice" type="number" step="0.01" min="0"
+                                    class="block w-full px-3 py-2 pr-12 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                    placeholder="0.00">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">₫</span>
+                                </div>
+                            </div>
+                            <span asp-validation-for="DiscountPrice" class="text-red-500 text-sm"></span>
+                        </div>
+                    </div>
+
+                    <!-- Stock -->
+                    <div>
+                        <label asp-for="StockQuantity" class="block text-sm font-medium text-gray-700 mb-1">
+                            Số lượng tồn kho <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="StockQuantity" type="number" min="0" required
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="0">
+                        <span asp-validation-for="StockQuantity" class="text-red-500 text-sm"></span>
+                        <p class="text-sm text-gray-500 mt-1">Số lượng sách hiện có trong kho.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Category and Status -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-cogs text-blue-600 mr-2"></i>
+                        Cấu hình
+                    </h3>
+                </div>
+                <div class="p-6 space-y-6">
+                    <!-- Category -->
+                    <div>
+                        <label asp-for="CategoryId" class="block text-sm font-medium text-gray-700 mb-1">
+                            Danh mục <span class="text-red-500">*</span>
+                        </label>
+                        <select asp-for="CategoryId"
+                            asp-items="@(new SelectList(Model?.Categories ?? new List<Category>(), "Id", "Name"))"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500">
+                            <option value="">Chọn danh mục</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="flex items-center">
+                            <input asp-for="IsActive" type="checkbox" checked
+                                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                            <span class="ml-2 text-sm text-gray-700">Hoạt động</span>
+                        </label>
+                        <p class="text-sm text-gray-500 mt-1">Sách sẽ hiển thị trên website khi được kích hoạt.</p>
+                    </div>
+
+                    <!-- Featured -->
+                    <div>
+                        <label class="flex items-center">
+                            @* <input asp-for="IsFeatured" type="checkbox"
+                                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"> *@
+                            <span class="ml-2 text-sm text-gray-700">Sách nổi bật</span>
+                        </label>
+                        <p class="text-sm text-gray-500 mt-1">Sách sẽ xuất hiện trong danh sách sách nổi bật.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-image text-purple-600 mr-2"></i>
+                        Hình ảnh
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <!-- Image Upload -->
+                    <div>
+                        <label asp-for="ImageFile" class="block text-sm font-medium text-gray-700 mb-2">
+                            Ảnh bìa sách
+                        </label>
+                        <div
+                            class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
+                            <div class="space-y-1 text-center">
+                                <i class="fas fa-cloud-upload-alt text-gray-400 text-3xl"></i>
+                                <div class="flex text-sm text-gray-600">
+                                    <label for="ImageFile"
+                                        class="relative cursor-pointer bg-white rounded-md font-medium text-primary-600 hover:text-primary-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500">
+                                        <span>Tải ảnh lên</span>
+                                        <input asp-for="ImageFile" id="ImageFile" name="ImageFile" type="file"
+                                            accept="image/*" class="sr-only" onchange="previewImage(event)">
+                                    </label>
+                                    <p class="pl-1">hoặc kéo thả</p>
+                                </div>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF, WebP tối đa 5MB</p>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ImageFile" class="text-red-500 text-sm"></span>
+
+                        <!-- Image Preview -->
+                        <div id="image-preview" class="mt-4 hidden">
+                            <div class="relative">
+                                <img id="preview-img" class="w-full h-64 object-cover rounded-lg border border-gray-200"
+                                    alt="Preview">
+                                <button type="button" onclick="removeImage()"
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors">
+                                    <i class="fas fa-times text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="p-6">
+                    <div class="flex flex-col space-y-3">
+                        <button type="submit"
+                            class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                            <i class="fas fa-save mr-2"></i>
+                            Lưu sách
+                        </button>
+
+                        <button type="button" onclick="saveDraft()"
+                            class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+                            <i class="fas fa-file-alt mr-2"></i>
+                            Lưu nháp
+                        </button>
+
+                        <a href="@Url.Action("Books", "Admin")"
+                            class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                            <i class="fas fa-times mr-2"></i>
+                            Hủy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Initialize form validation
+            $('#create-book-form').validate({
+                errorClass: 'text-red-500 text-sm',
+                validClass: 'text-green-500 text-sm',
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                },
+                highlight: function (element) {
+                    $(element).addClass('border-red-500 focus:border-red-500 focus:ring-red-500');
+                    $(element).removeClass('border-gray-300 focus:border-primary-500 focus:ring-primary-500');
+                },
+                unhighlight: function (element) {
+                    $(element).removeClass('border-red-500 focus:border-red-500 focus:ring-red-500');
+                    $(element).addClass('border-gray-300 focus:border-primary-500 focus:ring-primary-500');
+                }
+            });
+
+            // Auto-calculate discount percentage
+            $('#DiscountPrice').on('input', function () {
+                const originalPrice = parseFloat($('#Price').val()) || 0;
+                const discountPrice = parseFloat($(this).val()) || 0;
+
+                if (discountPrice > originalPrice) {
+                    alert('Giá khuyến mãi không thể cao hơn giá gốc.');
+                    $(this).val('');
+                }
+            });
+
+            // Form submission with loading state
+            $('#create-book-form').on('submit', function () {
+                const submitBtn = $(this).find('button[type="submit"]');
+                submitBtn.prop('disabled', true);
+                submitBtn.html('<i class="fas fa-spinner fa-spin mr-2"></i>Đang lưu...');
+
+                // Re-enable after 10 seconds to prevent permanent disabled state
+                setTimeout(function () {
+                    submitBtn.prop('disabled', false);
+                    submitBtn.html('<i class="fas fa-save mr-2"></i>Lưu sách');
+                }, 10000);
+            });
+        });
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Validate file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Kích thước file không được vượt quá 5MB.');
+                    event.target.value = '';
+                    return;
+                }
+
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Chỉ hỗ trợ file ảnh: JPG, PNG, GIF, WebP.');
+                    event.target.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#preview-img').attr('src', e.target.result);
+                    $('#image-preview').removeClass('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            $('#ImageFile').val('');
+            $('#image-preview').addClass('hidden');
+            $('#preview-img').attr('src', '');
+        }
+
+        function saveDraft() {
+            // Set IsActive to false for draft
+            $('#IsActive').prop('checked', false);
+
+            // Submit the form
+            $('#create-book-form').submit();
+        }
+
+        // Auto-save draft every 5 minutes
+        let autoSaveInterval;
+        function startAutoSave() {
+            autoSaveInterval = setInterval(function () {
+                const formData = new FormData($('#create-book-form')[0]);
+                formData.set('IsActive', 'false'); // Mark as draft
+
+                // Show auto-save indicator
+                const indicator = $('<div class="fixed bottom-4 right-4 bg-blue-100 text-blue-800 px-3 py-2 rounded-lg text-sm"><i class="fas fa-save mr-1"></i>Tự động lưu nháp...</div>');
+                $('body').append(indicator);
+
+                setTimeout(function () {
+                    indicator.fadeOut(function () {
+                        $(this).remove();
+                    });
+                }, 3000);
+            }, 300000); // 5 minutes
+        }
+
+        // Start auto-save when user starts typing
+        $('#Title, #Author, #Description').one('input', function () {
+            startAutoSave();
+        });
+
+        // Clear auto-save on page unload
+        $(window).on('beforeunload', function () {
+            if (autoSaveInterval) {
+                clearInterval(autoSaveInterval);
+            }
+        });
+    </script>
+}

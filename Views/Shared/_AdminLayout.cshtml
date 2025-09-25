@@ -33,7 +33,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
     <!-- Custom Admin Styles -->
-    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/output.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
 </head>
 
 <body class="h-full flex bg-gray-50">
@@ -101,6 +102,7 @@
                                     class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
                                     Thêm sách mới
                                 </a>
+
                                 <a asp-area="Admin" asp-controller="Categories" asp-action="Index"
                                     class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
                                     Danh mục sách
