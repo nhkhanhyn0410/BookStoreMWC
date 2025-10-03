@@ -48,6 +48,7 @@ namespace BookStoreMVC.Controllers
                 var model = await _dashboardService.GetAdminDashboardAsync();
                 ViewBag.PageTitle = "Admin Dashboard";
                 ViewBag.ActiveMenu = "Dashboard";
+                ViewBag.IsAdmin = true;
                 return View(model);
             }
             catch (Exception ex)
@@ -57,21 +58,21 @@ namespace BookStoreMVC.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("dashboard/stats")]
-        public async Task<IActionResult> GetDashboardStats()
-        {
-            try
-            {
-                var stats = await _dashboardService.GetDashboardStatsAsync();
-                return Json(new { success = true, data = stats });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting dashboard stats");
-                return Json(new { success = false, message = "Error loading statistics" });
-            }
-        }
+        // [HttpGet]
+        // [Route("dashboard/stats")]
+        // public async Task<IActionResult> GetDashboardStats()
+        // {
+        //     try
+        //     {
+        //         var stats = await _dashboardService.GetDashboardStatsAsync();
+        //         return Json(new { success = true, data = stats });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error getting dashboard stats");
+        //         return Json(new { success = false, message = "Error loading statistics" });
+        //     }
+        // }
 
         #endregion
 
@@ -90,6 +91,7 @@ namespace BookStoreMVC.Controllers
 
                 ViewBag.PageTitle = "Manage Books";
                 ViewBag.ActiveMenu = "Books";
+                ViewBag.IsAdmin = true;
                 return View(model);
             }
             catch (Exception ex)

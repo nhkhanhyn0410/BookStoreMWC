@@ -62,6 +62,9 @@ namespace BookStoreMVC.Models.Entities
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        [StringLength(2000)]
+        public string? AdditionalImages { get; set; }
+
         // Navigation Properties
         public virtual Category Category { get; set; } = null!;
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
@@ -95,5 +98,36 @@ namespace BookStoreMVC.Models.Entities
             }
             return $"{len:0.##} {sizes[order]}";
         }
+
+        [NotMapped]
+        public List<string> GalleryImageUrls
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(AdditionalImages))
+                    return new List<string>();
+
+                try
+                {
+                    return System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalImages) ?? new List<string>();
+                }
+                catch
+                {
+                    return new List<string>();
+                }
+            }
+            set
+            {
+                AdditionalImages = value?.Any() == true
+                    ? System.Text.Json.JsonSerializer.Serialize(value)
+                    : null;
+            }
+        }
+
+        [NotMapped]
+        public bool HasGalleryImages => GalleryImageUrls.Any();
+
+        [NotMapped]
+        public int GalleryImageCount => GalleryImageUrls.Count;
     }
 }

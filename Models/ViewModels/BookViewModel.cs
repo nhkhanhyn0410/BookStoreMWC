@@ -47,6 +47,12 @@ namespace BookStoreMVC.Models.ViewModels
         [Display(Name = "Publish Date")]
         public DateTime? PublishDate { get; set; }
 
+        [Display(Name = "Date Create")]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [Display(Name = "Update last")]
+        public DateTime? LastUpdatedDate { get; set; }
+
         [Range(1, 9999, ErrorMessage = "Page count must be between 1 and 9999")]
         [Display(Name = "Page Count")]
         public int? PageCount { get; set; }
@@ -138,6 +144,8 @@ namespace BookStoreMVC.Models.ViewModels
         public int TotalCount { get; set; }
         public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
 
+        public int CurrentPage => PageNumber;   // 🔹 Thêm dòng này
+
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => PageNumber < TotalPages;
 
@@ -145,19 +153,19 @@ namespace BookStoreMVC.Models.ViewModels
         public string ViewMode { get; set; } = "grid"; // grid or list
 
         public Dictionary<string, string> SortOptions => new()
-        {
-            {"title", "Title A-Z"},
-            {"title_desc", "Title Z-A"},
-            {"author", "Author A-Z"},
-            {"author_desc", "Author Z-A"},
-            {"price", "Price Low to High"},
-            {"price_desc", "Price High to Low"},
-            {"rating", "Rating Low to High"},
-            {"rating_desc", "Rating High to Low"},
-            {"newest", "Newest First"},
-            {"oldest", "Oldest First"},
-            {"popularity", "Most Popular"}
-        };
+    {
+        {"title", "Title A-Z"},
+        {"title_desc", "Title Z-A"},
+        {"author", "Author A-Z"},
+        {"author_desc", "Author Z-A"},
+        {"price", "Price Low to High"},
+        {"price_desc", "Price High to Low"},
+        {"rating", "Rating Low to High"},
+        {"rating_desc", "Rating High to Low"},
+        {"newest", "Newest First"},
+        {"oldest", "Oldest First"},
+        {"popularity", "Most Popular"}
+    };
 
         // Filter helpers
         public string GetActiveFiltersCount()
@@ -175,9 +183,8 @@ namespace BookStoreMVC.Models.ViewModels
 
             return count > 0 ? $"({count})" : "";
         }
-
-
     }
+
 
     public class BookDetailsViewModel
     {

@@ -377,37 +377,37 @@
             // For demo purposes, we'll show sample data
             setTimeout(function () {
                 const sampleOrders = `
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            <a href="#" class="text-primary-600 hover:text-primary-900">#ORD-001</a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Nguyễn Văn A</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">250,000 ₫</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Hoàn thành
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <a href="#" class="text-primary-600 hover:text-primary-900">Xem</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            <a href="#" class="text-primary-600 hover:text-primary-900">#ORD-002</a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Trần Thị B</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">180,000 ₫</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                Đang xử lý
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <a href="#" class="text-primary-600 hover:text-primary-900">Xem</a>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <a href="#" class="text-primary-600 hover:text-primary-900">#ORD-001</a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Nguyễn Văn A</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">250,000 ₫</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    Hoàn thành
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <a href="#" class="text-primary-600 hover:text-primary-900">Xem</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <a href="#" class="text-primary-600 hover:text-primary-900">#ORD-002</a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Trần Thị B</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">180,000 ₫</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Đang xử lý
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <a href="#" class="text-primary-600 hover:text-primary-900">Xem</a>
+                            </td>
+                        </tr>
+                    `;
                 $('#recent-orders').html(sampleOrders);
             }, 1000);
         }
@@ -416,47 +416,47 @@
             // Sample recent activity data
             setTimeout(function () {
                 const sampleActivity = `
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
-                                        <i class="fas fa-plus text-white text-xs"></i>
-                                    </span>
-                                </div>
-                                <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                <div class="relative flex space-x-3">
                                     <div>
-                                        <p class="text-sm text-gray-500">Đã thêm sách mới <strong>"Tôi thấy hoa vàng trên cỏ xanh"</strong></p>
+                                        <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                                            <i class="fas fa-plus text-white text-xs"></i>
+                                        </span>
                                     </div>
-                                    <div class="text-right text-sm whitespace-nowrap text-gray-500">
-                                        <time>2 giờ trước</time>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Đã thêm sách mới <strong>"Tôi thấy hoa vàng trên cỏ xanh"</strong></p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                            <time>2 giờ trước</time>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="relative pb-8">
-                            <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-                            <div class="relative flex space-x-3">
-                                <div>
-                                    <span class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </span>
-                                </div>
-                                <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                        </li>
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                <div class="relative flex space-x-3">
                                     <div>
-                                        <p class="text-sm text-gray-500">Đơn hàng <strong>#ORD-001</strong> đã được xử lý</p>
+                                        <span class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
+                                            <i class="fas fa-check text-white text-xs"></i>
+                                        </span>
                                     </div>
-                                    <div class="text-right text-sm whitespace-nowrap text-gray-500">
-                                        <time>4 giờ trước</time>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Đơn hàng <strong>#ORD-001</strong> đã được xử lý</p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                            <time>4 giờ trước</time>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                `;
+                        </li>
+                    `;
                 $('#recent-activity').html(sampleActivity);
             }, 1500);
         }

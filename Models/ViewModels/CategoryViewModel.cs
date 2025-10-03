@@ -41,19 +41,32 @@ namespace BookStoreMVC.Models.ViewModels
     public class CategoryListViewModel
     {
         public IEnumerable<CategoryViewModel> Categories { get; set; } = new List<CategoryViewModel>();
+
+        // --- Filters / Search ---
         public string? SearchTerm { get; set; }
-        public bool ShowInactiveCategories { get; set; }
+        public int? ParentCategoryId { get; set; }              // filter by parent
+        public IEnumerable<CategoryViewModel> ParentCategories { get; set; } = new List<CategoryViewModel>(); // để render dropdown
+        public bool? IsActive { get; set; }                     // null = tất cả, true = chỉ active, false = chỉ inactive
+
+        // --- Paging ---
+        public int CurrentPage { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalCount { get; set; } = 0;
+        public int TotalPages => PageSize > 0 ? (int)Math.Ceiling(TotalCount / (double)PageSize) : 1;
+        public IEnumerable<int> PageSizeOptions { get; } = new[] { 10, 25, 50, 100 };
+
+        // --- Sorting ---
         public string SortBy { get; set; } = "name";
         public string SortOrder { get; set; } = "asc";
-
-        public Dictionary<string, string> SortOptions => new()
+        public IReadOnlyDictionary<string, string> SortOptions { get; } = new Dictionary<string, string>
         {
-            {"name", "Name A-Z"},
-            {"name_desc", "Name Z-A"},
-            {"bookcount", "Book Count (Low to High)"},
-            {"bookcount_desc", "Book Count (High to Low)"},
-            {"created", "Created Date (Oldest)"},
-            {"created_desc", "Created Date (Newest)"}
+            { "name", "Tên A-Z" },
+            { "name_desc", "Tên Z-A" },
+            { "books_count", "Số sách (Tăng dần)" },
+            { "books_count_desc", "Số sách (Giảm dần)" },
+            { "created", "Ngày tạo (Cũ → Mới)" },
+            { "created_desc", "Ngày tạo (Mới → Cũ)" },
+            { "order", "Thứ tự hiển thị" }
         };
     }
 }

@@ -46,10 +46,10 @@
         class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform -translate-x-full lg:translate-x-0 lg:static lg:inset-0 transition-transform duration-300 ease-in-out">
         <div class="flex flex-col h-full">
             <!-- Logo -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-                <div class="flex items-center">
-                    <img src="~/images/logo.png" alt="BookStore" class="h-8 mr-3 filter brightness-0 invert" />
-                    <span class="text-xl font-bold">Admin Panel</span>
+            <div class="flex items-center justify-between h-20 border-b border-gray-700 w-full">
+                <div class="flex items-center justify-center w-full">
+
+                    <span class="text-xl font-bold text-center">Admin Panel</span>
                 </div>
                 <!-- Mobile close button -->
                 <button id="mobile-sidebar-close" class="lg:hidden p-1 text-gray-400 hover:text-white">
@@ -71,11 +71,11 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 px-4 py-6 overflow-y-auto">
+            <nav class="flex-1 h-20 px-4 py-6 overflow-y-auto">
                 <ul class="space-y-2">
                     <!-- Dashboard -->
                     <li>
-                        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="Dashboard"
                             class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
                             <i class="fas fa-tachometer-alt mr-3 w-5"></i>
                             <span>Dashboard</span>
@@ -84,35 +84,20 @@
 
                     <!-- Books Management -->
                     <li>
-                        <div class="space-y-1">
-                            <button
-                                class="admin-dropdown-toggle flex items-center justify-between w-full px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-                                <div class="flex items-center">
-                                    <i class="fas fa-book mr-3 w-5"></i>
-                                    <span>Quản lý sách</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-xs transition-transform"></i>
-                            </button>
-                            <div class="admin-dropdown-content hidden pl-8 space-y-1">
-                                <a asp-area="Admin" asp-controller="Books" asp-action="Index"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Danh sách sách
-                                </a>
-                                <a asp-area="Admin" asp-controller="Books" asp-action="Create"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Thêm sách mới
-                                </a>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="Books"
+                            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
+                            <i class="fas fa-book mr-3 w-5"></i>
+                            <span>Quản lý sách</span>
+                        </a>
+                    </li>
 
-                                <a asp-area="Admin" asp-controller="Categories" asp-action="Index"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Danh mục sách
-                                </a>
-                                <a asp-area="Admin" asp-controller="Books" asp-action="Import"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Import sách
-                                </a>
-                            </div>
-                        </div>
+                    <!-- Categories Management -->
+                    <li>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="Categories"
+                            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
+                            <i class="fa-solid fa-layer-group mr-3 w-5"></i>
+                            <span>Quản lý danh mục</span>
+                        </a>
                     </li>
 
                     <!-- Orders Management -->
@@ -324,14 +309,14 @@
                         <nav class="flex" aria-label="Breadcrumb">
                             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                                 <li class="inline-flex items-center">
-                                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                                    <a asp-area="Admin" asp-controller="Admin" asp-action="Dashboard"
                                         class="inline-flex items-center text-sm text-gray-500 hover:text-primary-600">
                                         <i class="fas fa-home mr-1"></i>
                                         Dashboard
                                     </a>
                                 </li>
 
-                                @if (ViewBag.AdminBreadcrumb != null)
+                                @* @if (ViewBag.AdminBreadcrumb != null)
                                 {
                                     @foreach (var crumb in ViewBag.AdminBreadcrumb as List<dynamic>)
                                     {
@@ -360,7 +345,7 @@
                                             <span class="text-sm font-medium text-gray-700">@ViewData["Title"]</span>
                                         </div>
                                     </li>
-                                }
+                                } *@
                             </ol>
                         </nav>
                     </div>
