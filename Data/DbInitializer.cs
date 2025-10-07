@@ -172,7 +172,7 @@ namespace BookStoreMVC.Data
                 {
                     Title = "Số đỏ",
                     Author = "Vũ Trọng Phụng",
-                    Price = 89000m,
+                    Price = 89000,
                     StockQuantity = 45,
                     CategoryId = categories["Văn học trong nước"],
                     Publisher = "NXB Văn học",
@@ -236,7 +236,7 @@ namespace BookStoreMVC.Data
                 {
                     Title = "Tiểu thuyết Mùa hè không tên",
                     Author = "Nguyễn Nhật Ánh",
-                    Price = 85000m,
+                    Price = 85000,
                     StockQuantity = 95,
                     CategoryId = categories["Văn học nước ngoài"],
                     Publisher = "NXB Trẻ",
@@ -251,8 +251,8 @@ namespace BookStoreMVC.Data
                 {
                     Title = "1984",
                     Author = "George Orwell",
-                    Price = 125000m,
-                    DiscountPrice = 99000m,
+                    Price = 125000,
+                    DiscountPrice = 99000,
                     StockQuantity = 60,
                     CategoryId = categories["Văn học nước ngoài"],
                     Publisher = "NXB Văn học",

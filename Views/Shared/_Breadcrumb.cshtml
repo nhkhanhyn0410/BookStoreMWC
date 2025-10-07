@@ -1,50 +1,55 @@
-<div class="bg-gray-100 border-b border-gray-200">
-    <div class="container mx-auto px-4 py-3">
-        <nav class="flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <!-- Home -->
-                <li class="inline-flex items-center">
-                    <a asp-controller="Home" asp-action="Index"
-                        class="inline-flex items-center text-gray-500 hover:text-primary-600 transition-colors">
-                        <i class="fas fa-home mr-1"></i>
-                        Trang chủ
-                    </a>
-                </li>
+@using BookStoreMVC.Models.ViewModels
+@{
+    var breadcrumbs = Html.GetBreadcrumbs();
+    var isAdmin = ViewContext.RouteData.Values["area"]?.ToString()?.Equals("Admin", StringComparison.OrdinalIgnoreCase) ??
+    false;
+}
 
-                <!-- Dynamic Breadcrumb Items -->
-                @if (ViewBag.Breadcrumb != null)
-                {
-                    @foreach (var crumb in ViewBag.Breadcrumb as List<dynamic>)
+@if (breadcrumbs.Any())
+{
+    <div class="@(isAdmin ? "bg-white border border-gray-500/30 rounded px-6 py-3" : "bg-white border border-gray-300 rounded px-4 py-3") 
+                                                            flex items-center space-x-3 text-sm text-gray-600">
+        @for (int i = 0; i < breadcrumbs.Count; i++)
+        {
+            var crumb = breadcrumbs[i];
+            var isLast = i == breadcrumbs.Count - 1;
+
+            @if (i > 0)
+            {
+                <!-- SVG separator -->
+                <svg width="12" height="20" viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.527 1 1.13 18.429" stroke="#6B7280" stroke-opacity=".8" stroke-width="1.3" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            }
+
+            @if (!isLast && !string.IsNullOrEmpty(crumb.Url))
+            {
+                <a href="@crumb.Url" class="hover:text-primary-600 transition-colors duration-150 flex items-center space-x-1"
+                    itemprop="item">
+                    @if (!string.IsNullOrEmpty(crumb.Icon))
                     {
-                        <li>
-                            <div class="flex items-center">
-                                <i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i>
-                                @if (crumb.Url != null)
-                                {
-                                    <a href="@crumb.Url"
-                                        class="ml-1 text-gray-500 hover:text-primary-600 transition-colors md:ml-2">
-                                        @crumb.Title
-                                    </a>
-                                }
-                                else
-                                {
-                                    <span class="ml-1 font-medium text-gray-700 md:ml-2">@crumb.Title</span>
-                                }
-                            </div>
-                        </li>
+
+                        @Html.Raw(crumb.Icon)
+
                     }
-                }
-                else if (ViewData["Title"] != null)
-                {
-                    <!-- Fallback to page title -->
-                    <li>
-                        <div class="flex items-center">
-                            <i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i>
-                            <span class="ml-1 font-medium text-gray-700 md:ml-2">@ViewData["Title"]</span>
-                        </div>
-                    </li>
-                }
-            </ol>
-        </nav>
+                    <span itemprop="name">@crumb.Title</span>
+                </a>
+                <meta itemprop="position" content="@(i + 1)" />
+            }
+            else
+            {
+                <span class="font-medium text-gray-800 flex items-center space-x-1" itemprop="name">
+                    @if (!string.IsNullOrEmpty(crumb.Icon))
+                    {
+
+                        @Html.Raw(crumb.Icon)
+
+                    }
+                    @crumb.Title
+                </span>
+                <meta itemprop="position" content="@(i + 1)" />
+            }
+        }
     </div>
-</div>
+}

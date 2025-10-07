@@ -1,5 +1,7 @@
 
 // Program.cs
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using BookStoreMVC.Data;
@@ -9,7 +11,17 @@ using Serilog;
 using BookStoreMVC;
 
 var builder = WebApplication.CreateBuilder(args);
+var cultureInfo = new CultureInfo("vi-VN");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { cultureInfo };
+    options.DefaultRequestCulture = new RequestCulture(cultureInfo);
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -216,7 +228,7 @@ else
 
 //     await next();
 // });
-
+app.UseRequestLocalization();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

@@ -1,3 +1,4 @@
+@using BookStoreMVC.Models.ViewModels
 <!-- ===== Views/Shared/_AdminLayout.cshtml ===== -->
 <!DOCTYPE html>
 <html lang="vi" class="h-full bg-gray-50">
@@ -27,7 +28,7 @@
     </script>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Chart.js for admin dashboard -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -75,7 +76,7 @@
                 <ul class="space-y-2">
                     <!-- Dashboard -->
                     <li>
-                        <a asp-area="Admin" asp-controller="Admin" asp-action="Dashboard"
+                        <a asp-controller="Admin" asp-action="Dashboard"
                             class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
                             <i class="fas fa-tachometer-alt mr-3 w-5"></i>
                             <span>Dashboard</span>
@@ -84,7 +85,7 @@
 
                     <!-- Books Management -->
                     <li>
-                        <a asp-area="Admin" asp-controller="Admin" asp-action="Books"
+                        <a asp-controller="Admin" asp-action="Books"
                             class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
                             <i class="fas fa-book mr-3 w-5"></i>
                             <span>Quản lý sách</span>
@@ -93,7 +94,7 @@
 
                     <!-- Categories Management -->
                     <li>
-                        <a asp-area="Admin" asp-controller="Admin" asp-action="Categories"
+                        <a asp-controller="Admin" asp-action="Categories"
                             class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
                             <i class="fa-solid fa-layer-group mr-3 w-5"></i>
                             <span>Quản lý danh mục</span>
@@ -112,15 +113,15 @@
                                 <i class="fas fa-chevron-down text-xs transition-transform"></i>
                             </button>
                             <div class="admin-dropdown-content hidden pl-8 space-y-1">
-                                <a asp-area="Admin" asp-controller="Orders" asp-action="Index"
+                                <a asp-controller="Admin" asp-action="Orders"
                                     class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
                                     Tất cả đơn hàng
                                 </a>
-                                <a asp-area="Admin" asp-controller="Orders" asp-action="Pending"
+                                <a asp-controller="Orders" asp-action="Pending"
                                     class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
                                     Chờ xử lý
                                 </a>
-                                <a asp-area="Admin" asp-controller="Orders" asp-action="Shipping"
+                                <a asp-controller="Orders" asp-action="Shipping"
                                     class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
                                     Đang giao
                                 </a>
@@ -130,7 +131,7 @@
 
                     <!-- Users Management -->
                     <li>
-                        <a asp-area="Admin" asp-controller="Users" asp-action="Index"
+                        <a asp-controller="Admin" asp-action="Users"
                             class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
                             <i class="fas fa-users mr-3 w-5"></i>
                             <span>Quản lý người dùng</span>
@@ -138,68 +139,30 @@
                     </li>
 
                     <!-- Reviews Management -->
-                    <li>
-                        <a asp-area="Admin" asp-controller="Reviews" asp-action="Index"
+                    @* <li>
+                        <a  asp-controller="Admin" asp-action="Reviews"
                             class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
                             <i class="fas fa-star mr-3 w-5"></i>
                             <span>Quản lý đánh giá</span>
                         </a>
-                    </li>
+                    </li> *@
 
                     <!-- Reports -->
                     <li>
-                        <div class="space-y-1">
-                            <button
-                                class="admin-dropdown-toggle flex items-center justify-between w-full px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-                                <div class="flex items-center">
-                                    <i class="fas fa-chart-bar mr-3 w-5"></i>
-                                    <span>Báo cáo</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-xs transition-transform"></i>
-                            </button>
-                            <div class="admin-dropdown-content hidden pl-8 space-y-1">
-                                <a asp-area="Admin" asp-controller="Reports" asp-action="Sales"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Báo cáo bán hàng
-                                </a>
-                                <a asp-area="Admin" asp-controller="Reports" asp-action="Inventory"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Báo cáo tồn kho
-                                </a>
-                                <a asp-area="Admin" asp-controller="Reports" asp-action="Customers"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Báo cáo khách hàng
-                                </a>
-                            </div>
-                        </div>
+                        <a asp-controller="Admin" asp-action="Reports"
+                            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
+                            <i class="fas fa-chart-bar mr-3 w-5"></i>
+                            <span>Báo cáo</span>
+                        </a>
                     </li>
 
                     <!-- Settings -->
                     <li>
-                        <div class="space-y-1">
-                            <button
-                                class="admin-dropdown-toggle flex items-center justify-between w-full px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
-                                <div class="flex items-center">
-                                    <i class="fas fa-cog mr-3 w-5"></i>
-                                    <span>Cài đặt</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-xs transition-transform"></i>
-                            </button>
-                            <div class="admin-dropdown-content hidden pl-8 space-y-1">
-                                <a asp-area="Admin" asp-controller="Settings" asp-action="General"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Cài đặt chung
-                                </a>
-                                <a asp-area="Admin" asp-controller="Settings" asp-action="Payment"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Phương thức thanh toán
-                                </a>
-                                <a asp-area="Admin" asp-controller="Settings" asp-action="Shipping"
-                                    class="block px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors">
-                                    Cài đặt vận chuyển
-                                </a>
-                            </div>
-                        </div>
+                        <a asp-controller="Admin" asp-action="Settings"
+                            class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors">
+                            <i class="fas fa-cog mr-3 w-5"></i>
+                            <span>Cài đặt</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -302,55 +265,10 @@
         <!-- Main Content Area -->
         <main class="flex-1 overflow-y-auto bg-gray-50">
             <!-- Breadcrumb -->
-            @if (ViewBag.ShowBreadcrumb != false)
-            {
-                <div class="bg-white border-b border-gray-200">
-                    <div class="px-6 py-3">
-                        <nav class="flex" aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                                <li class="inline-flex items-center">
-                                    <a asp-area="Admin" asp-controller="Admin" asp-action="Dashboard"
-                                        class="inline-flex items-center text-sm text-gray-500 hover:text-primary-600">
-                                        <i class="fas fa-home mr-1"></i>
-                                        Dashboard
-                                    </a>
-                                </li>
+            <!-- Trong _AdminLayout.cshtml -->
+            @* <partial name="_Breadcrumb" /> *@
+            <partial name="_Breadcrumb" />
 
-                                @* @if (ViewBag.AdminBreadcrumb != null)
-                                {
-                                    @foreach (var crumb in ViewBag.AdminBreadcrumb as List<dynamic>)
-                                    {
-                                        <li>
-                                            <div class="flex items-center">
-                                                <i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i>
-                                                @if (crumb.Url != null)
-                                                {
-                                                    <a href="@crumb.Url" class="text-sm text-gray-500 hover:text-primary-600">
-                                                        @crumb.Title
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-sm font-medium text-gray-700">@crumb.Title</span>
-                                                }
-                                            </div>
-                                        </li>
-                                    }
-                                }
-                                else
-                                {
-                                    <li>
-                                        <div class="flex items-center">
-                                            <i class="fas fa-chevron-right mx-2 text-gray-400 text-xs"></i>
-                                            <span class="text-sm font-medium text-gray-700">@ViewData["Title"]</span>
-                                        </div>
-                                    </li>
-                                } *@
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-            }
 
             <!-- Alert Messages -->
             <partial name="_AlertMessages" />

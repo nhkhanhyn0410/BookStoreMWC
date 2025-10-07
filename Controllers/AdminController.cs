@@ -5,7 +5,7 @@ using BookStoreMVC.Models.Entities;
 using BookStoreMVC.Models.ViewModels;
 using BookStoreMVC.Services;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Html;
 
 namespace BookStoreMVC.Controllers
 {
@@ -49,6 +49,10 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Admin Dashboard";
                 ViewBag.ActiveMenu = "Dashboard";
                 ViewBag.IsAdmin = true;
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard", SvgHelpers.HomeIcon()),
+                    new BreadcrumbItem("Dashboard", "/admin/dashboard")
+                );
                 return View(model);
             }
             catch (Exception ex)
@@ -92,6 +96,10 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Manage Books";
                 ViewBag.ActiveMenu = "Books";
                 ViewBag.IsAdmin = true;
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard", SvgHelpers.HomeIcon()),
+                    new BreadcrumbItem("Quản lý sách", "/admin/books")
+                );
                 return View(model);
             }
             catch (Exception ex)
@@ -114,6 +122,11 @@ namespace BookStoreMVC.Controllers
 
                 ViewBag.PageTitle = "Create Book";
                 ViewBag.ActiveMenu = "Books";
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý sách", "/admin/books"),
+                    new BreadcrumbItem("Thêm sách mới", "admin/books/create")
+                );
                 return View(model);
             }
             catch (Exception ex)
@@ -411,6 +424,10 @@ namespace BookStoreMVC.Controllers
 
                 ViewBag.PageTitle = "Manage Categories";
                 ViewBag.ActiveMenu = "Categories";
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý danh mục", "/admin/categories")
+                );
                 return View(model);
             }
             catch (Exception ex)
@@ -433,6 +450,11 @@ namespace BookStoreMVC.Controllers
 
                 ViewBag.PageTitle = "Create Category";
                 ViewBag.ActiveMenu = "Categories";
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý danh mục", "/admin/categories"),
+                    new BreadcrumbItem("Thêm danh mục mới", "admin/categories/create")
+                );
                 return View(model);
             }
             catch (Exception ex)
@@ -632,6 +654,8 @@ namespace BookStoreMVC.Controllers
         }
 
         #endregion
+
+
 
         #region Users Management
 
