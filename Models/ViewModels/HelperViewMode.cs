@@ -51,7 +51,7 @@ namespace BookStoreMVC.Models.ViewModels
             // Home/Dashboard
             if (isAdmin)
             {
-                breadcrumbs.Add(new BreadcrumbItem("Dashboard", "/admin/dashboard", "fa-home"));
+                breadcrumbs.Add(new BreadcrumbItem("Dashboard", "/admin/dashboard", SvgHelpers.HomeIcon()));
             }
             else
             {

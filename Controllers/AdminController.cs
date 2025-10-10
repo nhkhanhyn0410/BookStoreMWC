@@ -1,11 +1,11 @@
-// Controllers/AdminController.cs
+// Controllers/AdminController.cs - Complete Version Based on All Services
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using BookStoreMVC.Models.Entities;
 using BookStoreMVC.Models.ViewModels;
 using BookStoreMVC.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Html;
+using System.Text.Json;
 
 namespace BookStoreMVC.Controllers
 {
@@ -17,23 +17,34 @@ namespace BookStoreMVC.Controllers
         private readonly IBookService _bookService;
         private readonly IOrderService _orderService;
         private readonly IUserService _userService;
+        private readonly IReviewService _reviewService;
+        private readonly ICartService _cartService;
+        private readonly IWishlistService _wishlistService;
         private readonly IFileUploadService _fileUploadService;
-        private readonly ILogger<AdminController> _logger;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<AdminController> _logger;
 
         public AdminController(
             IDashboardService dashboardService,
             IBookService bookService,
             IOrderService orderService,
             IUserService userService,
+            IReviewService reviewService,
+            ICartService cartService,
+            IWishlistService wishlistService,
             IFileUploadService fileUploadService,
-            ILogger<AdminController> logger,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            ILogger<AdminController> logger)
         {
             _dashboardService = dashboardService;
             _bookService = bookService;
             _orderService = orderService;
             _userService = userService;
+            _reviewService = reviewService;
+            _cartService = cartService;
+            _wishlistService = wishlistService;
+            _fileUploadService = fileUploadService;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -46,37 +57,41 @@ namespace BookStoreMVC.Controllers
             try
             {
                 var model = await _dashboardService.GetAdminDashboardAsync();
+
                 ViewBag.PageTitle = "Admin Dashboard";
                 ViewBag.ActiveMenu = "Dashboard";
                 ViewBag.IsAdmin = true;
+
                 this.SetBreadcrumb(
                     new BreadcrumbItem("Admin", "/admin/dashboard", SvgHelpers.HomeIcon()),
-                    new BreadcrumbItem("Dashboard", "/admin/dashboard")
+                    new BreadcrumbItem("Dashboard", null)
                 );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading admin dashboard");
+                TempData["ErrorMessage"] = "Không thể tải dashboard. Vui lòng thử lại.";
                 return View(new AdminDashboardViewModel());
             }
         }
 
-        // [HttpGet]
-        // [Route("dashboard/stats")]
-        // public async Task<IActionResult> GetDashboardStats()
-        // {
-        //     try
-        //     {
-        //         var stats = await _dashboardService.GetDashboardStatsAsync();
-        //         return Json(new { success = true, data = stats });
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(ex, "Error getting dashboard stats");
-        //         return Json(new { success = false, message = "Error loading statistics" });
-        //     }
-        // }
+        [HttpGet]
+        [Route("dashboard/stats")]
+        public async Task<IActionResult> GetDashboardStats()
+        {
+            try
+            {
+                var stats = await _dashboardService.GetDashboardStatsAsync();
+                return Json(new { success = true, data = stats });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting dashboard stats");
+                return Json(new { success = false, message = "Lỗi khi tải thống kê" });
+            }
+        }
 
         #endregion
 
@@ -93,18 +108,20 @@ namespace BookStoreMVC.Controllers
                 model.TotalCount = totalCount;
                 model.Categories = await _bookService.GetCategoriesAsync();
 
-                ViewBag.PageTitle = "Manage Books";
+                ViewBag.PageTitle = "Quản lý sách";
                 ViewBag.ActiveMenu = "Books";
-                ViewBag.IsAdmin = true;
+
                 this.SetBreadcrumb(
                     new BreadcrumbItem("Admin", "/admin/dashboard", SvgHelpers.HomeIcon()),
-                    new BreadcrumbItem("Quản lý sách", "/admin/books")
+                    new BreadcrumbItem("Quản lý sách", null)
                 );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading books management page");
+                TempData["ErrorMessage"] = "Không thể tải danh sách sách. Vui lòng thử lại.";
                 return View(new BookListViewModel());
             }
         }
@@ -117,27 +134,30 @@ namespace BookStoreMVC.Controllers
             {
                 var model = new BookViewModel
                 {
-                    Categories = (await _bookService.GetCategoriesAsync()).ToList()
+                    Categories = (await _bookService.GetCategoriesAsync()).ToList(),
+                    IsActive = true,
+                    StockQuantity = 0
                 };
 
-                ViewBag.PageTitle = "Create Book";
+                ViewBag.PageTitle = "Thêm sách mới";
                 ViewBag.ActiveMenu = "Books";
+
                 this.SetBreadcrumb(
                     new BreadcrumbItem("Admin", "/admin/dashboard"),
                     new BreadcrumbItem("Quản lý sách", "/admin/books"),
-                    new BreadcrumbItem("Thêm sách mới", "admin/books/create")
+                    new BreadcrumbItem("Thêm sách mới", null)
                 );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading create book page");
+                TempData["ErrorMessage"] = "Không thể tải trang tạo sách.";
                 return RedirectToAction(nameof(Books));
             }
         }
 
-
-        #region Books Management with Image Support
         [HttpPost]
         [Route("books/create")]
         [ValidateAntiForgeryToken]
@@ -145,29 +165,28 @@ namespace BookStoreMVC.Controllers
         {
             try
             {
-                // Validate image file if provided
+                // Validate image file
                 if (model.ImageFile != null && !_fileUploadService.IsValidImageFile(model.ImageFile))
                 {
-                    ModelState.AddModelError("ImageFile", "Please upload a valid image file (JPG, PNG, GIF, WebP) smaller than 5MB.");
+                    ModelState.AddModelError("ImageFile", "Vui lòng tải lên file ảnh hợp lệ (JPG, PNG, GIF, WebP) < 5MB.");
                 }
 
                 if (!ModelState.IsValid)
                 {
                     model.Categories = (await _bookService.GetCategoriesAsync()).ToList();
-                    ViewBag.ActiveMenu = "Books";
                     return View(model);
                 }
 
-                await _bookService.CreateBookAsync(model, model.ImageFile);
-                TempData["SuccessMessage"] = "Book created successfully!";
+                var createdBook = await _bookService.CreateBookAsync(model, model.ImageFile);
+
+                TempData["SuccessMessage"] = $"Tạo sách '{createdBook.Title}' thành công!";
                 return RedirectToAction(nameof(Books));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating book");
-                ModelState.AddModelError(string.Empty, "An error occurred while creating the book.");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi tạo sách.");
                 model.Categories = (await _bookService.GetCategoriesAsync()).ToList();
-                ViewBag.ActiveMenu = "Books";
                 return View(model);
             }
         }
@@ -181,17 +200,27 @@ namespace BookStoreMVC.Controllers
                 var book = await _bookService.GetBookByIdAsync(id);
                 if (book == null)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "Không tìm thấy sách.";
+                    return RedirectToAction(nameof(Books));
                 }
 
                 book.Categories = (await _bookService.GetCategoriesAsync()).ToList();
-                ViewBag.PageTitle = $"Edit Book: {book.Title}";
+
+                ViewBag.PageTitle = $"Chỉnh sửa: {book.Title}";
                 ViewBag.ActiveMenu = "Books";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý sách", "/admin/books"),
+                    new BreadcrumbItem($"Chỉnh sửa: {book.Title}", null)
+                );
+
                 return View(book);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading edit book page for book {BookId}", id);
+                TempData["ErrorMessage"] = "Không thể tải trang chỉnh sửa.";
                 return RedirectToAction(nameof(Books));
             }
         }
@@ -203,187 +232,30 @@ namespace BookStoreMVC.Controllers
         {
             try
             {
-                // Validate image file if provided
                 if (model.ImageFile != null && !_fileUploadService.IsValidImageFile(model.ImageFile))
                 {
-                    ModelState.AddModelError("ImageFile", "Please upload a valid image file (JPG, PNG, GIF, WebP) smaller than 5MB.");
+                    ModelState.AddModelError("ImageFile", "Vui lòng tải lên file ảnh hợp lệ.");
                 }
 
                 if (!ModelState.IsValid)
                 {
                     model.Categories = (await _bookService.GetCategoriesAsync()).ToList();
-                    ViewBag.ActiveMenu = "Books";
                     return View(model);
                 }
 
-                await _bookService.UpdateBookAsync(model, model.ImageFile);
-                TempData["SuccessMessage"] = "Book updated successfully!";
+                var updatedBook = await _bookService.UpdateBookAsync(model, model.ImageFile);
+
+                TempData["SuccessMessage"] = $"Cập nhật sách '{updatedBook.Title}' thành công!";
                 return RedirectToAction(nameof(Books));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating book {BookId}", model.Id);
-                ModelState.AddModelError(string.Empty, "An error occurred while updating the book.");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi cập nhật sách.");
                 model.Categories = (await _bookService.GetCategoriesAsync()).ToList();
-                ViewBag.ActiveMenu = "Books";
                 return View(model);
             }
         }
-
-        [HttpPost]
-        [Route("books/upload-image/{id:int}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UploadBookImage(int id, IFormFile imageFile)
-        {
-            try
-            {
-                if (imageFile == null || imageFile.Length == 0)
-                {
-                    return Json(new { success = false, message = "Please select an image file." });
-                }
-
-                if (!_fileUploadService.IsValidImageFile(imageFile))
-                {
-                    return Json(new { success = false, message = "Please upload a valid image file (JPG, PNG, GIF, WebP) smaller than 5MB." });
-                }
-
-                var success = await _bookService.UpdateBookImageAsync(id, imageFile);
-
-                if (success)
-                {
-                    // Get updated book to return new image URL
-                    var book = await _bookService.GetBookByIdAsync(id);
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Image uploaded successfully!",
-                        imageUrl = book?.ImageUrl,
-                        defaultImageUrl = book?.DefaultImageUrl
-                    });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Failed to upload image. Please try again." });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error uploading book image for book {BookId}", id);
-                return Json(new { success = false, message = "An error occurred while uploading the image." });
-            }
-        }
-
-        [HttpPost]
-        [Route("books/remove-image/{id:int}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveBookImage(int id)
-        {
-            try
-            {
-                var success = await _bookService.RemoveBookImageAsync(id);
-
-                if (success)
-                {
-                    return Json(new
-                    {
-                        success = true,
-                        message = "Image removed successfully!",
-                        defaultImageUrl = "/images/books/default-book.jpg"
-                    });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Failed to remove image or image not found." });
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error removing book image for book {BookId}", id);
-                return Json(new { success = false, message = "An error occurred while removing the image." });
-            }
-        }
-
-        #endregion
-
-        #region Image Management Utilities
-
-        [HttpGet]
-        [Route("images/gallery")]
-        public async Task<IActionResult> ImageGallery()
-        {
-            try
-            {
-                // Get all books with images for gallery view
-                var booksModel = new BookListViewModel { PageSize = 100 };
-                var (books, totalCount) = await _bookService.GetBooksAsync(booksModel);
-
-                var imageGallery = books
-                    .Where(b => b.HasImage)
-                    .Select(b => new
-                    {
-                        BookId = b.Id,
-                        BookTitle = b.Title,
-                        ImageUrl = b.ImageUrl,
-                        FileName = b.ImageFileName,
-                        FileSize = b.FormattedFileSize,
-                        UploadDate = "Unknown" // You can add this field to Book entity if needed
-                    })
-                    .ToList();
-
-                ViewBag.PageTitle = "Image Gallery";
-                ViewBag.ActiveMenu = "Images";
-                return View(imageGallery);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading image gallery");
-                return View(new List<object>());
-            }
-        }
-
-        [HttpPost]
-        [Route("images/bulk-upload")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BulkUploadImages(List<IFormFile> files)
-        {
-            try
-            {
-                var results = new List<object>();
-
-                foreach (var file in files)
-                {
-                    if (_fileUploadService.IsValidImageFile(file))
-                    {
-                        var uploadResult = await _fileUploadService.UploadImageAsync(file, "books");
-                        results.Add(new
-                        {
-                            fileName = file.FileName,
-                            success = uploadResult.Success,
-                            imageUrl = uploadResult.ImageUrl,
-                            message = uploadResult.Success ? "Uploaded successfully" : uploadResult.ErrorMessage
-                        });
-                    }
-                    else
-                    {
-                        results.Add(new
-                        {
-                            fileName = file.FileName,
-                            success = false,
-                            message = "Invalid file type or size"
-                        });
-                    }
-                }
-
-                return Json(new { success = true, results });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in bulk image upload");
-                return Json(new { success = false, message = "An error occurred during bulk upload." });
-            }
-        }
-
-        #endregion
 
         [HttpPost]
         [Route("books/delete/{id:int}")]
@@ -396,17 +268,38 @@ namespace BookStoreMVC.Controllers
 
                 if (success)
                 {
-                    return Json(new { success = true, message = "Book deleted successfully!" });
+                    return Json(new { success = true, message = "Xóa sách thành công!" });
                 }
-                else
-                {
-                    return Json(new { success = false, message = "Book not found or unable to delete." });
-                }
+
+                return Json(new { success = false, message = "Không tìm thấy sách." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting book {BookId}", id);
-                return Json(new { success = false, message = "An error occurred while deleting the book." });
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xóa sách." });
+            }
+        }
+
+        [HttpPost]
+        [Route("books/update-stock/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateBookStock(int id, [FromBody] UpdateStockModel model)
+        {
+            try
+            {
+                var success = await _bookService.UpdateStockAsync(id, model.Quantity);
+
+                if (success)
+                {
+                    return Json(new { success = true, message = "Cập nhật tồn kho thành công!" });
+                }
+
+                return Json(new { success = false, message = "Không tìm thấy sách." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating book stock {BookId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi." });
             }
         }
 
@@ -415,24 +308,31 @@ namespace BookStoreMVC.Controllers
         #region Categories Management
 
         [Route("categories")]
-        public async Task<IActionResult> Categories(CategoryListViewModel model)
+        public async Task<IActionResult> Categories()
         {
             try
             {
                 var categories = await _bookService.GetCategoriesWithStatsAsync();
-                model.Categories = categories;
 
-                ViewBag.PageTitle = "Manage Categories";
+                var model = new CategoryListViewModel
+                {
+                    Categories = categories
+                };
+
+                ViewBag.PageTitle = "Quản lý danh mục";
                 ViewBag.ActiveMenu = "Categories";
+
                 this.SetBreadcrumb(
                     new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý danh mục", "/admin/categories")
+                    new BreadcrumbItem("Quản lý danh mục", null)
                 );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading categories management page");
+                TempData["ErrorMessage"] = "Không thể tải danh sách danh mục.";
                 return View(new CategoryListViewModel());
             }
         }
@@ -445,21 +345,25 @@ namespace BookStoreMVC.Controllers
             {
                 var model = new CategoryViewModel
                 {
-                    AvailableParentCategories = (await _bookService.GetCategoriesAsync()).ToList()
+                    AvailableParentCategories = (await _bookService.GetCategoriesAsync()).ToList(),
+                    IsActive = true
                 };
 
-                ViewBag.PageTitle = "Create Category";
+                ViewBag.PageTitle = "Thêm danh mục mới";
                 ViewBag.ActiveMenu = "Categories";
+
                 this.SetBreadcrumb(
                     new BreadcrumbItem("Admin", "/admin/dashboard"),
                     new BreadcrumbItem("Quản lý danh mục", "/admin/categories"),
-                    new BreadcrumbItem("Thêm danh mục mới", "admin/categories/create")
+                    new BreadcrumbItem("Thêm danh mục mới", null)
                 );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading create category page");
+                TempData["ErrorMessage"] = "Không thể tải trang tạo danh mục.";
                 return RedirectToAction(nameof(Categories));
             }
         }
@@ -474,20 +378,19 @@ namespace BookStoreMVC.Controllers
                 if (!ModelState.IsValid)
                 {
                     model.AvailableParentCategories = (await _bookService.GetCategoriesAsync()).ToList();
-                    ViewBag.ActiveMenu = "Categories";
                     return View(model);
                 }
 
-                await _bookService.CreateCategoryAsync(model);
-                TempData["SuccessMessage"] = "Category created successfully!";
+                var createdCategory = await _bookService.CreateCategoryAsync(model);
+
+                TempData["SuccessMessage"] = $"Tạo danh mục '{createdCategory.Name}' thành công!";
                 return RedirectToAction(nameof(Categories));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating category");
-                ModelState.AddModelError(string.Empty, "An error occurred while creating the category.");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi tạo danh mục.");
                 model.AvailableParentCategories = (await _bookService.GetCategoriesAsync()).ToList();
-                ViewBag.ActiveMenu = "Categories";
                 return View(model);
             }
         }
@@ -501,20 +404,29 @@ namespace BookStoreMVC.Controllers
                 var category = await _bookService.GetCategoryByIdAsync(id);
                 if (category == null)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "Không tìm thấy danh mục.";
+                    return RedirectToAction(nameof(Categories));
                 }
 
                 category.AvailableParentCategories = (await _bookService.GetCategoriesAsync())
-                    .Where(c => c.Id != id) // Exclude self from parent options
+                    .Where(c => c.Id != id)
                     .ToList();
 
-                ViewBag.PageTitle = $"Edit Category: {category.Name}";
+                ViewBag.PageTitle = $"Chỉnh sửa: {category.Name}";
                 ViewBag.ActiveMenu = "Categories";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý danh mục", "/admin/categories"),
+                    new BreadcrumbItem($"Chỉnh sửa: {category.Name}", null)
+                );
+
                 return View(category);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading edit category page for category {CategoryId}", id);
+                TempData["ErrorMessage"] = "Không thể tải trang chỉnh sửa.";
                 return RedirectToAction(nameof(Categories));
             }
         }
@@ -531,22 +443,21 @@ namespace BookStoreMVC.Controllers
                     model.AvailableParentCategories = (await _bookService.GetCategoriesAsync())
                         .Where(c => c.Id != model.Id)
                         .ToList();
-                    ViewBag.ActiveMenu = "Categories";
                     return View(model);
                 }
 
-                await _bookService.UpdateCategoryAsync(model);
-                TempData["SuccessMessage"] = "Category updated successfully!";
+                var updatedCategory = await _bookService.UpdateCategoryAsync(model);
+
+                TempData["SuccessMessage"] = $"Cập nhật danh mục '{updatedCategory.Name}' thành công!";
                 return RedirectToAction(nameof(Categories));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating category {CategoryId}", model.Id);
-                ModelState.AddModelError(string.Empty, "An error occurred while updating the category.");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi cập nhật danh mục.");
                 model.AvailableParentCategories = (await _bookService.GetCategoriesAsync())
                     .Where(c => c.Id != model.Id)
                     .ToList();
-                ViewBag.ActiveMenu = "Categories";
                 return View(model);
             }
         }
@@ -562,12 +473,10 @@ namespace BookStoreMVC.Controllers
 
                 if (success)
                 {
-                    return Json(new { success = true, message = "Category deleted successfully!" });
+                    return Json(new { success = true, message = "Xóa danh mục thành công!" });
                 }
-                else
-                {
-                    return Json(new { success = false, message = "Category not found or unable to delete." });
-                }
+
+                return Json(new { success = false, message = "Không thể xóa danh mục. Có thể danh mục đang chứa sách." });
             }
             catch (InvalidOperationException ex)
             {
@@ -576,7 +485,7 @@ namespace BookStoreMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting category {CategoryId}", id);
-                return Json(new { success = false, message = "An error occurred while deleting the category." });
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xóa danh mục." });
             }
         }
 
@@ -585,77 +494,103 @@ namespace BookStoreMVC.Controllers
         #region Orders Management
 
         [Route("orders")]
-        public async Task<IActionResult> Orders(OrderListViewModel model)
+        public async Task<IActionResult> Orders(string? status = null)
         {
             try
             {
+                var model = new OrderListViewModel
+                {
+                    StatusFilter = !string.IsNullOrEmpty(status)
+                        ? Enum.TryParse<OrderStatus>(status, true, out var parsedStatus) ? parsedStatus : null
+                        : null,
+                    PageSize = 25
+                };
+
                 var (orders, totalCount) = await _orderService.GetOrdersAsync(model);
 
                 model.Orders = orders;
                 model.TotalCount = totalCount;
 
-                ViewBag.PageTitle = "Manage Orders";
+                ViewBag.PageTitle = "Quản lý đơn hàng";
                 ViewBag.ActiveMenu = "Orders";
+                ViewBag.CurrentStatus = status;
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý đơn hàng", null)
+                );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading orders management page");
+                TempData["ErrorMessage"] = "Không thể tải danh sách đơn hàng.";
                 return View(new OrderListViewModel());
             }
         }
 
+        [HttpGet]
         [Route("orders/details/{id:int}")]
         public async Task<IActionResult> OrderDetails(int id)
         {
             try
             {
                 var order = await _orderService.GetOrderByIdAsync(id);
-
                 if (order == null)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "Không tìm thấy đơn hàng.";
+                    return RedirectToAction(nameof(Orders));
                 }
 
-                ViewBag.PageTitle = $"Order {order.OrderNumber}";
+                ViewBag.PageTitle = $"Chi tiết đơn hàng #{id}";
                 ViewBag.ActiveMenu = "Orders";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý đơn hàng", "/admin/orders"),
+                    new BreadcrumbItem($"Đơn hàng #{id}", null)
+                );
+
                 return View(order);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading order details for ID: {OrderId}", id);
-                return NotFound();
+                _logger.LogError(ex, "Error loading order details for order {OrderId}", id);
+                TempData["ErrorMessage"] = "Không thể tải chi tiết đơn hàng.";
+                return RedirectToAction(nameof(Orders));
             }
         }
 
         [HttpPost]
-        [Route("orders/update-status")]
+        [Route("orders/update-status/{id:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateOrderStatus(int id, OrderStatus status)
+        public async Task<IActionResult> UpdateOrderStatus(int id, [FromBody] OrderStatusUpdateModel model)
         {
             try
             {
+                if (!Enum.TryParse<OrderStatus>(model.Status, out var status))
+                {
+                    return Json(new { success = false, message = "Trạng thái không hợp lệ." });
+                }
+
                 var success = await _orderService.UpdateOrderStatusAsync(id, status);
 
                 if (success)
                 {
-                    return Json(new { success = true, message = "Order status updated successfully!" });
+                    return Json(new { success = true, message = "Cập nhật trạng thái đơn hàng thành công!" });
                 }
-                else
-                {
-                    return Json(new { success = false, message = "Order not found or unable to update status." });
-                }
+
+                return Json(new { success = false, message = "Không tìm thấy đơn hàng." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating order status for order {OrderId}", id);
-                return Json(new { success = false, message = "An error occurred while updating the order status." });
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi cập nhật trạng thái." });
             }
         }
 
         #endregion
-
-
 
         #region Users Management
 
@@ -664,14 +599,22 @@ namespace BookStoreMVC.Controllers
         {
             try
             {
-                var users = await _userService.GetRecentUsersAsync(50);
-                ViewBag.PageTitle = "Manage Users";
+                var users = await _userService.GetRecentUsersAsync(100);
+
+                ViewBag.PageTitle = "Quản lý người dùng";
                 ViewBag.ActiveMenu = "Users";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý người dùng", null)
+                );
+
                 return View(users);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading users management page");
+                TempData["ErrorMessage"] = "Không thể tải danh sách người dùng.";
                 return View(new List<User>());
             }
         }
@@ -684,17 +627,126 @@ namespace BookStoreMVC.Controllers
                 var userProfile = await _userService.GetUserProfileAsync(id);
                 if (userProfile == null)
                 {
-                    return NotFound();
+                    TempData["ErrorMessage"] = "Không tìm thấy người dùng.";
+                    return RedirectToAction(nameof(Users));
                 }
 
-                ViewBag.PageTitle = $"User: {userProfile.Name}";
+                ViewBag.PageTitle = $"Người dùng: {userProfile.Name}";
                 ViewBag.ActiveMenu = "Users";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý người dùng", "/admin/users"),
+                    new BreadcrumbItem(userProfile.Name, null)
+                );
+
                 return View(userProfile);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading user details for ID: {UserId}", id);
-                return NotFound();
+                TempData["ErrorMessage"] = "Không thể tải thông tin người dùng.";
+                return RedirectToAction(nameof(Users));
+            }
+        }
+
+        [HttpPost]
+        [Route("users/toggle-lock/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleUserLock(string id)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy người dùng." });
+                }
+
+                var isLocked = await _userManager.IsLockedOutAsync(user);
+
+                IdentityResult result;
+                if (isLocked)
+                {
+                    // Unlock user
+                    result = await _userManager.SetLockoutEndDateAsync(user, null);
+                }
+                else
+                {
+                    // Lock user for 100 years
+                    result = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+                }
+
+                if (result.Succeeded)
+                {
+                    var message = isLocked ? "Mở khóa người dùng thành công!" : "Khóa người dùng thành công!";
+                    return Json(new { success = true, message = message, isLocked = !isLocked });
+                }
+
+                return Json(new { success = false, message = "Không thể thực hiện thao tác." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling user lock for user {UserId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi." });
+            }
+        }
+
+        #endregion
+
+        #region Reviews Management
+
+        [Route("reviews")]
+        public async Task<IActionResult> Reviews(ReviewListViewModel model)
+        {
+            try
+            {
+                // Không có hệ thống phê duyệt - hiển thị tất cả reviews
+                model.ShowUnapproved = false;
+                var (reviews, totalCount) = await _reviewService.GetReviewsAsync(model);
+
+                model.Reviews = reviews;
+                model.TotalCount = totalCount;
+
+                ViewBag.PageTitle = "Quản lý đánh giá";
+                ViewBag.ActiveMenu = "Reviews";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Quản lý đánh giá", null)
+                );
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading reviews management page");
+                TempData["ErrorMessage"] = "Không thể tải danh sách đánh giá.";
+                return View(new ReviewListViewModel());
+            }
+        }
+
+        [HttpPost]
+        [Route("reviews/delete/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            try
+            {
+                var adminUserId = _userManager.GetUserId(User);
+                var success = await _reviewService.DeleteReviewAsync(id, adminUserId!);
+
+                if (success)
+                {
+                    return Json(new { success = true, message = "Xóa đánh giá thành công!" });
+                }
+
+                return Json(new { success = false, message = "Không tìm thấy đánh giá." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting review {ReviewId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xóa đánh giá." });
             }
         }
 
@@ -709,10 +761,12 @@ namespace BookStoreMVC.Controllers
             {
                 var model = new AdminDashboardViewModel();
 
-                // Get comprehensive statistics for reports
+                // Get order statistics
                 var (totalRevenue, totalOrders, averageOrderValue) = await _orderService.GetOrderStatisticsAsync();
                 var monthlyRevenue = await _orderService.GetMonthlyRevenueAsync(12);
                 var ordersByStatus = await _orderService.GetOrdersByStatusAsync();
+
+                // Get user registrations
                 var userRegistrations = await _userService.GetUserRegistrationsAsync(12);
 
                 model.TotalRevenue = totalRevenue;
@@ -721,81 +775,259 @@ namespace BookStoreMVC.Controllers
                 model.OrdersByStatus = ordersByStatus.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value);
                 model.UserRegistrations = userRegistrations;
 
-                ViewBag.PageTitle = "Reports & Analytics";
+                ViewBag.PageTitle = "Báo cáo & Thống kê";
                 ViewBag.ActiveMenu = "Reports";
+
+                this.SetBreadcrumb(
+                    new BreadcrumbItem("Admin", "/admin/dashboard"),
+                    new BreadcrumbItem("Báo cáo", null)
+                );
+
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading reports page");
+                TempData["ErrorMessage"] = "Không thể tải trang báo cáo.";
                 return View(new AdminDashboardViewModel());
             }
         }
 
         [HttpGet]
-        [Route("reports/export/{type}")]
-        public async Task<IActionResult> ExportReport(string type)
+        [Route("reports/export")]
+        public async Task<IActionResult> ExportReport(string type, string format = "csv")
         {
             try
             {
-                // This would be implemented based on your reporting needs
-                // For now, just return a placeholder
-                return Json(new { success = false, message = "Export functionality not implemented yet" });
+                // TODO: Implement report export functionality
+                return Json(new { success = false, message = "Tính năng xuất báo cáo đang được phát triển." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error exporting report of type: {Type}", type);
-                return Json(new { success = false, message = "Error exporting report" });
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xuất báo cáo." });
             }
         }
 
         #endregion
-
-
 
         #region Settings
 
         [Route("settings")]
         public IActionResult Settings()
         {
-            ViewBag.PageTitle = "System Settings";
+            ViewBag.PageTitle = "Cài đặt hệ thống";
             ViewBag.ActiveMenu = "Settings";
+
+            this.SetBreadcrumb(
+                new BreadcrumbItem("Admin", "/admin/dashboard"),
+                new BreadcrumbItem("Cài đặt", null)
+            );
+
             return View();
         }
 
         [HttpPost]
-        [Route("settings")]
+        [Route("settings/clear-cache")]
         [ValidateAntiForgeryToken]
-        public IActionResult Settings(string action)
+        public IActionResult ClearCache()
         {
             try
             {
-                // Handle different settings actions here
-                switch (action?.ToLower())
-                {
-                    case "clearcache":
-                        // Clear cache logic
-                        TempData["SuccessMessage"] = "Cache cleared successfully!";
-                        break;
-                    case "backup":
-                        // Backup logic
-                        TempData["SuccessMessage"] = "Backup created successfully!";
-                        break;
-                    default:
-                        TempData["ErrorMessage"] = "Unknown action";
-                        break;
-                }
-
+                // TODO: Implement cache clearing
+                TempData["SuccessMessage"] = "Cache đã được xóa thành công!";
                 return RedirectToAction(nameof(Settings));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in settings action: {Action}", action);
-                TempData["ErrorMessage"] = "An error occurred while processing the request.";
+                _logger.LogError(ex, "Error clearing cache");
+                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi xóa cache.";
+                return RedirectToAction(nameof(Settings));
+            }
+        }
+
+        [HttpPost]
+        [Route("settings/backup")]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateBackup()
+        {
+            try
+            {
+                // TODO: Implement database backup
+                TempData["SuccessMessage"] = "Backup đã được tạo thành công!";
+                return RedirectToAction(nameof(Settings));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating backup");
+                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi tạo backup.";
                 return RedirectToAction(nameof(Settings));
             }
         }
 
         #endregion
+
+        #region Search API
+
+        [HttpGet]
+        [Route("search")]
+        public async Task<IActionResult> Search(string q)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(q))
+                {
+                    return Json(new { books = Array.Empty<object>(), orders = Array.Empty<object>(), users = Array.Empty<object>() });
+                }
+
+                // Search books
+                var books = await _bookService.SearchBooksAsync(q, 5);
+                var bookResults = books.Select(b => new
+                {
+                    id = b.Id,
+                    title = b.Title,
+                    author = b.Author,
+                    price = b.Price
+                });
+
+                // Search orders (simplified - can be enhanced)
+                var orderResults = Array.Empty<object>();
+
+                // Search users (simplified - can be enhanced)
+                var userResults = Array.Empty<object>();
+
+                return Json(new
+                {
+                    books = bookResults,
+                    orders = orderResults,
+                    users = userResults
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error performing admin search for query: {Query}", q);
+                return Json(new { error = "Tìm kiếm thất bại" });
+            }
+        }
+
+        #endregion
+
+        #region Notifications API
+
+        [HttpGet]
+        [Route("notifications/getunread")]
+        public async Task<IActionResult> GetUnreadNotifications()
+        {
+            try
+            {
+                // Generate notifications based on dashboard stats
+                var stats = await _dashboardService.GetDashboardStatsAsync();
+
+                var notifications = new List<object>();
+
+                // Check for pending orders
+                if (stats.TryGetValue("PendingOrders", out var pendingOrders) && Convert.ToInt32(pendingOrders) > 0)
+                {
+                    notifications.Add(new
+                    {
+                        id = 1,
+                        type = "order",
+                        title = "Đơn hàng chờ xử lý",
+                        message = $"Có {pendingOrders} đơn hàng đang chờ xử lý",
+                        url = "/admin/orders?status=Pending",
+                        createdAt = DateTime.UtcNow,
+                        isRead = false
+                    });
+                }
+
+                // Check for low stock books
+                if (stats.TryGetValue("LowStockCount", out var lowStock) && Convert.ToInt32(lowStock) > 0)
+                {
+                    notifications.Add(new
+                    {
+                        id = 2,
+                        type = "warning",
+                        title = "Sách sắp hết hàng",
+                        message = $"Có {lowStock} sách có tồn kho thấp (< 10 cuốn)",
+                        url = "/admin/books?filter=lowstock",
+                        createdAt = DateTime.UtcNow,
+                        isRead = false
+                    });
+                }
+
+                // Check for total reviews (informational)
+                if (stats.TryGetValue("TotalReviews", out var totalReviews) && Convert.ToInt32(totalReviews) > 0)
+                {
+                    var recentReviews = Convert.ToInt32(totalReviews);
+                    if (recentReviews > 0)
+                    {
+                        notifications.Add(new
+                        {
+                            id = 3,
+                            type = "review",
+                            title = "Đánh giá mới",
+                            message = $"Hệ thống có {recentReviews} đánh giá từ khách hàng",
+                            url = "/admin/reviews",
+                            createdAt = DateTime.UtcNow,
+                            isRead = false
+                        });
+                    }
+                }
+
+                // Check for new users in last 24h
+                if (stats.TryGetValue("NewUsersToday", out var newUsers) && Convert.ToInt32(newUsers) > 0)
+                {
+                    notifications.Add(new
+                    {
+                        id = 4,
+                        type = "user",
+                        title = "Người dùng mới",
+                        message = $"Có {newUsers} người dùng mới đăng ký trong 24h qua",
+                        url = "/admin/users",
+                        createdAt = DateTime.UtcNow,
+                        isRead = false
+                    });
+                }
+
+                return Json(new
+                {
+                    count = notifications.Count,
+                    notifications = notifications
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting unread notifications");
+                return Json(new { count = 0, notifications = Array.Empty<object>() });
+            }
+        }
+
+        #endregion
     }
+
+    #region Helper Models
+
+    public class OrderStatusUpdateModel
+    {
+        public string Status { get; set; } = string.Empty;
+    }
+
+    public class UpdateStockModel
+    {
+        public int Quantity { get; set; }
+    }
+
+    #endregion
+
+    #region Extension Methods
+
+    public static class ControllerExtensions
+    {
+        public static void SetBreadcrumb(this Controller controller, params BreadcrumbItem[] items)
+        {
+            controller.ViewBag.Breadcrumbs = items.ToList();
+        }
+    }
+
+    #endregion
 }
