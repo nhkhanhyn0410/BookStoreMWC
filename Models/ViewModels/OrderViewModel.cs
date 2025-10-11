@@ -123,20 +123,17 @@ namespace BookStoreMVC.Models.ViewModels
 
     public class OrderListViewModel
     {
+        // --- Danh sách đơn hàng ---
         public IEnumerable<OrderViewModel> Orders { get; set; } = new List<OrderViewModel>();
+
+        // --- Bộ lọc ---
         public OrderStatus? StatusFilter { get; set; }
+        public string SearchTerm { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
+        // --- Sắp xếp ---
         public string SortBy { get; set; } = "created_desc";
-
-        // Pagination
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 10;
-        public int TotalCount { get; set; }
-        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-        public bool HasPreviousPage => PageNumber > 1;
-        public bool HasNextPage => PageNumber < TotalPages;
-
         public Dictionary<string, string> SortOptions => new()
         {
             {"created_desc", "Newest First"},
@@ -146,7 +143,20 @@ namespace BookStoreMVC.Models.ViewModels
             {"status", "Status"}
         };
 
-        // Summary
+        // --- Phân trang ---
+        public int PageNumber { get; set; } = 1;             // Trang hiện tại
+        public int PageSize { get; set; } = 10;              // Số bản ghi mỗi trang
+        public int TotalCount { get; set; }                  // Tổng số bản ghi
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+
+        public bool HasPreviousPage => PageNumber > 1;
+        public bool HasNextPage => PageNumber < TotalPages;
+
+        // Chỉ số hiển thị (ví dụ: "Hiển thị 11–20 / 52 đơn hàng")
+        public int StartItem => (PageNumber - 1) * PageSize + 1;
+        public int EndItem => Math.Min(PageNumber * PageSize, TotalCount);
+
+        // --- Thống kê trạng thái ---
         public decimal TotalAmount => Orders.Sum(o => o.Total);
         public int PendingCount => Orders.Count(o => o.Status == OrderStatus.Pending);
         public int ProcessingCount => Orders.Count(o => o.Status == OrderStatus.Processing);

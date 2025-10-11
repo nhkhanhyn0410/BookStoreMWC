@@ -24,49 +24,67 @@ namespace BookStoreMVC.Models.ViewModels
         public int Id { get; set; }
         public string UserId { get; set; } = string.Empty;
         public int BookId { get; set; }
+
         public int Rating { get; set; }
         public string? Comment { get; set; }
+
         public bool IsVerifiedPurchase { get; set; }
         public bool IsApproved { get; set; }
-        public DateTime CreatedAt { get; set; }
 
-        // Navigation properties
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; } // ✅ Thêm thuộc tính thời gian cập nhật
+
+        // Navigation
         public User User { get; set; } = new();
         public Book Book { get; set; } = new();
 
-        // Calculated properties
+        // ✅ Hiển thị tên người dùng
         public string UserDisplayName => User?.Name ?? "Anonymous";
+
+        // ✅ Hiển thị sao
+        public string StarDisplay => new string('★', Rating) + new string('☆', 5 - Rating);
+
+        // ✅ Tính thời gian hiển thị (ưu tiên UpdatedAt nếu có)
         public string TimeAgo
         {
             get
             {
-                var timeSpan = DateTime.UtcNow - CreatedAt;
+                var referenceTime = UpdatedAt ?? CreatedAt;
+                var timeSpan = DateTime.UtcNow - referenceTime;
+
+                string suffix = UpdatedAt.HasValue ? " (edited)" : string.Empty;
+
                 if (timeSpan.TotalDays >= 365)
-                    return $"{(int)(timeSpan.TotalDays / 365)} year(s) ago";
+                    return $"{(int)(timeSpan.TotalDays / 365)} year(s) ago{suffix}";
                 if (timeSpan.TotalDays >= 30)
-                    return $"{(int)(timeSpan.TotalDays / 30)} month(s) ago";
+                    return $"{(int)(timeSpan.TotalDays / 30)} month(s) ago{suffix}";
                 if (timeSpan.TotalDays >= 1)
-                    return $"{(int)timeSpan.TotalDays} day(s) ago";
+                    return $"{(int)timeSpan.TotalDays} day(s) ago{suffix}";
                 if (timeSpan.TotalHours >= 1)
-                    return $"{(int)timeSpan.TotalHours} hour(s) ago";
-                return "Just now";
+                    return $"{(int)timeSpan.TotalHours} hour(s) ago{suffix}";
+                return $"Just now{suffix}";
             }
         }
-        public string StarDisplay => new string('★', Rating) + new string('☆', 5 - Rating);
     }
 
     public class ReviewListViewModel
     {
         public IEnumerable<ReviewViewModel> Reviews { get; set; } = new List<ReviewViewModel>();
+
+        // Filters
         public int? BookId { get; set; }
         public int? Rating { get; set; }
         public bool ShowUnapproved { get; set; }
+
+        // Sorting & Searching
         public string SortBy { get; set; } = "newest";
+        public string? SearchTerm { get; set; }
 
         // Pagination
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
         public int TotalCount { get; set; }
+
         public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => PageNumber < TotalPages;
@@ -77,6 +95,7 @@ namespace BookStoreMVC.Models.ViewModels
             .Select(i => Reviews.Count(r => r.Rating == i))
             .ToArray();
 
+        // Sorting options
         public Dictionary<string, string> SortOptions => new()
         {
             {"newest", "Newest First"},
