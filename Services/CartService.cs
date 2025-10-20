@@ -14,6 +14,7 @@ namespace BookStoreMVC.Services
         Task<bool> RemoveFromCartAsync(string userId, int bookId);
         Task<bool> ClearCartAsync(string userId);
         Task<int> GetCartItemCountAsync(string userId);
+        // Task<CartViewModel> PopulateCartDetailsAsync(CartViewModel cart);
     }
 
     public class CartService : ICartService
@@ -135,21 +136,31 @@ namespace BookStoreMVC.Services
         {
             return new CartItemViewModel
             {
+                // Database cart CÓ ID
                 Id = cartItem.Id,
                 BookId = cartItem.BookId,
                 Quantity = cartItem.Quantity,
                 CreatedAt = cartItem.CreatedAt,
+
+                // Thông tin sách cơ bản
+                BookTitle = cartItem.Book.Title,
+                BookAuthor = cartItem.Book.Author,
+                BookImage = cartItem.Book.ImageUrl,
+                // Price = cartItem.Book.DisplayPrice,
+
+                // Book entity đầy đủ
                 Book = new BookViewModel
                 {
                     Id = cartItem.Book.Id,
                     Title = cartItem.Book.Title,
                     Author = cartItem.Book.Author,
+                    ImageUrl = cartItem.Book.ImageUrl,
                     Price = cartItem.Book.Price,
                     DiscountPrice = cartItem.Book.DiscountPrice,
                     StockQuantity = cartItem.Book.StockQuantity,
                     IsActive = cartItem.Book.IsActive,
-                    Category = cartItem.Book.Category,
-                    Reviews = cartItem.Book.Reviews
+                    // InStock = cartItem.Book.StockQuantity > 0 && cartItem.Book.IsActive,
+                    // ... các thuộc tính khác
                 }
             };
         }

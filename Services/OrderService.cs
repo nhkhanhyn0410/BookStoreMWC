@@ -11,6 +11,7 @@ namespace BookStoreMVC.Services
         Task<OrderViewModel?> CreateOrderAsync(string userId, OrderCreateViewModel model);
         Task<OrderViewModel?> GetOrderByIdAsync(int orderId, string? userId = null);
         Task<(IEnumerable<OrderViewModel> Orders, int TotalCount)> GetOrdersAsync(OrderListViewModel model, string? userId = null);
+        Task<IEnumerable<OrderViewModel>> GetUserOrdersAsync(string userId);
         Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status);
         Task<bool> CancelOrderAsync(int orderId, string userId);
         Task<(decimal TotalRevenue, int TotalOrders, decimal AverageOrderValue)> GetOrderStatisticsAsync();
@@ -195,6 +196,22 @@ namespace BookStoreMVC.Services
                 .ToListAsync();
 
             return (orders.Select(MapToViewModel), totalCount);
+        }
+
+        public async Task<IEnumerable<OrderViewModel>> GetUserOrdersAsync(string userId)
+        {
+            var orders = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.ShippingInfo)
+                .Include(o => o.Payment)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Book)
+                        .ThenInclude(b => b.Category)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+            return orders.Select(MapToViewModel);
         }
 
         public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)

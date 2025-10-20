@@ -1,4 +1,3 @@
-// Controllers/OrdersController.cs
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +7,7 @@ using BookStoreMVC.Services;
 
 namespace BookStoreMVC.Controllers
 {
-    [Authorize]
+    [Authorize] // Yêu cầu đăng nhập cho toàn bộ controller
     public class OrdersController : Controller
     {
         private readonly IOrderService _orderService;
@@ -28,59 +27,24 @@ namespace BookStoreMVC.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index(OrderListViewModel model)
-        {
-            try
-            {
-                var userId = _userManager.GetUserId(User)!;
-                var (orders, totalCount) = await _orderService.GetOrdersAsync(model, userId);
-
-                model.Orders = orders;
-                model.TotalCount = totalCount;
-
-                ViewBag.PageTitle = "My Orders";
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading user orders");
-                return View(new OrderListViewModel());
-            }
-        }
-
-        public async Task<IActionResult> Details(int id)
-        {
-            try
-            {
-                var userId = _userManager.GetUserId(User)!;
-                var order = await _orderService.GetOrderByIdAsync(id, userId);
-
-                if (order == null)
-                {
-                    return NotFound();
-                }
-
-                ViewBag.PageTitle = $"Order {order.OrderNumber}";
-                return View(order);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading order details for ID: {OrderId}", id);
-                return NotFound();
-            }
-        }
-
         [HttpGet]
         public async Task<IActionResult> Checkout()
         {
             try
             {
+                // Kiểm tra người dùng đã đăng nhập
+                if (!User.Identity?.IsAuthenticated ?? true)
+                {
+                    TempData["InfoMessage"] = "Vui lòng đăng nhập để tiếp tục thanh toán.";
+                    return RedirectToAction("Login", "Account", new { returnUrl = "/Orders/Checkout" });
+                }
+
                 var userId = _userManager.GetUserId(User)!;
                 var cart = await _cartService.GetCartAsync(userId);
 
                 if (cart.IsEmpty)
                 {
-                    TempData["ErrorMessage"] = "Your cart is empty.";
+                    TempData["ErrorMessage"] = "Giỏ hàng của bạn đang trống.";
                     return RedirectToAction("Index", "Cart");
                 }
 
@@ -126,12 +90,12 @@ namespace BookStoreMVC.Controllers
 
                 if (order != null)
                 {
-                    TempData["SuccessMessage"] = $"Order {order.OrderNumber} has been created successfully!";
+                    TempData["SuccessMessage"] = $"Đơn hàng {order.OrderNumber} đã được tạo thành công!";
                     return RedirectToAction(nameof(Details), new { id = order.Id });
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Unable to create order. Please try again.");
+                    ModelState.AddModelError(string.Empty, "Không thể tạo đơn hàng. Vui lòng thử lại.");
                     model.Cart = await _cartService.GetCartAsync(currentUserId);
                     return View(model);
                 }
@@ -141,17 +105,56 @@ namespace BookStoreMVC.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
                 var userId = _userManager.GetUserId(User)!;
                 model.Cart = await _cartService.GetCartAsync(userId);
-                model.AvailablePaymentMethods = new[] { "Credit Card", "PayPal", "Bank Transfer", "Cash on Delivery" };
-                model.AvailableCountries = new[] { "Vietnam", "United States", "United Kingdom", "Canada", "Australia" };
                 return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating order");
-                ModelState.AddModelError(string.Empty, "An error occurred while processing your order.");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi tạo đơn hàng.");
                 var userId = _userManager.GetUserId(User)!;
                 model.Cart = await _cartService.GetCartAsync(userId);
                 return View(model);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User)!;
+                var orders = await _orderService.GetUserOrdersAsync(userId);
+
+                ViewBag.PageTitle = "Đơn hàng của tôi";
+                return View(orders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading orders");
+                return View(new List<OrderViewModel>());
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User)!;
+                var order = await _orderService.GetOrderByIdAsync(id);
+
+                if (order == null || order.UserId != userId)
+                {
+                    return NotFound();
+                }
+
+                ViewBag.PageTitle = $"Order {order.OrderNumber}";
+                return View(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading order details");
+                return NotFound();
             }
         }
 
@@ -166,19 +169,19 @@ namespace BookStoreMVC.Controllers
 
                 if (success)
                 {
-                    TempData["SuccessMessage"] = "Order has been cancelled successfully.";
+                    TempData["SuccessMessage"] = "Đơn hàng đã được hủy thành công.";
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Unable to cancel order. Please contact customer service.";
+                    TempData["ErrorMessage"] = "Không thể hủy đơn hàng này.";
                 }
 
                 return RedirectToAction(nameof(Details), new { id });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error cancelling order {OrderId}", id);
-                TempData["ErrorMessage"] = "An error occurred while cancelling the order.";
+                _logger.LogError(ex, "Error cancelling order");
+                TempData["ErrorMessage"] = "Đã xảy ra lỗi khi hủy đơn hàng.";
                 return RedirectToAction(nameof(Details), new { id });
             }
         }
