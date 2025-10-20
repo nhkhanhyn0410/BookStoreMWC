@@ -135,6 +135,7 @@ namespace BookStoreMVC.Controllers
             }
         }
 
+
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {

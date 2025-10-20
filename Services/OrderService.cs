@@ -200,18 +200,25 @@ namespace BookStoreMVC.Services
 
         public async Task<IEnumerable<OrderViewModel>> GetUserOrdersAsync(string userId)
         {
-            var orders = await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.ShippingInfo)
-                .Include(o => o.Payment)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Book)
-                        .ThenInclude(b => b.Category)
-                .Where(o => o.UserId == userId)
-                .OrderByDescending(o => o.CreatedAt)
-                .ToListAsync();
+            try
+            {
+                var orders = await _context.Orders
+                    .Include(o => o.User)
+                    .Include(o => o.ShippingInfo)
+                    .Include(o => o.Payment)
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Book)
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .ToListAsync();
 
-            return orders.Select(MapToViewModel);
+                return orders.Select(MapToViewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching user orders for {UserId}", userId);
+                return Enumerable.Empty<OrderViewModel>();
+            }
         }
 
         public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)
