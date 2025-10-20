@@ -12,6 +12,7 @@ namespace BookStoreMVC
         }
         // DbSets
         public DbSet<Book> Books { get; set; }
+        public DbSet<BookGalleryImage> BookGalleryImages { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -77,6 +78,44 @@ namespace BookStoreMVC
                     .WithMany(c => c.Books)
                     .HasForeignKey(e => e.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<BookGalleryImage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.ImageUrl)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.ImageFileName)
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.ImageContentType)
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.DisplayOrder)
+                    .IsRequired();
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                entity.Property(e => e.CreatedAt)
+                    .IsRequired();
+
+                entity.Property(e => e.UpdatedAt)
+                    .IsRequired();
+
+                // Relationship with Book
+                entity.HasOne(e => e.Book)
+                    .WithMany(b => b.GalleryImages)
+                    .HasForeignKey(e => e.BookId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Index
+                entity.HasIndex(e => e.BookId);
+                entity.HasIndex(e => e.IsActive);
+                entity.HasIndex(e => new { e.BookId, e.DisplayOrder });
             });
 
             // Configure ShippingInfo entity

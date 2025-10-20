@@ -664,15 +664,15 @@
             imageDiv.dataset.index = index;
 
             imageDiv.innerHTML = `
-                                                        <img src="${src}" alt="${fileName}" class="w-full h-24 object-cover rounded border border-gray-200">
-                                                        <button type="button" onclick="removeGalleryImage(${index})" 
-                                                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            ${fileName}
-                                                        </div>
-                                                    `;
+                                                                <img src="${src}" alt="${fileName}" class="w-full h-24 object-cover rounded border border-gray-200">
+                                                                <button type="button" onclick="removeGalleryImage(${index})" 
+                                                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                                <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    ${fileName}
+                                                                </div>
+                                                            `;
 
             grid.appendChild(imageDiv);
         }
@@ -759,12 +759,12 @@
                 imageDiv.className = 'relative group';
 
                 imageDiv.innerHTML = `
-                                                            <img src="${image.url}" alt="Gallery image ${index + 1}" class="w-full h-24 object-cover rounded border border-gray-200">
-                                                            <button type="button" onclick="removeCurrentGalleryImage('${image.id}')" 
-                                                                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
-                                                                <i class="fas fa-times"></i>
-                                                            </button>
-                                                        `;
+                                                                    <img src="${image.url}" alt="Gallery image ${index + 1}" class="w-full h-24 object-cover rounded border border-gray-200">
+                                                                    <button type="button" onclick="removeCurrentGalleryImage('${image.id}')" 
+                                                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
+                                                                        <i class="fas fa-times"></i>
+                                                                    </button>
+                                                                `;
 
                 grid.appendChild(imageDiv);
             });
@@ -854,26 +854,26 @@
                 }`;
 
             notification.innerHTML = `
-                                                        <div class="p-4">
-                                                            <div class="flex items-start">
-                                                                <div class="flex-shrink-0">
-                                                                    <i class="fas ${type === 'success' ? 'fa-check-circle text-green-400' :
+                                                                <div class="p-4">
+                                                                    <div class="flex items-start">
+                                                                        <div class="flex-shrink-0">
+                                                                            <i class="fas ${type === 'success' ? 'fa-check-circle text-green-400' :
                     type === 'error' ? 'fa-times-circle text-red-400' :
                         type === 'warning' ? 'fa-exclamation-triangle text-yellow-400' :
                             'fa-info-circle text-blue-400'
                 }"></i>
+                                                                        </div>
+                                                                        <div class="ml-3 w-0 flex-1 pt-0.5">
+                                                                            <p class="text-sm font-medium text-gray-900">${message}</p>
+                                                                        </div>
+                                                                        <div class="ml-4 flex-shrink-0 flex">
+                                                                            <button class="inline-flex text-gray-400 hover:text-gray-500" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                                                                                <i class="fas fa-times"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="ml-3 w-0 flex-1 pt-0.5">
-                                                                    <p class="text-sm font-medium text-gray-900">${message}</p>
-                                                                </div>
-                                                                <div class="ml-4 flex-shrink-0 flex">
-                                                                    <button class="inline-flex text-gray-400 hover:text-gray-500" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
-                                                                        <i class="fas fa-times"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                            `;
 
             document.body.appendChild(notification);
 
@@ -882,6 +882,65 @@
                     notification.remove();
                 }
             }, 5000);
+        }
+
+        function removeCurrentGalleryImage(imageId) {
+            if (confirm('Bạn có chắc chắn muốn xóa ảnh này khỏi thư viện?')) {
+                // Lấy CSRF token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                fetch(`/admin/books/remove-gallery-image/${imageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadCurrentGallery(); // Refresh gallery
+                            showNotification('Ảnh đã được xóa khỏi thư viện!', 'success');
+                        } else {
+                            showNotification(data.message || 'Có lỗi xảy ra khi xóa ảnh!', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Có lỗi xảy ra khi xóa ảnh!', 'error');
+                    });
+            }
+        }
+
+        // Cập nhật hàm removeCurrentCover để thêm Content-Type header
+        function removeCurrentCover() {
+            if (confirm('Bạn có chắc chắn muốn xóa ảnh bìa hiện tại?')) {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                fetch(`/admin/books/remove-image/@Model.Id`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('current-cover').classList.add('hidden');
+                            document.getElementById('cover-placeholder').classList.remove('hidden');
+                            document.getElementById('cover-upload-actions').classList.add('hidden');
+                            originalImageUrl = '';
+                            showNotification('Ảnh bìa đã được xóa thành công!', 'success');
+                        } else {
+                            showNotification(data.message || 'Có lỗi xảy ra khi xóa ảnh bìa!', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Có lỗi xảy ra khi xóa ảnh bìa!', 'error');
+                    });
+            }
         }
     </script>
 }

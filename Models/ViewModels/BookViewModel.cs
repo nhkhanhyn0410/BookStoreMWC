@@ -1,3 +1,4 @@
+// Models/ViewModels/BookViewModel.cs - CẬP NHẬT
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using BookStoreMVC.Models.Entities;
@@ -82,6 +83,48 @@ namespace BookStoreMVC.Models.ViewModels
         [NotMapped]
         public long? ImageFileSize { get; set; }
 
+        // ====== THÊM MỚI: Gallery Images Properties ======
+        [StringLength(2000)]
+        [Display(Name = "Gallery Images (JSON)")]
+        public string? AdditionalImages { get; set; }
+
+        [NotMapped]
+        public List<string> GalleryImageUrls
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(AdditionalImages))
+                    return new List<string>();
+
+                try
+                {
+                    return System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalImages)
+                        ?? new List<string>();
+                }
+                catch (Exception)
+                {
+                    return new List<string>();
+                }
+            }
+            set
+            {
+                AdditionalImages = value?.Any() == true
+                    ? System.Text.Json.JsonSerializer.Serialize(value)
+                    : null;
+            }
+        }
+
+        [NotMapped]
+        public bool HasGalleryImages => GalleryImageUrls.Any();
+
+        [NotMapped]
+        public int GalleryImageCount => GalleryImageUrls.Count;
+
+        [NotMapped]
+        [Display(Name = "Upload Gallery Images")]
+        public IFormFileCollection? GalleryImageFiles { get; set; }
+        // ====== KẾT THÚC PHẦN THÊM MỚI ======
+
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; } = true;
 
@@ -96,13 +139,17 @@ namespace BookStoreMVC.Models.ViewModels
         public bool InStock => StockQuantity > 0;
         public decimal DisplayPrice => DiscountPrice ?? Price;
         public bool HasDiscount => DiscountPrice.HasValue && DiscountPrice < Price;
-        public decimal DiscountPercentage => HasDiscount ? Math.Round(((Price - DiscountPrice.Value) / Price) * 100, 0) : 0;
+        public decimal DiscountPercentage => HasDiscount
+            ? Math.Round(((Price - DiscountPrice.Value) / Price) * 100, 0)
+            : 0;
 
         // Image helper properties
         public string DefaultImageUrl => ImageUrl ?? "/images/books/default-book.jpg";
         public bool HasImage => !string.IsNullOrEmpty(ImageUrl);
         public string ImageAlt => $"Cover image of {Title} by {Author}";
-        public string FormattedFileSize => ImageFileSize.HasValue ? FormatFileSize(ImageFileSize.Value) : "Unknown";
+        public string FormattedFileSize => ImageFileSize.HasValue
+            ? FormatFileSize(ImageFileSize.Value)
+            : "Unknown";
 
         private static string FormatFileSize(long bytes)
         {
@@ -118,6 +165,7 @@ namespace BookStoreMVC.Models.ViewModels
         }
     }
 
+    // Các class khác giữ nguyên...
     public class BookListViewModel
     {
         public IEnumerable<BookViewModel> Books { get; set; } = new List<BookViewModel>();
@@ -143,31 +191,28 @@ namespace BookStoreMVC.Models.ViewModels
         public int PageSize { get; set; } = 12;
         public int TotalCount { get; set; }
         public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-
-        public int CurrentPage => PageNumber;   // 🔹 Thêm dòng này
-
+        public int CurrentPage => PageNumber;
         public bool HasPreviousPage => PageNumber > 1;
         public bool HasNextPage => PageNumber < TotalPages;
 
         // Display options
-        public string ViewMode { get; set; } = "grid"; // grid or list
+        public string ViewMode { get; set; } = "grid";
 
         public Dictionary<string, string> SortOptions => new()
-    {
-        {"title", "Title A-Z"},
-        {"title_desc", "Title Z-A"},
-        {"author", "Author A-Z"},
-        {"author_desc", "Author Z-A"},
-        {"price", "Price Low to High"},
-        {"price_desc", "Price High to Low"},
-        {"rating", "Rating Low to High"},
-        {"rating_desc", "Rating High to Low"},
-        {"newest", "Newest First"},
-        {"oldest", "Oldest First"},
-        {"popularity", "Most Popular"}
-    };
+        {
+            {"title", "Title A-Z"},
+            {"title_desc", "Title Z-A"},
+            {"author", "Author A-Z"},
+            {"author_desc", "Author Z-A"},
+            {"price", "Price Low to High"},
+            {"price_desc", "Price High to Low"},
+            {"rating", "Rating Low to High"},
+            {"rating_desc", "Rating High to Low"},
+            {"newest", "Newest First"},
+            {"oldest", "Oldest First"},
+            {"popularity", "Most Popular"}
+        };
 
-        // Filter helpers
         public string GetActiveFiltersCount()
         {
             var count = 0;
@@ -184,7 +229,6 @@ namespace BookStoreMVC.Models.ViewModels
             return count > 0 ? $"({count})" : "";
         }
     }
-
 
     public class BookDetailsViewModel
     {

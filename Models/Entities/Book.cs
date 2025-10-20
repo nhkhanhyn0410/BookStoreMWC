@@ -1,16 +1,16 @@
 // Models/Entities/Book.cs
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace BookStoreMVC.Models.Entities
 {
+    [Table("Books")]
     public class Book
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -58,21 +58,27 @@ namespace BookStoreMVC.Models.Entities
 
         public bool IsActive { get; set; } = true;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
         [StringLength(2000)]
         public string? AdditionalImages { get; set; }
 
+        // Timestamps
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
         // Navigation Properties
-        public virtual Category Category { get; set; } = null!;
+        [ForeignKey("CategoryId")]
+        public virtual Category? Category { get; set; }
+
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
         public virtual ICollection<WishListItem> WishlistItems { get; set; } = new List<WishListItem>();
 
-        // Helper properties for image handling
+        // ✅ Navigation property cho thư viện ảnh
+        public virtual ICollection<BookGalleryImage> GalleryImages { get; set; } = new List<BookGalleryImage>();
+
+        // ---------------- Helper properties ----------------
+
         [NotMapped]
         public string DefaultImageUrl => ImageUrl ?? "/images/books/default-book.jpg";
 
@@ -109,7 +115,8 @@ namespace BookStoreMVC.Models.Entities
 
                 try
                 {
-                    return System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalImages) ?? new List<string>();
+                    return System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalImages)
+                           ?? new List<string>();
                 }
                 catch
                 {
@@ -129,5 +136,40 @@ namespace BookStoreMVC.Models.Entities
 
         [NotMapped]
         public int GalleryImageCount => GalleryImageUrls.Count;
+    }
+
+    // ----------------------------------------------------
+    // Class con cho ảnh thư viện của sách
+    // ----------------------------------------------------
+    [Table("BookGalleryImages")]
+    public class BookGalleryImage
+    {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public int BookId { get; set; }
+
+        [StringLength(500)]
+        public string? ImageUrl { get; set; }
+
+        [StringLength(255)]
+        public string? ImageFileName { get; set; }
+
+        [StringLength(100)]
+        public string? ImageContentType { get; set; }
+
+        public long? ImageFileSize { get; set; }
+
+        public int DisplayOrder { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation property
+        [ForeignKey("BookId")]
+        public virtual Book? Book { get; set; }
     }
 }

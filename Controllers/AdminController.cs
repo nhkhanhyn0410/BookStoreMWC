@@ -305,6 +305,156 @@ namespace BookStoreMVC.Controllers
 
         #endregion
 
+        #region File Management
+        // Thêm các API endpoints này vào AdminController.cs
+
+        // 1. Upload ảnh bìa riêng biệt
+        [HttpPost]
+        [Route("books/upload-image/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadBookImage(int id, IFormFile imageFile)
+        {
+            try
+            {
+                if (imageFile == null || imageFile.Length == 0)
+                {
+                    return Json(new { success = false, message = "Vui lòng chọn file ảnh." });
+                }
+
+                if (!_fileUploadService.IsValidImageFile(imageFile))
+                {
+                    return Json(new { success = false, message = "File không hợp lệ. Chỉ chấp nhận JPG, PNG, GIF, WebP dưới 5MB." });
+                }
+
+                var success = await _bookService.UpdateBookImageAsync(id, imageFile);
+
+                if (success)
+                {
+                    var book = await _bookService.GetBookByIdAsync(id);
+                    return Json(new { success = true, message = "Upload ảnh bìa thành công!", imageUrl = book?.ImageUrl });
+                }
+
+                return Json(new { success = false, message = "Không tìm thấy sách." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading book image for book {BookId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi upload ảnh." });
+            }
+        }
+
+        // 2. Xóa ảnh bìa
+        [HttpPost]
+        [Route("books/remove-image/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveBookImage(int id)
+        {
+            try
+            {
+                var success = await _bookService.RemoveBookImageAsync(id);
+
+                if (success)
+                {
+                    return Json(new { success = true, message = "Xóa ảnh bìa thành công!" });
+                }
+
+                return Json(new { success = false, message = "Không tìm thấy sách hoặc ảnh." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing book image for book {BookId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xóa ảnh." });
+            }
+        }
+
+        // 3. Lấy danh sách ảnh gallery
+        [HttpGet]
+        [Route("books/gallery/{id:int}")]
+        public async Task<IActionResult> GetBookGallery(int id)
+        {
+            try
+            {
+                var galleryImages = await _bookService.GetBookGalleryImagesAsync(id);
+
+                return Json(new
+                {
+                    success = true,
+                    images = galleryImages.Select(img => new
+                    {
+                        id = img.Id,
+                        url = img.ImageUrl
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading gallery for book {BookId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi tải thư viện ảnh." });
+            }
+        }
+
+        // 4. Upload nhiều ảnh vào gallery
+        [HttpPost]
+        [Route("books/upload-gallery/{id:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadGalleryImages(int id, List<IFormFile> galleryFiles)
+        {
+            try
+            {
+                if (galleryFiles == null || galleryFiles.Count == 0)
+                {
+                    return Json(new { success = false, message = "Vui lòng chọn ít nhất một file ảnh." });
+                }
+
+                // Validate tất cả files
+                var invalidFiles = galleryFiles.Where(f => !_fileUploadService.IsValidImageFile(f)).ToList();
+                if (invalidFiles.Any())
+                {
+                    return Json(new { success = false, message = $"{invalidFiles.Count} file không hợp lệ. Chỉ chấp nhận JPG, PNG, GIF, WebP dưới 5MB." });
+                }
+
+                var uploadedCount = await _bookService.UploadGalleryImagesAsync(id, galleryFiles);
+
+                if (uploadedCount > 0)
+                {
+                    return Json(new { success = true, message = $"Upload {uploadedCount} ảnh thành công!", uploadedCount });
+                }
+
+                return Json(new { success = false, message = "Không thể upload ảnh." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading gallery images for book {BookId}", id);
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi upload ảnh thư viện." });
+            }
+        }
+
+        // 5. Xóa ảnh từ gallery
+        [HttpDelete]
+        [Route("books/remove-gallery-image/{imageId:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveGalleryImage(int imageId)
+        {
+            try
+            {
+                var success = await _bookService.RemoveGalleryImageAsync(imageId);
+
+                if (success)
+                {
+                    return Json(new { success = true, message = "Xóa ảnh thành công!" });
+                }
+
+                return Json(new { success = false, message = "Không tìm thấy ảnh." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing gallery image {ImageId}", imageId);
+                return Json(new { success = false, message = "Đã xảy ra lỗi khi xóa ảnh." });
+            }
+        }
+
+        #endregion
+
         #region Categories Management
 
         [Route("categories")]

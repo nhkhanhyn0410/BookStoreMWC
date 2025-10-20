@@ -16,9 +16,8 @@
     <div class="relative overflow-hidden bg-gray-100">
         <a
             href="@Url.Action(isAdminContext ? "EditBook" : "Details", isAdminContext ? "Admin" : "Books", new { id = Model.Id })">
-            <img src="@(Model.ImageUrl ?? "/images/books/default-book.jpg")" alt="@Model.Title"
-                class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                onerror="this.src='/images/books/default-book.jpg'">
+            <img src="@Model.ImageUrl" alt="@Model.ImageAlt"
+                class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300" />
         </a>
 
         <!-- Stock Badge -->

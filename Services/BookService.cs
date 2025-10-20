@@ -20,6 +20,7 @@ namespace BookStoreMVC.Services
         Task<bool> UpdateBookImageAsync(int bookId, IFormFile imageFile);
         Task<bool> RemoveBookImageAsync(int bookId);
 
+
         // Truy vấn sách nổi bật
         Task<IEnumerable<BookViewModel>> GetFeaturedBooksAsync(int count = 8);
         Task<IEnumerable<BookViewModel>> GetNewBooksAsync(int count = 8);
@@ -34,6 +35,11 @@ namespace BookStoreMVC.Services
         Task<CategoryViewModel> CreateCategoryAsync(CategoryViewModel model);
         Task<CategoryViewModel> UpdateCategoryAsync(CategoryViewModel model);
         Task<bool> DeleteCategoryAsync(int id);
+
+        //
+        Task<List<BookGalleryImage>> GetBookGalleryImagesAsync(int bookId);
+        Task<int> UploadGalleryImagesAsync(int bookId, List<IFormFile> imageFiles);
+        Task<bool> RemoveGalleryImageAsync(int imageId);
     }
 
     public partial class BookService : IBookService
@@ -624,6 +630,107 @@ namespace BookStoreMVC.Services
             book.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<BookGalleryImage>> GetBookGalleryImagesAsync(int bookId)
+        {
+            try
+            {
+                return await _context.BookGalleryImages
+                    .Where(img => img.BookId == bookId && img.IsActive)
+                    .OrderBy(img => img.DisplayOrder)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting gallery images for book {BookId}", bookId);
+                return new List<BookGalleryImage>();
+            }
+        }
+
+        // 2. Upload nhiều ảnh vào gallery
+        public async Task<int> UploadGalleryImagesAsync(int bookId, List<IFormFile> imageFiles)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var book = await _context.Books.FindAsync(bookId);
+                if (book == null)
+                    return 0;
+
+                var uploadedCount = 0;
+                var maxDisplayOrder = await _context.BookGalleryImages
+                    .Where(img => img.BookId == bookId)
+                    .MaxAsync(img => (int?)img.DisplayOrder) ?? 0;
+
+                foreach (var imageFile in imageFiles)
+                {
+                    var uploadResult = await _fileUploadService.UploadImageAsync(imageFile, "books/gallery");
+
+                    if (uploadResult.Success)
+                    {
+                        var galleryImage = new BookGalleryImage
+                        {
+                            BookId = bookId,
+                            ImageUrl = uploadResult.ImageUrl,
+                            ImageFileName = uploadResult.FileName,
+                            ImageContentType = uploadResult.ContentType,
+                            ImageFileSize = uploadResult.FileSize,
+                            DisplayOrder = ++maxDisplayOrder,
+                            IsActive = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+
+                        _context.BookGalleryImages.Add(galleryImage);
+                        uploadedCount++;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to upload gallery image: {Error}", uploadResult.ErrorMessage);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return uploadedCount;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Error uploading gallery images for book {BookId}", bookId);
+                return 0;
+            }
+        }
+
+        // 3. Xóa ảnh từ gallery
+        public async Task<bool> RemoveGalleryImageAsync(int imageId)
+        {
+            try
+            {
+                var galleryImage = await _context.BookGalleryImages.FindAsync(imageId);
+                if (galleryImage == null)
+                    return false;
+
+                // Xóa file vật lý
+                if (!string.IsNullOrEmpty(galleryImage.ImageUrl))
+                {
+                    await _fileUploadService.DeleteImageAsync(galleryImage.ImageUrl);
+                }
+
+                // Xóa record khỏi database
+                _context.BookGalleryImages.Remove(galleryImage);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error removing gallery image {ImageId}", imageId);
+                return false;
+            }
         }
     }
 }
