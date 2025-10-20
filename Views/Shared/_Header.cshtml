@@ -102,13 +102,6 @@
 
             <!-- Action Buttons -->
             <div class="flex items-center space-x-1">
-                <!-- Compare -->
-                <a asp-action="Compare" asp-controller="Book"
-                    class="bv-btn-action hover:text-green-600 hover:bg-green-50 group">
-                    <i class="fas fa-balance-scale text-lg group-hover:scale-110 transition-transform"></i>
-                    <span class="bv-badge bg-green-500">@ViewBag.CompareCount ?? 2</span>
-                    <div class="bv-tooltip">So sánh</div>
-                </a>
 
                 <!-- Wishlist -->
                 <a asp-action="Wishlist" asp-controller="Account"
@@ -119,12 +112,13 @@
                 </a>
 
                 <!-- Cart -->
-                <a asp-action="Cart" asp-controller="Shopping"
+                <a asp-controller="Cart" asp-action="Index"
                     class="bv-btn-action hover:text-primary-600 hover:bg-primary-50 group">
                     <i class="fas fa-shopping-bag text-lg group-hover:scale-110 transition-transform"></i>
                     <span class="bv-badge bg-blue-500">@ViewBag.CartCount ?? 3</span>
                     <div class="bv-tooltip">Giỏ hàng</div>
                 </a>
+
 
                 <!-- Account -->
                 <div class="relative group">
