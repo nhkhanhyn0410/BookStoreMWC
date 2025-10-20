@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using BookStoreMVC.Models.Entities;
 
 namespace BookStoreMVC.Data
@@ -12,6 +13,7 @@ namespace BookStoreMVC.Data
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<ApplicationDbContext>>();
 
             try
@@ -23,7 +25,7 @@ namespace BookStoreMVC.Data
                 await CreateRoles(roleManager);
 
                 // Tạo admin duy nhất
-                await CreateAdminUser(userManager);
+                await CreateAdminUser(userManager, configuration, logger);
 
                 logger.LogInformation("✅ Database initialized with admin user only.");
             }
@@ -47,11 +49,18 @@ namespace BookStoreMVC.Data
             }
         }
 
-        private static async Task CreateAdminUser(UserManager<User> userManager)
+        private static async Task CreateAdminUser(UserManager<User> userManager, IConfiguration configuration, ILogger logger)
         {
-            var email = "admin@bookstore.com";
-            var password = "Admin123!"; // bạn nên đổi mật khẩu này
-            var name = "Quản trị viên";
+            // Đọc thông tin admin từ configuration thay vì hardcode
+            var email = configuration["AdminAccount:Email"] ?? "admin@bookstore.com";
+            var password = configuration["AdminAccount:Password"];
+            var name = configuration["AdminAccount:Name"] ?? "Quản trị viên";
+
+            if (string.IsNullOrEmpty(password))
+            {
+                logger.LogWarning("⚠️ Admin password not configured in appsettings.json. Skipping admin user creation.");
+                return;
+            }
 
             var existingUser = await userManager.FindByEmailAsync(email);
             if (existingUser == null)
@@ -69,6 +78,11 @@ namespace BookStoreMVC.Data
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, "Admin");
+                    logger.LogInformation("✅ Admin user created successfully with email: {Email}", email);
+                }
+                else
+                {
+                    logger.LogError("❌ Failed to create admin user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
             }
         }

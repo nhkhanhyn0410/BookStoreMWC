@@ -118,8 +118,10 @@ namespace BookStoreMVC.Models.Entities
                     return System.Text.Json.JsonSerializer.Deserialize<List<string>>(AdditionalImages)
                            ?? new List<string>();
                 }
-                catch
+                catch (System.Text.Json.JsonException)
                 {
+                    // Return empty list if JSON is invalid or corrupt
+                    // This is acceptable for a computed property to avoid breaking the entire entity
                     return new List<string>();
                 }
             }

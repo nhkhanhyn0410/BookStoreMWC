@@ -7,6 +7,7 @@ namespace BookStoreMVC.Services
     {
         CartViewModel GetCart();
         void AddToCart(int bookId, int quantity);
+        Task AddToCartAsync(int bookId, int quantity);
         void UpdateCartItem(int bookId, int quantity);
         void RemoveFromCart(int bookId);
         void ClearCart();
@@ -17,12 +18,17 @@ namespace BookStoreMVC.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IBookService _bookService;
+        private readonly ILogger<SessionCartService> _logger;
         private const string CartSessionKey = "GuestCart";
 
-        public SessionCartService(IHttpContextAccessor httpContextAccessor, IBookService bookService)
+        public SessionCartService(
+            IHttpContextAccessor httpContextAccessor,
+            IBookService bookService,
+            ILogger<SessionCartService> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _bookService = bookService;
+            _logger = logger;
         }
 
         private ISession Session => _httpContextAccessor.HttpContext!.Session;
@@ -41,17 +47,26 @@ namespace BookStoreMVC.Services
                 var cart = JsonSerializer.Deserialize<CartViewModel>(cartJson);
                 return cart ?? new CartViewModel();
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to deserialize cart from session. Returning empty cart.");
                 return new CartViewModel();
             }
         }
 
+        // DEPRECATED: Use AddToCartAsync instead to avoid blocking async calls
         public void AddToCart(int bookId, int quantity)
+        {
+            // Using GetAwaiter().GetResult() instead of .Result to reduce deadlock risk
+            // However, prefer using AddToCartAsync for better performance
+            AddToCartAsync(bookId, quantity).GetAwaiter().GetResult();
+        }
+
+        public async Task AddToCartAsync(int bookId, int quantity)
         {
             var cart = GetCart();
 
-            var book = _bookService.GetBookByIdAsync(bookId).Result;
+            var book = await _bookService.GetBookByIdAsync(bookId);
             if (book == null) return;
 
             var existingItem = cart.Items.FirstOrDefault(i => i.BookId == bookId);

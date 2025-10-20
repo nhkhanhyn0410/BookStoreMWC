@@ -58,29 +58,6 @@ builder.Services.AddSession(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-// === DEBUG - KIỂM TRA CONNECTION STRING ===
-Console.WriteLine("==================== DEBUG INFO ====================");
-Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
-Console.WriteLine($"Connection String: {connectionString}");
-Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
-
-// Kiểm tra tất cả connection strings có sẵn
-var allConnectionStrings = builder.Configuration.GetSection("ConnectionStrings").GetChildren();
-Console.WriteLine("All available connection strings:");
-foreach (var conn in allConnectionStrings)
-{
-    Console.WriteLine($"  {conn.Key}: {conn.Value}");
-}
-
-// Kiểm tra configuration sources
-Console.WriteLine("Configuration sources:");
-var configRoot = (IConfigurationRoot)builder.Configuration;
-foreach (var provider in configRoot.Providers)
-{
-    Console.WriteLine($"  {provider.GetType().Name}");
-}
-Console.WriteLine("=====================================================");
-
 // Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -210,7 +187,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:5001", "https://localhost:7001")
+        var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>()
+            ?? new[] { "https://localhost:5001", "https://localhost:7001" };
+
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
