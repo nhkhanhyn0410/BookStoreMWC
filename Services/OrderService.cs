@@ -208,6 +208,7 @@ namespace BookStoreMVC.Services
                     .Include(o => o.Payment)
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Book)
+                            .ThenInclude(b => b.Category)  // THÊM DÒNG NÀY
                     .Where(o => o.UserId == userId)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToListAsync();
@@ -270,17 +271,19 @@ namespace BookStoreMVC.Services
                 User = order.User,
                 ShippingInfo = order.ShippingInfo,
                 Payment = order.Payment,
-                OrderItems = order.OrderItems.Select(oi => new OrderItemViewModel
-                {
-                    Id = oi.Id,
-                    BookId = oi.BookId,
-                    Quantity = oi.Quantity,
-                    UnitPrice = oi.UnitPrice,
-                    Total = oi.Total,
-                    BookTitle = oi.Book.Title,
-                    BookAuthor = oi.Book.Author,
-                    Book = oi.Book
-                }).ToList()
+                OrderItems = order.OrderItems
+                    .Where(oi => oi.Book != null)  // ← THÊM NULL CHECK
+                    .Select(oi => new OrderItemViewModel
+                    {
+                        Id = oi.Id,
+                        BookId = oi.BookId,
+                        Quantity = oi.Quantity,
+                        UnitPrice = oi.UnitPrice,
+                        Total = oi.Total,
+                        BookTitle = oi.Book.Title,
+                        BookAuthor = oi.Book.Author,
+                        Book = oi.Book
+                    }).ToList()
             };
         }
 

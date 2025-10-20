@@ -40,14 +40,14 @@ document.querySelector('input[type="text"]').addEventListener('keypress', functi
 });
 
 // Search button click
-document.querySelector('.bg-blue-500.hover\\:bg-blue-600').addEventListener('click', function () {
-    const searchInput = document.querySelector('input[type="text"]');
-    const searchTerm = searchInput.value;
-    if (searchTerm.trim()) {
-        console.log('Searching for:', searchTerm);
-        // Here you would implement actual search functionality
-    }
-});
+// document.querySelector('.bg-blue-500.hover\\:bg-blue-600').addEventListener('click', function () {
+//     const searchInput = document.querySelector('input[type="text"]');
+//     const searchTerm = searchInput.value;
+//     if (searchTerm.trim()) {
+//         console.log('Searching for:', searchTerm);
+//         // Here you would implement actual search functionality
+//     }
+// });
 
 // Smooth scroll for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
