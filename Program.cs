@@ -160,9 +160,10 @@ builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
-
-// Register Session Cart Service (MỚI - Quan trọng cho Guest Cart)
 builder.Services.AddScoped<ISessionCartService, SessionCartService>();
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 // ===================================================================
 // 8. CẤU HÌNH LOGGING

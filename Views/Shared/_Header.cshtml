@@ -104,7 +104,7 @@
             <div class="flex items-center space-x-1">
 
                 <!-- Wishlist -->
-                <a asp-action="Wishlist" asp-controller="Account"
+                <a asp-action="Index" asp-controller="Wishlist"
                     class="bv-btn-action hover:text-pink-500 hover:bg-pink-50 group">
                     <i class="fas fa-heart text-lg group-hover:scale-110 transition-transform"></i>
                     <span class="bv-badge bg-pink-500">@ViewBag.WishlistCount ?? 8</span>
@@ -115,7 +115,7 @@
                 <a asp-controller="Cart" asp-action="Index"
                     class="bv-btn-action hover:text-primary-600 hover:bg-primary-50 group">
                     <i class="fas fa-shopping-bag text-lg group-hover:scale-110 transition-transform"></i>
-                    <span class="bv-badge bg-blue-500">@ViewBag.CartCount ?? 3</span>
+                    <span class="bv-badge bg-blue-500">(@ViewBag.CartCount ?? 3)</span>
                     <div class="bv-tooltip">Giỏ hàng</div>
                 </a>
 
@@ -153,14 +153,11 @@
                                         <i class="fas fa-user w-4 mr-3 text-gray-400"></i>
                                         Hồ sơ của tôi
                                     </a>
-                                    <a asp-action="Orders" asp-controller="Account" class="bv-dropdown-item">
+                                    <a asp-action="Index" asp-controller="Orders" class="bv-dropdown-item">
                                         <i class="fas fa-clipboard-list w-4 mr-3 text-gray-400"></i>
                                         Đơn hàng của tôi
                                     </a>
-                                    <a asp-action="Settings" asp-controller="Account" class="bv-dropdown-item">
-                                        <i class="fas fa-cog w-4 mr-3 text-gray-400"></i>
-                                        Cài đặt
-                                    </a>
+
                                 </div>
                                 <div class="border-t border-gray-100 py-2">
                                     <form asp-action="Logout" asp-controller="Account" method="post">

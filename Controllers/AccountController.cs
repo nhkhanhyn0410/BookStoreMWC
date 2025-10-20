@@ -1,3 +1,4 @@
+// Controllers/AccountController.cs - HOÀN CHỈNH KHÔNG CÓ 2FA
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -14,25 +15,25 @@ namespace BookStoreMVC.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ICartService _cartService;
-        private readonly ISessionCartService _sessionCartService; // ← THÊM DÒNG NÀY
+        private readonly ISessionCartService _sessionCartService;
         private readonly ILogger<AccountController> _logger;
 
         // ===================================================================
-        // CONSTRUCTOR - Thêm ISessionCartService và ICartService
+        // CONSTRUCTOR
         // ===================================================================
         public AccountController(
             IUserService userService,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            ICartService cartService,              // ← THÊM
-            ISessionCartService sessionCartService, // ← THÊM
+            ICartService cartService,
+            ISessionCartService sessionCartService,
             ILogger<AccountController> logger)
         {
             _userService = userService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _cartService = cartService;              // ← THÊM
-            _sessionCartService = sessionCartService; // ← THÊM
+            _cartService = cartService;
+            _sessionCartService = sessionCartService;
             _logger = logger;
         }
 
@@ -57,7 +58,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // ===================================================================
-        // PROFILE
+        // PROFILE - GET
         // ===================================================================
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -82,24 +83,31 @@ namespace BookStoreMVC.Controllers
             }
         }
 
+        // ===================================================================
+        // PROFILE - POST (Update Profile)
+        // ===================================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Profile(UserProfileViewModel model)
+        public async Task<IActionResult> Profile(EditProfileViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return View(model);
+                    // Nếu validation fail, load lại profile
+                    var userId = _userManager.GetUserId(User)!;
+                    var fullProfile = await _userService.GetUserProfileAsync(userId);
+                    return View(fullProfile);
                 }
 
-                var userId = _userManager.GetUserId(User)!;
-                var success = await _userService.UpdateUserProfileAsync(userId, model);
+                var currentUserId = _userManager.GetUserId(User)!;
+                var success = await _userService.UpdateUserProfileAsync(currentUserId, model);
 
                 if (!success)
                 {
                     ModelState.AddModelError("", "Không thể cập nhật hồ sơ.");
-                    return View(model);
+                    var fullProfile = await _userService.GetUserProfileAsync(currentUserId);
+                    return View(fullProfile);
                 }
 
                 TempData["SuccessMessage"] = "Cập nhật hồ sơ thành công!";
@@ -109,12 +117,70 @@ namespace BookStoreMVC.Controllers
             {
                 _logger.LogError(ex, "Error updating user profile");
                 ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi cập nhật hồ sơ.");
+
+                var userId = _userManager.GetUserId(User)!;
+                var profile = await _userService.GetUserProfileAsync(userId);
+                return View(profile ?? new UserProfileViewModel());
+            }
+        }
+
+        // ===================================================================
+        // CHANGE PASSWORD
+        // ===================================================================
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            ViewBag.PageTitle = "Đổi mật khẩu";
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction(nameof(Login));
+                }
+
+                var result = await _userManager.ChangePasswordAsync(
+                    user,
+                    model.CurrentPassword,
+                    model.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(user);
+                    _logger.LogInformation("User changed their password successfully.");
+                    TempData["SuccessMessage"] = "Mật khẩu đã được thay đổi thành công.";
+                    return RedirectToAction(nameof(Profile));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error changing password");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi khi đổi mật khẩu.");
                 return View(model);
             }
         }
 
         // ===================================================================
-        // LOGIN - VỚI CART MIGRATION
+        // LOGIN - GET
         // ===================================================================
         [AllowAnonymous]
         [HttpGet]
@@ -130,6 +196,9 @@ namespace BookStoreMVC.Controllers
             return View();
         }
 
+        // ===================================================================
+        // LOGIN - POST (KHÔNG CÓ 2FA)
+        // ===================================================================
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -158,9 +227,7 @@ namespace BookStoreMVC.Controllers
                 {
                     _logger.LogInformation("User logged in.");
 
-                    // ===================================================================
                     // MIGRATE GIỎ HÀNG TỪ SESSION SANG DATABASE
-                    // ===================================================================
                     if (sessionCartItems.Any())
                     {
                         var userId = _userManager.GetUserId(User)!;
@@ -202,15 +269,14 @@ namespace BookStoreMVC.Controllers
                     }
                 }
 
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
-                }
+                // BỎ HOÀN TOÀN 2FA - Không check RequiresTwoFactor nữa
+                // if (result.RequiresTwoFactor) { ... } // ← ĐÃ XÓA
 
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
-                    ModelState.AddModelError(string.Empty, "Tài khoản của bạn đã bị khóa do đăng nhập sai quá nhiều lần. Vui lòng thử lại sau.");
+                    ModelState.AddModelError(string.Empty,
+                        "Tài khoản của bạn đã bị khóa do đăng nhập sai quá nhiều lần. Vui lòng thử lại sau.");
                     return View(model);
                 }
                 else
@@ -228,7 +294,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // ===================================================================
-        // REGISTER - VỚI CART MIGRATION
+        // REGISTER - GET
         // ===================================================================
         [AllowAnonymous]
         [HttpGet]
@@ -244,6 +310,9 @@ namespace BookStoreMVC.Controllers
             return View();
         }
 
+        // ===================================================================
+        // REGISTER - POST
+        // ===================================================================
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -266,6 +335,7 @@ namespace BookStoreMVC.Controllers
                     UserName = model.Email,
                     Email = model.Email,
                     Name = model.FullName,
+                    PhoneNumber = model.PhoneNumber,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -275,15 +345,13 @@ namespace BookStoreMVC.Controllers
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Add to Customer role
-                    await _userManager.AddToRoleAsync(user, "Customer");
+                    // Thêm role User cho tài khoản mới
+                    await _userManager.AddToRoleAsync(user, "User");
 
-                    // Sign in user
+                    // Tự động đăng nhập sau khi đăng ký
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    // ===================================================================
-                    // MIGRATE GIỎ HÀNG SAU KHI ĐĂNG KÝ
-                    // ===================================================================
+                    // MIGRATE GIỎ HÀNG TỪ SESSION SANG DATABASE
                     if (sessionCartItems.Any())
                     {
                         foreach (var item in sessionCartItems)
@@ -298,28 +366,32 @@ namespace BookStoreMVC.Controllers
                             }
                             catch (Exception ex)
                             {
-                                _logger.LogError(ex, $"Error migrating cart item {item.BookId} after registration");
+                                _logger.LogError(ex, $"Error migrating cart item {item.BookId}");
                             }
                         }
 
-                        // Xóa session cart
                         _sessionCartService.ClearCart();
-
                         TempData["SuccessMessage"] = "Đăng ký thành công! Giỏ hàng của bạn đã được lưu.";
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "Đăng ký thành công! Chào mừng đến với BookStore!";
+                        TempData["SuccessMessage"] = "Đăng ký thành công! Chào mừng bạn đến với BookVerse.";
                     }
 
-                    return LocalRedirect(returnUrl ?? "/");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
+                    // Redirect
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        return Redirect(returnUrl);
                     }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
 
                 return View(model);
@@ -327,7 +399,7 @@ namespace BookStoreMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during registration");
-                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi trong quá trình đăng ký.");
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.");
                 return View(model);
             }
         }
@@ -346,7 +418,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // ===================================================================
-        // FORGOT PASSWORD
+        // FORGOT PASSWORD - GET
         // ===================================================================
         [AllowAnonymous]
         [HttpGet]
@@ -356,6 +428,9 @@ namespace BookStoreMVC.Controllers
             return View();
         }
 
+        // ===================================================================
+        // FORGOT PASSWORD - POST
+        // ===================================================================
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -381,12 +456,16 @@ namespace BookStoreMVC.Controllers
             // TODO: Gửi email callbackUrl cho user
             // await _emailService.SendPasswordResetEmailAsync(model.Email, callbackUrl);
 
+            _logger.LogInformation($"Password reset link generated for {model.Email}: {callbackUrl}");
+
             TempData["SuccessMessage"] = "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.";
+            TempData["DebugResetUrl"] = callbackUrl; // CHỈ CHO DEV - XÓA KHI PRODUCTION
+
             return RedirectToAction(nameof(Login));
         }
 
         // ===================================================================
-        // RESET PASSWORD
+        // RESET PASSWORD - GET
         // ===================================================================
         [AllowAnonymous]
         [HttpGet]
@@ -407,6 +486,9 @@ namespace BookStoreMVC.Controllers
             return View(model);
         }
 
+        // ===================================================================
+        // RESET PASSWORD - POST
+        // ===================================================================
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -437,68 +519,6 @@ namespace BookStoreMVC.Controllers
             }
 
             return View(model);
-        }
-
-        // ===================================================================
-        // TWO FACTOR AUTHENTICATION (Optional)
-        // ===================================================================
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> LoginWith2fa(bool rememberMe, string? returnUrl = null)
-        {
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-
-            if (user == null)
-            {
-                return RedirectToAction(nameof(Login));
-            }
-
-            var model = new LoginWith2faViewModel { RememberMe = rememberMe };
-            ViewData["ReturnUrl"] = returnUrl;
-            ViewBag.PageTitle = "Xác thực 2 yếu tố";
-
-            return View(model);
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginWith2fa(LoginWith2faViewModel model, string? returnUrl = null)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
-            if (user == null)
-            {
-                return RedirectToAction(nameof(Login));
-            }
-
-            var authenticatorCode = model.TwoFactorCode.Replace(" ", string.Empty).Replace("-", string.Empty);
-
-            var result = await _signInManager.TwoFactorAuthenticatorSignInAsync(
-                authenticatorCode,
-                model.RememberMe,
-                model.RememberMachine);
-
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
-                return LocalRedirect(returnUrl ?? "/");
-            }
-            else if (result.IsLockedOut)
-            {
-                _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
-                ModelState.AddModelError(string.Empty, "Tài khoản bị khóa.");
-                return View(model);
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Mã xác thực không hợp lệ.");
-                return View(model);
-            }
         }
 
         // ===================================================================

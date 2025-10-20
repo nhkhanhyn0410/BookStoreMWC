@@ -1,3 +1,4 @@
+// Models/ViewModels/AccountViewModels.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace BookStoreMVC.Models.ViewModels
@@ -36,6 +37,10 @@ namespace BookStoreMVC.Models.ViewModels
         [Display(Name = "Email")]
         public string Email { get; set; } = string.Empty;
 
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Display(Name = "Số điện thoại")]
+        public string? PhoneNumber { get; set; }
+
         [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
         [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} và tối đa {1} ký tự", MinimumLength = 6)]
         [DataType(DataType.Password)]
@@ -49,6 +54,8 @@ namespace BookStoreMVC.Models.ViewModels
 
         [Display(Name = "Tôi đồng ý với điều khoản và điều kiện")]
         public bool AgreeToTerms { get; set; }
+        [Display(Name = "Tôi muốn nhận email về các chương trình ưu đãi")]
+        public bool ReceivePromotions { get; set; }
     }
 
     // ===================================================================
@@ -85,23 +92,7 @@ namespace BookStoreMVC.Models.ViewModels
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 
-    // ===================================================================
-    // LOGIN WITH 2FA VIEW MODEL
-    // ===================================================================
-    public class LoginWith2faViewModel
-    {
-        [Required(ErrorMessage = "Mã xác thực là bắt buộc")]
-        [StringLength(7, ErrorMessage = "Mã xác thực phải có {1} ký tự", MinimumLength = 6)]
-        [DataType(DataType.Text)]
-        [Display(Name = "Mã xác thực")]
-        public string TwoFactorCode { get; set; } = string.Empty;
-
-        [Display(Name = "Ghi nhớ đăng nhập")]
-        public bool RememberMe { get; set; }
-
-        [Display(Name = "Ghi nhớ máy này")]
-        public bool RememberMachine { get; set; }
-    }
+    // ❌ ĐÃ XÓA: LoginWith2faViewModel - Không cần 2FA nữa
 
     // ===================================================================
     // CHANGE PASSWORD VIEW MODEL
@@ -126,7 +117,7 @@ namespace BookStoreMVC.Models.ViewModels
     }
 
     // ===================================================================
-    // USER PROFILE VIEW MODEL
+    // USER PROFILE VIEW MODEL (ENHANCED)
     // ===================================================================
     public class UserProfileViewModel
     {
@@ -163,30 +154,87 @@ namespace BookStoreMVC.Models.ViewModels
 
         [Display(Name = "Ngày tham gia")]
         public DateTime CreatedAt { get; set; }
+
+        // THỐNG KÊ
+        [Display(Name = "Tổng đơn hàng")]
+        public int TotalOrders { get; set; }
+
+        [Display(Name = "Tổng chi tiêu")]
+        public decimal TotalSpent { get; set; }
+
+        [Display(Name = "Số đánh giá")]
+        public int ReviewsCount { get; set; }
+
+        [Display(Name = "Số sản phẩm yêu thích")]
+        public int WishlistCount { get; set; }
+
+        [Display(Name = "Thành viên từ")]
+        public DateTime MemberSince { get; set; }
+
+        // HOẠT ĐỘNG GẦN ĐÂY
+        public List<OrderViewModel> RecentOrders { get; set; } = new();
+        public List<ReviewViewModel> RecentReviews { get; set; } = new();
+    }
+
+    // ===================================================================
+    // EDIT PROFILE VIEW MODEL
+    // ===================================================================
+    public class EditProfileViewModel
+    {
+        [Required(ErrorMessage = "Họ tên là bắt buộc")]
+        [StringLength(100)]
+        [Display(Name = "Họ và tên")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email là bắt buộc")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
+
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        [Display(Name = "Số điện thoại")]
+        public string? PhoneNumber { get; set; }
+
+        [StringLength(200)]
+        [Display(Name = "Địa chỉ")]
+        public string? Address { get; set; }
+
+        [StringLength(100)]
+        [Display(Name = "Thành phố")]
+        public string? City { get; set; }
+
+        [StringLength(100)]
+        [Display(Name = "Quốc gia")]
+        public string? Country { get; set; }
+
+        [Display(Name = "Ảnh đại diện")]
+        public IFormFile? AvatarFile { get; set; }
+
+        public string? CurrentProfilePictureUrl { get; set; }
     }
 
     // ===================================================================
     // USER DASHBOARD VIEW MODEL
     // ===================================================================
-    public class UserDashboardViewModel
-    {
-        public string UserId { get; set; } = string.Empty;
-        public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string? ProfilePictureUrl { get; set; }
+    // public class UserDashboardViewModel
+    // {
+    //     public string UserId { get; set; } = string.Empty;
+    //     public string UserName { get; set; } = string.Empty;
+    //     public string Email { get; set; } = string.Empty;
+    //     public string? ProfilePictureUrl { get; set; }
 
-        // Statistics
-        public int TotalOrders { get; set; }
-        public int PendingOrders { get; set; }
-        public int CompletedOrders { get; set; }
-        public decimal TotalSpent { get; set; }
+    //     // Statistics
+    //     public int TotalOrders { get; set; }
+    //     public int PendingOrders { get; set; }
+    //     public int CompletedOrders { get; set; }
+    //     public decimal TotalSpent { get; set; }
 
-        public int WishlistCount { get; set; }
-        public int CartItemCount { get; set; }
-        public int ReviewCount { get; set; }
+    //     public int WishlistCount { get; set; }
+    //     public int CartItemCount { get; set; }
+    //     public int ReviewCount { get; set; }
 
-        // Recent activities
-        public List<OrderViewModel> RecentOrders { get; set; } = new();
-        public List<BookViewModel> RecentlyViewedBooks { get; set; } = new();
-    }
+    //     // Recent activities
+    //     public List<OrderViewModel> RecentOrders { get; set; } = new();
+    //     public List<BookViewModel> RecentlyViewedBooks { get; set; } = new();
+    // }
 }

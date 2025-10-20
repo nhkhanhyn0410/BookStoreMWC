@@ -168,8 +168,8 @@ namespace BookStoreMVC.Services
                 CartItemsCount = cartItemsCount,
                 WishlistItemsCount = wishlistItemsCount,
                 PendingOrdersCount = pendingOrdersCount,
-                TotalSpent = totalSpent,
-                RecentOrders = recentOrders,
+                // TotalSpent = totalSpent,
+                // RecentOrders = recentOrders,
                 RecommendedBooks = recommendedBooks
             };
         }
