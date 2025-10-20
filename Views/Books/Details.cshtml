@@ -564,19 +564,34 @@ function validateQuantity() {
     input.value = value;
 }
 
+// Thay thế hàm addToCart() trong Views/Books/Details.cshtml
+
 function addToCart() {
     const quantity = parseInt(document.getElementById('quantity').value);
-    fetch('/cart/add', {
+    
+    // Lấy anti-forgery token
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    
+    fetch('/Cart/AddToCart', {  // ✅ Sửa URL từ /cart/add thành /Cart/AddToCart
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookId: @Model.Book.Id, quantity: quantity })
+        headers: { 
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': token || ''  // ✅ Thêm token
+        },
+        body: JSON.stringify({ 
+            bookId: @Model.Book.Id, 
+            quantity: quantity 
+        })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             showNotification('Đã thêm vào giỏ hàng!', 'success');
-            const cartCount = document.getElementById('cart-count');
-            if (cartCount) cartCount.textContent = data.cartCount;
+            // ✅ Cập nhật số lượng giỏ hàng
+            const cartCount = document.querySelector('.cart-count');
+            if (cartCount && data.cartItemCount) {
+                cartCount.textContent = data.cartItemCount;
+            }
         } else {
             showNotification(data.message || 'Có lỗi xảy ra!', 'error');
         }

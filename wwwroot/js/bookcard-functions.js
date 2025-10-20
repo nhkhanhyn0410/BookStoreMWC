@@ -19,6 +19,12 @@ function getAntiForgeryToken() {
 /**
  * Hiển thị thông báo toast
  */
+/**
+ * Hiển thị notification không bị header che
+ * @param {string} message - Nội dung thông báo
+ * @param {string} type - Loại: 'success', 'error', 'warning', 'info'
+ * @param {number} duration - Thời gian hiển thị (ms)
+ */
 function showNotification(message, type = 'success', duration = 3000) {
     // Xóa notification cũ nếu có
     const oldNotification = document.querySelector('.toast-notification');
@@ -26,10 +32,26 @@ function showNotification(message, type = 'success', duration = 3000) {
         oldNotification.remove();
     }
 
+    // Tính toán vị trí top dựa trên header height
+    const header = document.querySelector('header, nav, .navbar');
+    let topPosition = '1rem'; // 16px mặc định
+    
+    if (header) {
+        const headerHeight = header.offsetHeight;
+        // Thêm 16px padding bên dưới header
+        topPosition = `${headerHeight + 16}px`;
+    } else {
+        // Nếu không tìm thấy header, dùng top cao hơn
+        topPosition = '5rem'; // 80px
+    }
+
     // Tạo notification mới
     const notification = document.createElement('div');
-    notification.className = 'toast-notification fixed top-4 right-4 z-[9999] transform transition-all duration-300 ease-in-out';
-    
+    notification.className = 'toast-notification fixed right-4 z-[10000] transform transition-all duration-300 ease-in-out';
+    notification.style.top = topPosition;
+    notification.style.transform = 'translateX(400px)'; // Start off-screen
+    notification.style.opacity = '0';
+
     const bgColor = {
         'success': 'bg-green-500',
         'error': 'bg-red-500',
@@ -45,10 +67,11 @@ function showNotification(message, type = 'success', duration = 3000) {
     }[type] || 'fa-info-circle';
 
     notification.innerHTML = `
-        <div class="${bgColor} text-white px-6 py-4 rounded-lg shadow-2xl flex items-center space-x-3 animate-slide-in">
-            <i class="fas ${icon} text-xl"></i>
-            <span class="font-medium">${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 hover:bg-white/20 rounded p-1">
+        <div class="${bgColor} text-white px-6 py-4 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[300px] max-w-[500px]">
+            <i class="fas ${icon} text-xl flex-shrink-0"></i>
+            <span class="font-medium flex-grow">${message}</span>
+            <button onclick="closeNotification(this)" 
+                    class="ml-4 hover:bg-white/20 rounded p-1 flex-shrink-0 transition-colors">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -56,13 +79,164 @@ function showNotification(message, type = 'success', duration = 3000) {
 
     document.body.appendChild(notification);
 
+    // Trigger animation (slide in)
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+    }, 10);
+
     // Tự động xóa sau duration
     setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => notification.remove(), 300);
+        closeNotificationElement(notification);
     }, duration);
 }
+
+/**
+ * Đóng notification khi click nút X
+ */
+function closeNotification(button) {
+    const notification = button.closest('.toast-notification');
+    if (notification) {
+        closeNotificationElement(notification);
+    }
+}
+
+/**
+ * Animation đóng notification
+ */
+function closeNotificationElement(notification) {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateX(400px)';
+    setTimeout(() => {
+        notification.remove();
+    }, 300);
+}
+
+/**
+ * Hiển thị nhiều notifications xếp chồng (nếu cần)
+ * @param {string} message - Nội dung thông báo
+ * @param {string} type - Loại thông báo
+ * @param {number} duration - Thời gian hiển thị
+ */
+function showNotificationStack(message, type = 'success', duration = 3000) {
+    // Tính toán vị trí top cho notification mới
+    const header = document.querySelector('header, nav, .navbar');
+    let baseTop = header ? header.offsetHeight + 16 : 80;
+    
+    // Đếm số notification đang hiển thị
+    const existingNotifications = document.querySelectorAll('.toast-notification-stack');
+    const offset = existingNotifications.length * 90; // Mỗi notification cách nhau 90px
+    
+    const topPosition = `${baseTop + offset}px`;
+
+    // Tạo notification
+    const notification = document.createElement('div');
+    notification.className = 'toast-notification-stack fixed right-4 z-[10000] transform transition-all duration-300 ease-in-out';
+    notification.style.top = topPosition;
+    notification.style.transform = 'translateX(400px)';
+    notification.style.opacity = '0';
+
+    const bgColor = {
+        'success': 'bg-green-500',
+        'error': 'bg-red-500',
+        'warning': 'bg-yellow-500',
+        'info': 'bg-blue-500'
+    }[type] || 'bg-gray-500';
+
+    const icon = {
+        'success': 'fa-check-circle',
+        'error': 'fa-exclamation-circle',
+        'warning': 'fa-exclamation-triangle',
+        'info': 'fa-info-circle'
+    }[type] || 'fa-info-circle';
+
+    notification.innerHTML = `
+        <div class="${bgColor} text-white px-6 py-4 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[300px] max-w-[500px] top-20">
+            <i class="fas ${icon} text-xl flex-shrink-0"></i>
+            <span class="font-medium flex-grow">${message}</span>
+            <button onclick="closeNotificationStack(this)" 
+                    class="ml-4 hover:bg-white/20 rounded p-1 flex-shrink-0 transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Trigger animation
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+    }, 10);
+
+    // Tự động xóa và dời các notification khác lên
+    setTimeout(() => {
+        closeAndReposition(notification);
+    }, duration);
+}
+
+/**
+ * Đóng notification trong stack
+ */
+function closeNotificationStack(button) {
+    const notification = button.closest('.toast-notification-stack');
+    if (notification) {
+        closeAndReposition(notification);
+    }
+}
+
+/**
+ * Đóng và sắp xếp lại vị trí các notifications
+ */
+function closeAndReposition(notification) {
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateX(400px)';
+    
+    setTimeout(() => {
+        notification.remove();
+        
+        // Dời các notification phía dưới lên
+        const remainingNotifications = document.querySelectorAll('.toast-notification-stack');
+        const header = document.querySelector('header, nav, .navbar');
+        const baseTop = header ? header.offsetHeight + 16 : 80;
+        
+        remainingNotifications.forEach((notif, index) => {
+            const newTop = `${baseTop + (index * 90)}px`;
+            notif.style.top = newTop;
+        });
+    }, 300);
+}
+
+// Thêm CSS cho responsive trên mobile
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @media (max-width: 640px) {
+        .toast-notification,
+        .toast-notification-stack {
+            right: 0.5rem !important;
+            left: 0.5rem !important;
+            width: calc(100% - 1rem) !important;
+        }
+        
+        .toast-notification > div,
+        .toast-notification-stack > div {
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
+    
+    /* Đảm bảo notification luôn nằm trên mọi element */
+    .toast-notification,
+    .toast-notification-stack {
+        pointer-events: none;
+    }
+    
+    .toast-notification > div,
+    .toast-notification-stack > div {
+        pointer-events: auto;
+    }
+`;
+document.head.appendChild(notificationStyles);
 
 /**
  * Cập nhật số lượng sản phẩm trong giỏ hàng (header)

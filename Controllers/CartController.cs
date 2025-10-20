@@ -1,6 +1,9 @@
+// Controllers/CartController.cs - FIXED VERSION
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using BookStoreMVC.Data;
 using BookStoreMVC.Models.Entities;
 using BookStoreMVC.Models.ViewModels;
 using BookStoreMVC.Services;
@@ -12,21 +15,24 @@ namespace BookStoreMVC.Controllers
         private readonly ICartService _cartService;
         private readonly ISessionCartService _sessionCartService;
         private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<CartController> _logger;
 
         public CartController(
             ICartService cartService,
             ISessionCartService sessionCartService,
             UserManager<User> userManager,
+            ApplicationDbContext context,
             ILogger<CartController> logger)
         {
             _cartService = cartService;
             _sessionCartService = sessionCartService;
             _userManager = userManager;
+            _context = context;
             _logger = logger;
         }
 
-        // Cho phép xem giỏ hàng không cần đăng nhập
+        // GET: Cart/Index
         public async Task<IActionResult> Index()
         {
             try
@@ -35,13 +41,11 @@ namespace BookStoreMVC.Controllers
 
                 if (User.Identity?.IsAuthenticated == true)
                 {
-                    // Người dùng đã đăng nhập - load từ database
                     var userId = _userManager.GetUserId(User)!;
                     cart = await _cartService.GetCartAsync(userId);
                 }
                 else
                 {
-                    // Khách - load từ session
                     cart = _sessionCartService.GetCart();
                 }
 
@@ -51,20 +55,76 @@ namespace BookStoreMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading cart");
+                TempData["ErrorMessage"] = "Có lỗi xảy ra khi tải giỏ hàng";
                 return View(new CartViewModel());
             }
         }
 
-        // Cho phép thêm vào giỏ hàng không cần đăng nhập
+        // POST: Cart/AddToCart
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddToCart(AddToCartViewModel model)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartViewModel model)
         {
             try
             {
+                _logger.LogInformation("AddToCart request - BookId: {BookId}, Quantity: {Quantity}",
+                    model.BookId, model.Quantity);
+
                 if (!ModelState.IsValid)
                 {
-                    return Json(new { success = false, message = "Invalid request" });
+                    _logger.LogWarning("Invalid model state");
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Dữ liệu không hợp lệ"
+                    });
+                }
+
+                // Validate book trước (cho cả User và Guest)
+                var book = await _context.Books
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(b => b.Id == model.BookId);
+
+                if (book == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Sản phẩm không tồn tại",
+                        errorCode = "BOOK_NOT_FOUND"
+                    });
+                }
+
+                if (!book.IsActive)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Sản phẩm hiện không còn bán",
+                        errorCode = "BOOK_INACTIVE"
+                    });
+                }
+
+                if (book.StockQuantity <= 0)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Sản phẩm đã hết hàng",
+                        errorCode = "OUT_OF_STOCK",
+                        availableStock = 0
+                    });
+                }
+
+                if (model.Quantity > book.StockQuantity)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Kho chỉ còn {book.StockQuantity} sản phẩm",
+                        errorCode = "INSUFFICIENT_STOCK",
+                        availableStock = book.StockQuantity
+                    });
                 }
 
                 bool success;
@@ -72,52 +132,100 @@ namespace BookStoreMVC.Controllers
 
                 if (User.Identity?.IsAuthenticated == true)
                 {
-                    // Người dùng đã đăng nhập
+                    // ==== USER ĐÃ ĐĂNG NHẬP ====
                     var userId = _userManager.GetUserId(User)!;
                     success = await _cartService.AddToCartAsync(userId, model);
                     itemCount = await _cartService.GetCartItemCountAsync(userId);
-                }
-                else
-                {
-                    // Khách - lưu vào session
-                    _sessionCartService.AddToCart(model.BookId, model.Quantity);
-                    success = true;
-                    itemCount = _sessionCartService.GetCartItemCount();
-                }
 
-                if (success)
-                {
-                    return Json(new
+                    if (success)
                     {
-                        success = true,
-                        message = "Đã thêm vào giỏ hàng!",
-                        cartItemCount = itemCount
-                    });
+                        return Json(new
+                        {
+                            success = true,
+                            message = "Đã thêm vào giỏ hàng!",
+                            cartItemCount = itemCount
+                        });
+                    }
+                    else
+                    {
+                        // Kiểm tra xem có phải lỗi vượt quá giới hạn không
+                        var existingItem = await _context.CartItems
+                            .FirstOrDefaultAsync(ci => ci.UserId == userId && ci.BookId == model.BookId);
+
+                        if (existingItem != null)
+                        {
+                            int newTotal = existingItem.Quantity + model.Quantity;
+                            if (newTotal > book.StockQuantity)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = $"Kho chỉ còn {book.StockQuantity} sản phẩm. Bạn đã có {existingItem.Quantity} trong giỏ hàng.",
+                                    errorCode = "INSUFFICIENT_STOCK",
+                                    availableStock = book.StockQuantity,
+                                    currentCartQuantity = existingItem.Quantity
+                                });
+                            }
+                            else if (newTotal > 10)
+                            {
+                                return Json(new
+                                {
+                                    success = false,
+                                    message = $"Bạn chỉ có thể mua tối đa 10 sản phẩm này. Bạn đã có {existingItem.Quantity} trong giỏ hàng.",
+                                    errorCode = "QUANTITY_LIMIT_EXCEEDED",
+                                    currentCartQuantity = existingItem.Quantity
+                                });
+                            }
+                        }
+
+                        return Json(new
+                        {
+                            success = false,
+                            message = "Không thể thêm sản phẩm. Vui lòng kiểm tra tồn kho."
+                        });
+                    }
                 }
                 else
                 {
-                    return Json(new
+                    // ==== GUEST (CHƯA ĐĂNG NHẬP) ====
+                    try
                     {
-                        success = false,
-                        message = "Không thể thêm sản phẩm. Vui lòng kiểm tra tồn kho."
-                    });
+                        _sessionCartService.AddToCart(model.BookId, model.Quantity);
+                        itemCount = _sessionCartService.GetCartItemCount();
+
+                        return Json(new
+                        {
+                            success = true,
+                            message = "Đã thêm vào giỏ hàng!",
+                            cartItemCount = itemCount
+                        });
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        // SessionCartService throw InvalidOperationException với message chi tiết
+                        return Json(new
+                        {
+                            success = false,
+                            message = ex.Message
+                        });
+                    }
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding item to cart");
+                _logger.LogError(ex, "Unexpected error in AddToCart");
                 return Json(new
                 {
                     success = false,
-                    message = "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng."
+                    message = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau."
                 });
             }
         }
 
-        // Cho phép cập nhật số lượng không cần đăng nhập
+        // POST: Cart/UpdateCartItem
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateCartItem(UpdateCartItemViewModel model)
+        public async Task<IActionResult> UpdateCartItem([FromBody] UpdateCartItemViewModel model)
         {
             try
             {
@@ -126,22 +234,30 @@ namespace BookStoreMVC.Controllers
 
                 if (User.Identity?.IsAuthenticated == true)
                 {
-                    // Người dùng đã đăng nhập
                     var userId = _userManager.GetUserId(User)!;
                     success = await _cartService.UpdateCartItemAsync(userId, model.BookId, model.Quantity);
                     cart = await _cartService.GetCartAsync(userId);
                 }
                 else
                 {
-                    // Khách - cập nhật session
-                    _sessionCartService.UpdateCartItem(model.BookId, model.Quantity);
-                    cart = _sessionCartService.GetCart();
-                    success = true;
+                    try
+                    {
+                        _sessionCartService.UpdateCartItem(model.BookId, model.Quantity);
+                        cart = _sessionCartService.GetCart();
+                        success = true;
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = ex.Message
+                        });
+                    }
                 }
 
                 if (success)
                 {
-                    // Tìm item total cho sản phẩm vừa cập nhật
                     var item = cart.Items.FirstOrDefault(i => i.BookId == model.BookId);
                     var itemTotal = item != null ? (item.Price * item.Quantity).ToString("C0") : "0 ₫";
 
@@ -162,7 +278,11 @@ namespace BookStoreMVC.Controllers
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Không thể cập nhật số lượng." });
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Không thể cập nhật số lượng. Vui lòng kiểm tra tồn kho."
+                    });
                 }
             }
             catch (Exception ex)
@@ -176,10 +296,10 @@ namespace BookStoreMVC.Controllers
             }
         }
 
-        // Cho phép xóa sản phẩm không cần đăng nhập
+        // POST: Cart/RemoveFromCart
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveFromCart(RemoveFromCartViewModel model)
+        public async Task<IActionResult> RemoveFromCart([FromBody] RemoveFromCartViewModel model)
         {
             try
             {
@@ -188,14 +308,12 @@ namespace BookStoreMVC.Controllers
 
                 if (User.Identity?.IsAuthenticated == true)
                 {
-                    // Người dùng đã đăng nhập
                     var userId = _userManager.GetUserId(User)!;
                     success = await _cartService.RemoveFromCartAsync(userId, model.BookId);
                     cart = await _cartService.GetCartAsync(userId);
                 }
                 else
                 {
-                    // Khách - xóa khỏi session
                     _sessionCartService.RemoveFromCart(model.BookId);
                     cart = _sessionCartService.GetCart();
                     success = true;
@@ -237,7 +355,7 @@ namespace BookStoreMVC.Controllers
             }
         }
 
-        // Cho phép xóa toàn bộ giỏ hàng không cần đăng nhập
+        // POST: Cart/ClearCart
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClearCart()
@@ -248,13 +366,11 @@ namespace BookStoreMVC.Controllers
 
                 if (User.Identity?.IsAuthenticated == true)
                 {
-                    // Người dùng đã đăng nhập
                     var userId = _userManager.GetUserId(User)!;
                     success = await _cartService.ClearCartAsync(userId);
                 }
                 else
                 {
-                    // Khách - xóa session
                     _sessionCartService.ClearCart();
                     success = true;
                 }
@@ -279,7 +395,7 @@ namespace BookStoreMVC.Controllers
             }
         }
 
-        // Lấy số lượng items trong giỏ hàng
+        // GET: Cart/GetCartCount
         [HttpGet]
         public async Task<IActionResult> GetCartCount()
         {
@@ -306,9 +422,9 @@ namespace BookStoreMVC.Controllers
             }
         }
 
-        // Action để migrate giỏ hàng từ session sang database khi user đăng nhập
-        // Gọi action này trong AccountController sau khi login thành công
+        // POST: Cart/MigrateGuestCart
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> MigrateGuestCart()
         {
             try
@@ -318,7 +434,6 @@ namespace BookStoreMVC.Controllers
 
                 if (sessionCart.Items.Any())
                 {
-                    // Chuyển từng item từ session cart sang database cart
                     foreach (var item in sessionCart.Items)
                     {
                         await _cartService.AddToCartAsync(userId, new AddToCartViewModel
@@ -328,8 +443,8 @@ namespace BookStoreMVC.Controllers
                         });
                     }
 
-                    // Xóa session cart sau khi migrate
                     _sessionCartService.ClearCart();
+                    TempData["SuccessMessage"] = "Giỏ hàng của bạn đã được cập nhật!";
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -337,6 +452,7 @@ namespace BookStoreMVC.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error migrating guest cart");
+                TempData["ErrorMessage"] = "Có lỗi khi chuyển giỏ hàng";
                 return RedirectToAction(nameof(Index));
             }
         }
