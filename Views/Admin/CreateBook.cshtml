@@ -7,36 +7,6 @@
     ViewBag.ActiveMenu = "Books";
 }
 
-<!-- Page Header -->
-@* <div class="mb-6">
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="@Url.Action("Dashboard", "Admin")"
-                    class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors">
-                    <i class="fas fa-home mr-2"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <a href="@Url.Action("Books", "Admin")"
-                        class="ml-1 text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors">
-                        Quản lý sách
-                    </a>
-                </div>
-            </li>
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <span class="ml-1 text-sm font-medium text-gray-500">Thêm sách mới</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
-</div> *@
-
 <!-- Success/Error Messages -->
 @if (TempData["SuccessMessage"] != null)
 {
@@ -477,15 +447,15 @@
             imageDiv.dataset.index = index;
 
             imageDiv.innerHTML = `
-                                    <img src="${src}" alt="${fileName}" class="w-full h-24 object-cover rounded border border-gray-200">
-                                    <button type="button" onclick="removeGalleryImage(${index})" 
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                        ${fileName}
-                                    </div>
-                                `;
+                                        <img src="${src}" alt="${fileName}" class="w-full h-24 object-cover rounded border border-gray-200">
+                                        <button type="button" onclick="removeGalleryImage(${index})" 
+                                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                                            ${fileName}
+                                        </div>
+                                    `;
 
             grid.appendChild(imageDiv);
         }
@@ -522,15 +492,15 @@
             imageDiv.dataset.index = index;
 
             imageDiv.innerHTML = `
-                                    <img src="${src}" alt="${fileName}" class="w-full h-24 object-cover rounded border border-gray-200">
-                                    <button type="button" onclick="removeGalleryImage(${index})" 
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                        ${fileName}
-                                    </div>
-                                `;
+                                        <img src="${src}" alt="${fileName}" class="w-full h-24 object-cover rounded border border-gray-200">
+                                        <button type="button" onclick="removeGalleryImage(${index})" 
+                                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 text-xs">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                                            ${fileName}
+                                        </div>
+                                    `;
 
             grid.appendChild(imageDiv);
         }
@@ -601,26 +571,26 @@
                 }`;
 
             notification.innerHTML = `
-                                    <div class="p-4">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <i class="fas ${type === 'success' ? 'fa-check-circle text-green-400' :
+                                        <div class="p-4">
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas ${type === 'success' ? 'fa-check-circle text-green-400' :
                     type === 'error' ? 'fa-times-circle text-red-400' :
                         type === 'warning' ? 'fa-exclamation-triangle text-yellow-400' :
                             'fa-info-circle text-blue-400'
                 }"></i>
-                                            </div>
-                                            <div class="ml-3 w-0 flex-1 pt-0.5">
-                                                <p class="text-sm font-medium text-gray-900">${message}</p>
-                                            </div>
-                                            <div class="ml-4 flex-shrink-0 flex">
-                                                <button class="inline-flex text-gray-400 hover:text-gray-500" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
+                                                </div>
+                                                <div class="ml-3 w-0 flex-1 pt-0.5">
+                                                    <p class="text-sm font-medium text-gray-900">${message}</p>
+                                                </div>
+                                                <div class="ml-4 flex-shrink-0 flex">
+                                                    <button class="inline-flex text-gray-400 hover:text-gray-500" onclick="this.parentElement.parentElement.parentElement.parentElement.remove()">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                `;
+                                    `;
 
             document.body.appendChild(notification);
 

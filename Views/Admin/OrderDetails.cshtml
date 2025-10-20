@@ -7,30 +7,7 @@
     ViewBag.ActiveMenu = "Orders";
 }
 
-<!-- Breadcrumb -->
-@* <nav class="flex mb-6" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-        <li class="inline-flex items-center">
-            <a href="@Url.Action("Dashboard", "Admin")" class="text-gray-700 hover:text-primary-600">
-                <i class="fas fa-home mr-2"></i>Dashboard
-            </a>
-        </li>
-        <li>
-            <div class="flex items-center">
-                <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                <a href="@Url.Action("Orders", "Admin")" class="text-gray-700 hover:text-primary-600">
-                    Đơn hàng
-                </a>
-            </div>
-        </li>
-        <li aria-current="page">
-            <div class="flex items-center">
-                <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-                <span class="text-gray-500">@Model.OrderNumber</span>
-            </div>
-        </li>
-    </ol>
-</nav> *@
+
 
 <!-- Order Header -->
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
@@ -199,8 +176,8 @@
                         <span
                             class="px-2 py-1 inline-flex text-xs font-semibold rounded-full 
                                 @(Model.Payment.Status == PaymentStatus.Completed ? "bg-green-100 text-green-800" :
-                                                                                                                      Model.Payment.Status == PaymentStatus.Pending ? "bg-yellow-100 text-yellow-800" :
-                                                                                                                      Model.Payment.Status == PaymentStatus.Failed ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800")">
+                                                                                                                                                  Model.Payment.Status == PaymentStatus.Pending ? "bg-yellow-100 text-yellow-800" :
+                                                                                                                                                  Model.Payment.Status == PaymentStatus.Failed ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800")">
                                 @Model.Payment.Status.ToString()
                             </span>
                         </div>

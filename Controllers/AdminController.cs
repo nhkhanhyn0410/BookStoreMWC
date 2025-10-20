@@ -62,10 +62,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.ActiveMenu = "Dashboard";
                 ViewBag.IsAdmin = true;
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard", SvgHelpers.HomeIcon()),
-                    new BreadcrumbItem("Dashboard", null)
-                );
+
 
                 return View(model);
             }
@@ -111,10 +108,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Quản lý sách";
                 ViewBag.ActiveMenu = "Books";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard", SvgHelpers.HomeIcon()),
-                    new BreadcrumbItem("Quản lý sách", null)
-                );
+
 
                 return View(model);
             }
@@ -142,11 +136,6 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Thêm sách mới";
                 ViewBag.ActiveMenu = "Books";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý sách", "/admin/books"),
-                    new BreadcrumbItem("Thêm sách mới", null)
-                );
 
                 return View(model);
             }
@@ -209,11 +198,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = $"Chỉnh sửa: {book.Title}";
                 ViewBag.ActiveMenu = "Books";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý sách", "/admin/books"),
-                    new BreadcrumbItem($"Chỉnh sửa: {book.Title}", null)
-                );
+
 
                 return View(book);
             }
@@ -472,10 +457,6 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Quản lý danh mục";
                 ViewBag.ActiveMenu = "Categories";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý danh mục", null)
-                );
 
                 return View(model);
             }
@@ -502,11 +483,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Thêm danh mục mới";
                 ViewBag.ActiveMenu = "Categories";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý danh mục", "/admin/categories"),
-                    new BreadcrumbItem("Thêm danh mục mới", null)
-                );
+
 
                 return View(model);
             }
@@ -565,11 +542,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = $"Chỉnh sửa: {category.Name}";
                 ViewBag.ActiveMenu = "Categories";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý danh mục", "/admin/categories"),
-                    new BreadcrumbItem($"Chỉnh sửa: {category.Name}", null)
-                );
+
 
                 return View(category);
             }
@@ -665,10 +638,6 @@ namespace BookStoreMVC.Controllers
                 ViewBag.ActiveMenu = "Orders";
                 ViewBag.CurrentStatus = status;
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý đơn hàng", null)
-                );
 
                 return View(model);
             }
@@ -696,11 +665,6 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = $"Chi tiết đơn hàng #{id}";
                 ViewBag.ActiveMenu = "Orders";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý đơn hàng", "/admin/orders"),
-                    new BreadcrumbItem($"Đơn hàng #{id}", null)
-                );
 
                 return View(order);
             }
@@ -754,10 +718,6 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Quản lý người dùng";
                 ViewBag.ActiveMenu = "Users";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý người dùng", null)
-                );
 
                 return View(users);
             }
@@ -784,11 +744,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = $"Người dùng: {userProfile.Name}";
                 ViewBag.ActiveMenu = "Users";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý người dùng", "/admin/users"),
-                    new BreadcrumbItem(userProfile.Name, null)
-                );
+
 
                 return View(userProfile);
             }
@@ -861,10 +817,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Quản lý đánh giá";
                 ViewBag.ActiveMenu = "Reviews";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Quản lý đánh giá", null)
-                );
+
 
                 return View(model);
             }
@@ -928,10 +881,7 @@ namespace BookStoreMVC.Controllers
                 ViewBag.PageTitle = "Báo cáo & Thống kê";
                 ViewBag.ActiveMenu = "Reports";
 
-                this.SetBreadcrumb(
-                    new BreadcrumbItem("Admin", "/admin/dashboard"),
-                    new BreadcrumbItem("Báo cáo", null)
-                );
+
 
                 return View(model);
             }
@@ -969,10 +919,7 @@ namespace BookStoreMVC.Controllers
             ViewBag.PageTitle = "Cài đặt hệ thống";
             ViewBag.ActiveMenu = "Settings";
 
-            this.SetBreadcrumb(
-                new BreadcrumbItem("Admin", "/admin/dashboard"),
-                new BreadcrumbItem("Cài đặt", null)
-            );
+
 
             return View();
         }
@@ -1169,15 +1116,6 @@ namespace BookStoreMVC.Controllers
 
     #endregion
 
-    #region Extension Methods
 
-    public static class ControllerExtensions
-    {
-        public static void SetBreadcrumb(this Controller controller, params BreadcrumbItem[] items)
-        {
-            controller.ViewBag.Breadcrumbs = items.ToList();
-        }
-    }
 
-    #endregion
 }
