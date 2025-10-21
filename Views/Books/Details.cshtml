@@ -76,6 +76,131 @@
         background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
         pointer-events: none;
     }
+
+    /* Enhanced Gallery Styles */
+    .gallery-scroll {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        scrollbar-width: thin;
+        scrollbar-color: #3b82f6 #f3f4f6;
+    }
+
+    .gallery-scroll::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .gallery-scroll::-webkit-scrollbar-track {
+        background: #f3f4f6;
+        border-radius: 10px;
+    }
+
+    .gallery-scroll::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 10px;
+    }
+
+    .gallery-scroll::-webkit-scrollbar-thumb:hover {
+        background: #2563eb;
+    }
+
+    .thumbnail-wrapper {
+        flex: 0 0 auto;
+        width: 80px;
+    }
+
+    .image-indicator {
+        position: absolute;
+        bottom: 0.25rem;
+        right: 0.25rem;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 0.125rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .zoom-hover-effect {
+        transition: transform 0.5s ease;
+    }
+
+    .zoom-hover-effect:hover {
+        transform: scale(1.05);
+    }
+
+    .lightbox-image-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    @@keyframes slideFromRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideFromLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .slide-right {
+        animation: slideFromRight 0.4s ease;
+    }
+
+    .slide-left {
+        animation: slideFromLeft 0.4s ease;
+    }
+
+    .gallery-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        color: #1f2937;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    .gallery-nav-btn:hover {
+        background: white;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .gallery-nav-btn.left {
+        left: 0.5rem;
+    }
+
+    .gallery-nav-btn.right {
+        right: 0.5rem;
+    }
 </style>
 }
 
@@ -110,51 +235,70 @@
                     </div>
                 </div>
                 
-                <!-- Thumbnails -->
+                <!-- Enhanced Gallery Thumbnails -->
                 @if (Model.Book.HasGalleryImages)
                 {
-                    <div class="space-y-3">
-                        <h4 class="text-sm font-bold text-gray-800 flex items-center">
-                            <i class="fas fa-images mr-2 text-blue-600"></i>
-                            Thư viện ảnh
-                            <span class="ml-auto bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                    <div class="space-y-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-images mr-2 text-blue-600 text-lg"></i>
+                                <span>Thư viện ảnh</span>
+                            </h4>
+                            <span class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                                <i class="fas fa-camera mr-1"></i>
                                 @(Model.Book.GalleryImageCount + 1) ảnh
                             </span>
-                        </h4>
-                        <div class="grid grid-cols-4 gap-2">
-                            <!-- Cover -->
-                            <div class="thumbnail-item active border-2 border-blue-600 shadow-lg"
-                                 onclick="changeMainImage('@(Model.Book.ImageUrl ?? "/images/no-book-cover.png")', 0)">
-                                <img src="@(Model.Book.ImageUrl ?? "/images/no-book-cover.png")" 
-                                     alt="Cover" 
-                                     class="w-full h-20 object-cover" />
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
-                            </div>
-                            
-                            <!-- Gallery -->
-                            @for (int i = 0; i < Model.Book.GalleryImageUrls.Count && i < 7; i++)
-                            {
-                                var index = i;
-                                <div class="thumbnail-item border-2 border-gray-200 hover:border-blue-400 shadow-md"
-                                     onclick="changeMainImage('@Model.Book.GalleryImageUrls[index]', @(index + 1))">
-                                    <img src="@Model.Book.GalleryImageUrls[index]" 
-                                         alt="Gallery @(index + 1)" 
-                                         class="w-full h-20 object-cover" />
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
-                                </div>
-                            }
-                            
-                            @if (Model.Book.GalleryImageUrls.Count > 7)
-                            {
-                                <div class="thumbnail-item border-2 border-gray-200 hover:border-blue-400 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center shadow-md"
-                                     onclick="openLightbox(8)">
-                                    <div class="text-center">
-                                        <span class="text-blue-600 text-xl font-black">+@(Model.Book.GalleryImageUrls.Count - 7)</span>
-                                        <p class="text-blue-500 text-xs font-semibold">Xem thêm</p>
+                        </div>
+
+                        <!-- Gallery Navigation Buttons -->
+                        <div class="relative">
+                            <button onclick="scrollGallery(-1)" class="gallery-nav-btn left" title="Trước">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button onclick="scrollGallery(1)" class="gallery-nav-btn right" title="Sau">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+
+                            <!-- Scrollable Gallery -->
+                            <div id="galleryScroll" class="gallery-scroll">
+                                <!-- Cover Image -->
+                                <div class="thumbnail-wrapper">
+                                    <div class="thumbnail-item active border-2 border-blue-600 shadow-lg"
+                                         onclick="changeMainImage('@(Model.Book.ImageUrl ?? "/images/no-book-cover.png")', 0)">
+                                        <img src="@(Model.Book.ImageUrl ?? "/images/no-book-cover.png")"
+                                             alt="Cover"
+                                             class="w-full h-20 object-cover" />
+                                        <div class="image-indicator">
+                                            <i class="fas fa-book mr-1"></i>Bìa
+                                        </div>
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
                                     </div>
                                 </div>
-                            }
+
+                                <!-- Gallery Images -->
+                                @for (int i = 0; i < Model.Book.GalleryImageUrls.Count; i++)
+                                {
+                                    var index = i;
+                                    <div class="thumbnail-wrapper">
+                                        <div class="thumbnail-item border-2 border-gray-200 hover:border-blue-400 shadow-md"
+                                             onclick="changeMainImage('@Model.Book.GalleryImageUrls[index]', @(index + 1))">
+                                            <img src="@Model.Book.GalleryImageUrls[index]"
+                                                 alt="Gallery @(index + 1)"
+                                                 class="w-full h-20 object-cover" />
+                                            <div class="image-indicator">@(index + 1)</div>
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity"></div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
                         </div>
+
+                        <!-- View All Button -->
+                        <button onclick="openLightbox(0)"
+                                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-2 px-4 rounded-lg font-semibold text-sm transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                            <i class="fas fa-expand-alt"></i>
+                            <span>Xem tất cả ảnh</span>
+                        </button>
                     </div>
                 }
                 
@@ -437,33 +581,58 @@
     </div>
 </div>
 
-<!-- Lightbox -->
+<!-- Enhanced Lightbox -->
 <div id="lightboxModal" class="fixed inset-0 bg-black/95 z-50 hidden flex items-center justify-center fade-in">
-    <button onclick="closeLightbox()" 
+    <!-- Close Button -->
+    <button onclick="closeLightbox()"
             class="lightbox-button absolute top-6 right-6 text-white text-2xl w-14 h-14 rounded-full flex items-center justify-center z-20">
         <i class="fas fa-times"></i>
     </button>
-    
-    <button onclick="previousImage()" 
+
+    <!-- Navigation Buttons -->
+    <button onclick="previousImage()"
             class="lightbox-button absolute left-6 top-1/2 transform -translate-y-1/2 text-white text-2xl w-14 h-14 rounded-full flex items-center justify-center z-20">
         <i class="fas fa-chevron-left"></i>
     </button>
-    
-    <button onclick="nextImage()" 
+
+    <button onclick="nextImage()"
             class="lightbox-button absolute right-6 top-1/2 transform -translate-y-1/2 text-white text-2xl w-14 h-14 rounded-full flex items-center justify-center z-20">
         <i class="fas fa-chevron-right"></i>
     </button>
-    
-    <div class="max-w-7xl max-h-screen p-8 w-full">
-        <img id="lightboxImage" src="" alt="@Model.Book.Title" 
-             class="max-w-full max-h-[85vh] object-contain mx-auto rounded-lg shadow-2xl zoom-animation" />
-        
-        <div class="text-center mt-6">
-            <div class="inline-flex items-center bg-black/70 text-white px-6 py-3 rounded-full text-sm backdrop-blur-lg shadow-xl">
-                <i class="fas fa-images mr-3"></i>
+
+    <div class="max-w-7xl max-h-screen p-8 w-full flex flex-col">
+        <!-- Main Image -->
+        <div class="flex-1 flex items-center justify-center mb-6">
+            <img id="lightboxImage" src="" alt="@Model.Book.Title"
+                 class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl zoom-animation" />
+        </div>
+
+        <!-- Image Info and Counter -->
+        <div class="text-center mb-4">
+            <div class="inline-flex items-center bg-black/80 text-white px-6 py-3 rounded-full text-sm backdrop-blur-lg shadow-xl">
+                <i class="fas fa-images mr-3 text-blue-400"></i>
                 <span id="imageCounter" class="font-bold text-lg">1 / 1</span>
             </div>
         </div>
+
+        <!-- Thumbnail Strip -->
+        @if (Model.Book.HasGalleryImages)
+        {
+            <div class="relative">
+                <button onclick="scrollLightboxThumbs(-1)"
+                        class="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center z-10 transition-all">
+                    <i class="fas fa-chevron-left text-sm"></i>
+                </button>
+                <button onclick="scrollLightboxThumbs(1)"
+                        class="absolute right-0 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white w-8 h-8 rounded-full flex items-center justify-center z-10 transition-all">
+                    <i class="fas fa-chevron-right text-sm"></i>
+                </button>
+
+                <div id="lightboxThumbs" class="flex overflow-x-auto gap-2 px-10 py-2 scroll-smooth" style="scrollbar-width: thin; scrollbar-color: #3b82f6 #1f2937;">
+                    <!-- Thumbnails will be populated by JavaScript -->
+                </div>
+            </div>
+        }
     </div>
 </div>
 
@@ -481,6 +650,22 @@ const galleryImages = [
 ];
 
 let currentImageIndex = 0;
+let slideDirection = 'right';
+
+// Initialize lightbox thumbnails
+function initLightboxThumbnails() {
+    const thumbsContainer = document.getElementById('lightboxThumbs');
+    if (!thumbsContainer) return;
+
+    thumbsContainer.innerHTML = '';
+    galleryImages.forEach((url, index) => {
+        const thumb = document.createElement('div');
+        thumb.className = `flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${index === 0 ? 'border-blue-500 ring-2 ring-blue-400' : 'border-gray-600 hover:border-blue-400'}`;
+        thumb.onclick = () => jumpToImage(index);
+        thumb.innerHTML = `<img src="${url}" alt="Thumbnail ${index + 1}" class="w-full h-full object-cover" />`;
+        thumbsContainer.appendChild(thumb);
+    });
+}
 
 function changeMainImage(imageUrl, index) {
     const mainImage = document.getElementById('mainImage');
@@ -489,7 +674,8 @@ function changeMainImage(imageUrl, index) {
     void mainImage.offsetWidth;
     mainImage.classList.add('zoom-animation');
     currentImageIndex = index;
-    
+
+    // Update thumbnail active states
     document.querySelectorAll('.thumbnail-item').forEach((item, i) => {
         if (i === index) {
             item.classList.add('active', 'border-blue-600');
@@ -501,8 +687,31 @@ function changeMainImage(imageUrl, index) {
     });
 }
 
+function scrollGallery(direction) {
+    const gallery = document.getElementById('galleryScroll');
+    if (gallery) {
+        const scrollAmount = 100;
+        gallery.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+}
+
+function scrollLightboxThumbs(direction) {
+    const thumbs = document.getElementById('lightboxThumbs');
+    if (thumbs) {
+        const scrollAmount = 150;
+        thumbs.scrollBy({
+            left: direction * scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+}
+
 function openLightbox(index) {
     currentImageIndex = index;
+    initLightboxThumbnails();
     updateLightboxImage();
     document.getElementById('lightboxModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -514,25 +723,58 @@ function closeLightbox() {
 }
 
 function previousImage() {
+    slideDirection = 'left';
     currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
     updateLightboxImage();
 }
 
 function nextImage() {
+    slideDirection = 'right';
     currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+    updateLightboxImage();
+}
+
+function jumpToImage(index) {
+    slideDirection = index > currentImageIndex ? 'right' : 'left';
+    currentImageIndex = index;
     updateLightboxImage();
 }
 
 function updateLightboxImage() {
     const img = document.getElementById('lightboxImage');
     const counter = document.getElementById('imageCounter');
-    img.classList.remove('zoom-animation');
+
+    // Remove old animation classes
+    img.classList.remove('zoom-animation', 'slide-left', 'slide-right');
+
+    // Update image
     img.src = galleryImages[currentImageIndex];
-    void img.offsetWidth;
-    img.classList.add('zoom-animation');
+    void img.offsetWidth; // Force reflow
+
+    // Add new animation
+    img.classList.add('zoom-animation', slideDirection === 'left' ? 'slide-left' : 'slide-right');
+
+    // Update counter
     counter.textContent = `${currentImageIndex + 1} / ${galleryImages.length}`;
+
+    // Update lightbox thumbnails
+    const thumbs = document.querySelectorAll('#lightboxThumbs > div');
+    thumbs.forEach((thumb, index) => {
+        if (index === currentImageIndex) {
+            thumb.className = 'flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer border-2 border-blue-500 ring-2 ring-blue-400 transition-all';
+        } else {
+            thumb.className = 'flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden cursor-pointer border-2 border-gray-600 hover:border-blue-400 transition-all';
+        }
+    });
+
+    // Auto-scroll to active thumbnail
+    const activeThumb = thumbs[currentImageIndex];
+    if (activeThumb) {
+        activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
 }
 
+// Keyboard navigation
 document.addEventListener('keydown', function(e) {
     const modal = document.getElementById('lightboxModal');
     if (!modal.classList.contains('hidden')) {
@@ -542,9 +784,33 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
+// Click outside to close
 document.getElementById('lightboxModal').addEventListener('click', function(e) {
     if (e.target === this) closeLightbox();
 });
+
+// Touch swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.getElementById('lightboxModal').addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+}, false);
+
+document.getElementById('lightboxModal').addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+}, false);
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    if (touchEndX < touchStartX - swipeThreshold) {
+        nextImage(); // Swipe left
+    }
+    if (touchEndX > touchStartX + swipeThreshold) {
+        previousImage(); // Swipe right
+    }
+}
 
 function updateQuantity(delta) {
     const input = document.getElementById('quantity');
