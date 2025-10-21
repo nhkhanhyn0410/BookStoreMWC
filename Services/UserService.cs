@@ -15,6 +15,7 @@ namespace BookStoreMVC.Services
         Task<IEnumerable<User>> GetRecentUsersAsync(int count = 10);
         Task<int> GetTotalUsersCountAsync();
         Task<Dictionary<string, int>> GetUserRegistrationsAsync(int months = 12);
+        Task<IEnumerable<UserSummaryViewModel>> GetTopCustomersAsync(int count = 5);
 
 
     }
@@ -189,18 +190,56 @@ namespace BookStoreMVC.Services
 
         public async Task<Dictionary<string, int>> GetUserRegistrationsAsync(int months = 12)
         {
-            var startDate = DateTime.UtcNow.AddMonths(-months);
+            try
+            {
+                var startDate = DateTime.UtcNow.AddMonths(-months);
 
-            return await _context.Users
-                .Where(u => u.CreatedAt >= startDate)
-                .GroupBy(u => new { u.CreatedAt.Year, u.CreatedAt.Month })
-                .Select(g => new
-                {
-                    Date = new DateTime(g.Key.Year, g.Key.Month, 1),
-                    Count = g.Count()
-                })
-                .OrderBy(x => x.Date)
-                .ToDictionaryAsync(x => x.Date.ToString("MMM yyyy"), x => x.Count);
+                var registrationData = await _context.Users
+                    .Where(u => u.CreatedAt >= startDate)
+                    .GroupBy(u => new { u.CreatedAt.Year, u.CreatedAt.Month })
+                    .Select(g => new
+                    {
+                        Date = new DateTime(g.Key.Year, g.Key.Month, 1),
+                        Count = g.Count()
+                    })
+                    .OrderBy(x => x.Date)
+                    .ToListAsync();
+
+                return registrationData.ToDictionary(x => x.Date.ToString("MMM yyyy"), x => x.Count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting user registrations");
+                return new Dictionary<string, int>();
+            }
+        }
+
+        public async Task<IEnumerable<UserSummaryViewModel>> GetTopCustomersAsync(int count = 5)
+        {
+            try
+            {
+                var topCustomers = await _context.Orders
+                    .Include(o => o.User)
+                    .Where(o => o.Status == OrderStatus.Delivered && o.User != null)
+                    .GroupBy(o => new { o.UserId, UserName = o.User.Name ?? o.User.Email ?? "Unknown" })
+                    .Select(g => new UserSummaryViewModel
+                    {
+                        UserId = g.Key.UserId,
+                        UserName = g.Key.UserName,
+                        OrdersCount = g.Count(),
+                        TotalSpent = g.Sum(o => o.Total)
+                    })
+                    .OrderByDescending(u => u.TotalSpent)
+                    .Take(count)
+                    .ToListAsync();
+
+                return topCustomers;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting top customers");
+                return new List<UserSummaryViewModel>();
+            }
         }
     }
 }

@@ -108,7 +108,12 @@ namespace BookStoreMVC.Services
             var booksByCategory = await _context.Categories
                 .Include(c => c.Books)
                 .Where(c => c.IsActive)
-                .ToDictionaryAsync(c => c.Name, c => c.Books.Count(b => b.IsActive));
+                .Select(c => new { c.Name, Count = c.Books.Count(b => b.IsActive) })
+                .ToListAsync();
+
+            var booksByCategoryDict = booksByCategory
+                .GroupBy(x => x.Name)
+                .ToDictionary(g => g.Key, g => g.Sum(x => x.Count));
 
             var userRegistrations = await _userService.GetUserRegistrationsAsync(12);
 
@@ -128,7 +133,7 @@ namespace BookStoreMVC.Services
                 LowStockItems = lowStockItems,
                 MonthlyRevenue = monthlyRevenue,
                 OrdersByStatus = ordersByStatus.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value),
-                BooksByCategory = booksByCategory,
+                BooksByCategory = booksByCategoryDict,
                 UserRegistrations = userRegistrations
             };
         }
