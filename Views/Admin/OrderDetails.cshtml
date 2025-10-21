@@ -133,12 +133,12 @@
                 <div class="flex items-center mb-4">
                     <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
                         <span class="text-lg font-semibold text-primary-600">
-                            @Model.User.Name.Substring(0, 1).ToUpper()
+                            @(Model.User?.Name?.Substring(0, 1).ToUpper() ?? "?")
                         </span>
                     </div>
                     <div class="ml-3">
-                        <p class="font-medium text-gray-900">@Model.User.Name</p>
-                        <p class="text-sm text-gray-600">@Model.User.Email</p>
+                        <p class="font-medium text-gray-900">@Model.User?.Name</p>
+                        <p class="text-sm text-gray-600">@Model.User?.Email</p>
                     </div>
                 </div>
                 <a href="@Url.Action("UserDetails", "Admin", new { id = Model.UserId })"

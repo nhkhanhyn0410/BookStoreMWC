@@ -14,7 +14,7 @@
         <div class="flex items-center">
             <div class="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center">
                 <span class="text-3xl font-bold text-primary-600">
-                    @Model.Name.Substring(0, 1).ToUpper()
+                    @(Model.Name?.Substring(0, 1).ToUpper() ?? "?")
                 </span>
             </div>
             <div class="ml-6">

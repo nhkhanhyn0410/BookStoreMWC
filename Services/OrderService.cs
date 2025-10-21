@@ -74,7 +74,7 @@ namespace BookStoreMVC.Services
                 {
                     UserId = userId,
                     ShippingInfoId = shippingInfo.Id,
-                    Status = OrderStatus.Pending,
+                    Status = OrderStatus.Processing, // Auto-confirm order after successful payment
                     SubTotal = cart.SubTotal,
                     Tax = cart.Tax,
                     Discount = 0,
@@ -111,7 +111,7 @@ namespace BookStoreMVC.Services
                     Method = model.PaymentMethod,
                     TransactionId = model.TransactionId,
                     Amount = order.Total,
-                    Status = PaymentStatus.Pending,
+                    Status = PaymentStatus.Completed, // Auto-complete payment for school project
                     CreatedAt = DateTime.UtcNow
                 };
 
