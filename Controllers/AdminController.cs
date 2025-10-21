@@ -890,12 +890,18 @@ namespace BookStoreMVC.Controllers
                 // Get user registrations
                 var userRegistrations = await _userService.GetUserRegistrationsAsync(12);
 
+                // Get top selling books and top customers
+                var topSellingBooks = await _orderService.GetTopSellingBooksAsync(5);
+                var topCustomers = await _userService.GetTopCustomersAsync(5);
+
                 model.TotalRevenue = totalRevenue;
                 model.TotalOrders = totalOrders;
                 model.MonthlyRevenue = monthlyRevenue;
                 model.OrdersByStatus = ordersByStatus.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value);
                 model.UserRegistrations = userRegistrations;
 
+                ViewBag.TopSellingBooks = topSellingBooks;
+                ViewBag.TopCustomers = topCustomers;
                 ViewBag.PageTitle = "Báo cáo & Thống kê";
                 ViewBag.ActiveMenu = "Reports";
 

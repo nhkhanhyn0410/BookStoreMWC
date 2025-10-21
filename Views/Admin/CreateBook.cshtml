@@ -106,23 +106,24 @@
                                 Giá bán <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <input asp-for="Price" type="number" step="1000" min="0"
+                                <input asp-for="Price" type="number" step="1000" min="0" id="price-input"
                                     class="block w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                                    placeholder="0">
+                                    placeholder="0" oninput="formatCurrencyInput(this)">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span class="text-gray-500 text-sm">₫</span>
                                 </div>
                             </div>
+                            <p class="text-sm text-gray-500 mt-1">Nhập số tiền VND (VD: 150000)</p>
                             <span asp-validation-for="Price" class="text-red-500 text-sm mt-1 block"></span>
                         </div>
 
-                        <!-- Original Price -->
+                        <!-- Discount Price -->
                         <div>
-                            <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-2">
-                                Giá gốc (nếu có)
+                            <label asp-for="DiscountPrice" class="block text-sm font-medium text-gray-700 mb-2">
+                                Giá khuyến mãi (nếu có)
                             </label>
                             <div class="relative">
-                                <input asp-for="Price" type="number" step="1000" min="0"
+                                <input asp-for="DiscountPrice" type="number" step="1000" min="0"
                                     class="block w-full pl-8 pr-3 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                                     placeholder="0">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -130,7 +131,7 @@
                                 </div>
                             </div>
                             <p class="text-sm text-gray-500 mt-1">Để trống nếu không có giảm giá</p>
-                            <span asp-validation-for="Price" class="text-red-500 text-sm mt-1 block"></span>
+                            <span asp-validation-for="DiscountPrice" class="text-red-500 text-sm mt-1 block"></span>
                         </div>
                     </div>
 

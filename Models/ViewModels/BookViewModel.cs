@@ -24,7 +24,7 @@ namespace BookStoreMVC.Models.ViewModels
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
-        [Range(0.01, 9999.99, ErrorMessage = "Price must be between 0.01 and 9999.99")]
+        [Range(1000, 9999000, ErrorMessage = "Price must be between 1000 and 9999000")]
         [Display(Name = "Price")]
         public decimal Price { get; set; }
 

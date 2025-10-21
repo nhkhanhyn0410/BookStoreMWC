@@ -17,6 +17,7 @@ namespace BookStoreMVC.Services
         Task<(decimal TotalRevenue, int TotalOrders, decimal AverageOrderValue)> GetOrderStatisticsAsync();
         Task<Dictionary<string, decimal>> GetMonthlyRevenueAsync(int months = 12);
         Task<Dictionary<OrderStatus, int>> GetOrdersByStatusAsync();
+        Task<IEnumerable<BookSummaryViewModel>> GetTopSellingBooksAsync(int count = 5);
     }
 
     public class OrderService : IOrderService
@@ -302,20 +303,28 @@ namespace BookStoreMVC.Services
 
         public async Task<Dictionary<string, decimal>> GetMonthlyRevenueAsync(int months = 12)
         {
-            var startDate = DateTime.UtcNow.AddMonths(-months);
+            try
+            {
+                var startDate = DateTime.UtcNow.AddMonths(-months);
 
-            var monthlyRevenue = await _context.Orders
-                .Where(o => o.Status == OrderStatus.Delivered && o.CreatedAt >= startDate)
-                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
-                .Select(g => new
-                {
-                    Date = new DateTime(g.Key.Year, g.Key.Month, 1),
-                    Revenue = g.Sum(o => o.Total)
-                })
-                .OrderBy(x => x.Date)
-                .ToDictionaryAsync(x => x.Date.ToString("MMM yyyy"), x => x.Revenue);
+                var monthlyData = await _context.Orders
+                    .Where(o => o.Status == OrderStatus.Delivered && o.CreatedAt >= startDate)
+                    .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                    .Select(g => new
+                    {
+                        Date = new DateTime(g.Key.Year, g.Key.Month, 1),
+                        Revenue = g.Sum(o => o.Total)
+                    })
+                    .OrderBy(x => x.Date)
+                    .ToListAsync();
 
-            return monthlyRevenue;
+                return monthlyData.ToDictionary(x => x.Date.ToString("MMM yyyy"), x => x.Revenue);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting monthly revenue");
+                return new Dictionary<string, decimal>();
+            }
         }
 
         public async Task<Dictionary<OrderStatus, int>> GetOrdersByStatusAsync()
@@ -323,6 +332,35 @@ namespace BookStoreMVC.Services
             return await _context.Orders
                 .GroupBy(o => o.Status)
                 .ToDictionaryAsync(g => g.Key, g => g.Count());
+        }
+
+        public async Task<IEnumerable<BookSummaryViewModel>> GetTopSellingBooksAsync(int count = 5)
+        {
+            try
+            {
+                var topBooks = await _context.OrderItems
+                    .Include(oi => oi.Book)
+                    .Include(oi => oi.Order)
+                    .Where(oi => oi.Book != null && oi.Order != null && oi.Order.Status == OrderStatus.Delivered)
+                    .GroupBy(oi => new { oi.BookId, oi.Book.Title })
+                    .Select(g => new BookSummaryViewModel
+                    {
+                        BookId = g.Key.BookId,
+                        Title = g.Key.Title,
+                        QuantitySold = g.Sum(oi => oi.Quantity),
+                        Revenue = g.Sum(oi => oi.Total)
+                    })
+                    .OrderByDescending(b => b.QuantitySold)
+                    .Take(count)
+                    .ToListAsync();
+
+                return topBooks;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting top selling books");
+                return new List<BookSummaryViewModel>();
+            }
         }
     }
 }

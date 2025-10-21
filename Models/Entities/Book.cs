@@ -24,10 +24,10 @@ namespace BookStoreMVC.Models.Entities
         [StringLength(1000)]
         public string? Description { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
+        [Column(TypeName = "decimal(10)")]
         public decimal Price { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
+        [Column(TypeName = "decimal(10)")]
         public decimal? DiscountPrice { get; set; }
 
         public int StockQuantity { get; set; }
