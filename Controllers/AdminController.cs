@@ -105,10 +105,14 @@ namespace BookStoreMVC.Controllers
                 model.TotalCount = totalCount;
                 model.Categories = await _bookService.GetCategoriesAsync();
 
+                // Add stock counts for dashboard
+                var booksList = books.ToList();
+                ViewBag.InStockCount = booksList.Count(b => b.StockQuantity > 0);
+                ViewBag.LowStockCount = booksList.Count(b => b.StockQuantity <= 10 && b.StockQuantity > 0);
+                ViewBag.OutOfStockCount = booksList.Count(b => b.StockQuantity == 0);
+
                 ViewBag.PageTitle = "Quản lý sách";
                 ViewBag.ActiveMenu = "Books";
-
-
 
                 return View(model);
             }
@@ -634,10 +638,16 @@ namespace BookStoreMVC.Controllers
                 model.Orders = orders;
                 model.TotalCount = totalCount;
 
+                // Add order status counts for dashboard
+                var stats = await _orderService.GetOrdersByStatusAsync();
+                ViewBag.PendingCount = stats.GetValueOrDefault(OrderStatus.Pending, 0);
+                ViewBag.ProcessingCount = stats.GetValueOrDefault(OrderStatus.Processing, 0);
+                ViewBag.CompletedCount = stats.GetValueOrDefault(OrderStatus.Delivered, 0);
+                ViewBag.CancelledCount = stats.GetValueOrDefault(OrderStatus.Cancelled, 0);
+
                 ViewBag.PageTitle = "Quản lý đơn hàng";
                 ViewBag.ActiveMenu = "Orders";
                 ViewBag.CurrentStatus = status;
-
 
                 return View(model);
             }
@@ -837,7 +847,15 @@ namespace BookStoreMVC.Controllers
             try
             {
                 var adminUserId = _userManager.GetUserId(User);
-                var success = await _reviewService.DeleteReviewAsync(id, adminUserId!);
+
+                // Add null check before using adminUserId
+                if (string.IsNullOrEmpty(adminUserId))
+                {
+                    _logger.LogWarning("DeleteReview called but GetUserId returned null");
+                    return Json(new { success = false, message = "Không thể xác định người dùng." });
+                }
+
+                var success = await _reviewService.DeleteReviewAsync(id, adminUserId);
 
                 if (success)
                 {

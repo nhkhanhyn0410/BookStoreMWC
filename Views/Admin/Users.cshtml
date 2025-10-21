@@ -126,12 +126,12 @@
                                 <div class="flex items-center">
                                     <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
                                         <span class="text-sm font-semibold text-primary-600">
-                                            @user.Name.Substring(0, 1).ToUpper()
+                                            @(user.Name?.Substring(0, 1).ToUpper() ?? "?")
                                         </span>
                                     </div>
                                     <div class="ml-4">
                                         <div class="text-sm font-medium text-gray-900">@user.Name</div>
-                                        <div class="text-xs text-gray-500">ID: @user.Id.Substring(0, 8)</div>
+                                        <div class="text-xs text-gray-500">ID: @(user.Id?.Length >= 8 ? user.Id.Substring(0, 8) : user.Id)</div>
                                     </div>
                                 </div>
                             </td>
