@@ -88,27 +88,24 @@
             <!-- Cart Items -->
             <div class="lg:col-span-2">
                 <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <!-- Header -->
-                    <div class="bg-gray-50 px-6 py-4 border-b">
-                        <div class="grid grid-cols-12 gap-4 text-sm font-semibold text-gray-600">
-                            <div class="col-span-6">Sản phẩm</div>
-                            <div class="col-span-2 text-center">Đơn giá</div>
-                            <div class="col-span-2 text-center">Số lượng</div>
-                            <div class="col-span-2 text-right">Thành tiền</div>
-                        </div>
-                    </div>
+
 
                     <!-- Cart Items -->
                     <div class="divide-y divide-gray-100">
                         @foreach (var item in Model.Items)
                         {
                             <div id="cart-item-@item.BookId" class="cart-item p-6">
-                                <div class="grid grid-cols-12 gap-4 items-center">
+                                <div class=" gap-4 items-center">
                                     <!-- Product Info -->
-                                    <div class="col-span-6 flex items-center space-x-4">
-                                        <img src="@(item.BookImage ?? "/images/default-book.jpg")" alt="@item.BookTitle"
-                                            class="w-20 h-28 object-cover rounded-lg shadow-sm">
-                                        <div>
+                                    <div class="col-span-6 flex flex-col items-center space-y-4">
+                                        <!-- Hình ảnh -->
+                                        <div class="max-w-sm max-h-96 overflow-hidden flex justify-center">
+                                            <img class="max-w-full max-h-full object-contain"
+                                                src="@(item.BookImage ?? "/images/default-book.jpg")" alt="@item.BookTitle">
+                                        </div>
+
+                                        <!-- Thông tin sách -->
+                                        <div class="flex flex-col items-center text-center">
                                             <h3 class="font-semibold text-gray-800 mb-1">@item.BookTitle</h3>
                                             <button onclick="removeFromCart(@item.BookId)"
                                                 class="text-red-500 hover:text-red-700 text-sm font-medium">
@@ -118,10 +115,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Price -->
-                                    <div class="col-span-2 text-center">
-                                        <span class="font-semibold text-gray-800">@item.Price.ToString("C0")</span>
-                                    </div>
+
 
                                     <!-- Quantity -->
                                     <div class="col-span-2 flex justify-center">
@@ -143,7 +137,7 @@
                                     <!-- Item Total -->
                                     <div class="col-span-2 text-right">
                                         <span id="item-total-@item.BookId" class="font-bold text-blue-600">
-                                            @( (item.Price * item.Quantity).ToString("C0") )
+                                            @( (item.Price * item.Quantity).ToString("C0") )a
                                         </span>
                                     </div>
                                 </div>

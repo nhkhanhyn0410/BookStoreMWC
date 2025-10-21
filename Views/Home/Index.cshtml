@@ -219,65 +219,6 @@
     </section>
 }
 
-<!-- Testimonials Section -->
-@if (Model.Testimonials != null && Model.Testimonials.Any())
-{
-    <section class="py-12 mb-8 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
-                <i class="fas fa-comments text-purple-600 mr-2"></i>
-                Khách hàng nói gì
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach (var testimonial in Model.Testimonials.Take(3))
-                {
-                    <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-xl transition-shadow">
-                        <div class="flex items-center mb-4">
-                            <img src="@testimonial.CustomerImageUrl" alt="@testimonial.CustomerName"
-                                class="w-12 h-12 rounded-full mr-4 object-cover" />
-                            <div>
-                                <h4 class="font-bold text-gray-800">@testimonial.CustomerName</h4>
-                                <p class="text-sm text-gray-600">@testimonial.CustomerTitle</p>
-                            </div>
-                        </div>
-                        <div class="text-yellow-400 mb-3">
-                            @for (int i = 0; i < testimonial.Rating; i++)
-                            {
-                                <i class="fas fa-star"></i>
-                            }
-                        </div>
-                        <p class="text-gray-600 italic">"@testimonial.Content"</p>
-                    </div>
-                }
-            </div>
-        </div>
-    </section>
-}
-
-<!-- Newsletter Section -->
-<section class="py-12 mb-8 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-    <div class="container mx-auto px-4 text-center">
-        <h2 class="text-3xl font-bold mb-4">Đăng ký nhận tin</h2>
-        <p class="text-xl mb-8 opacity-90">Nhận thông tin về sách mới và ưu đãi đặc biệt</p>
-
-        <form class="max-w-md mx-auto">
-            <div class="flex">
-                <input type="email" placeholder="Email của bạn"
-                    class="flex-1 px-6 py-4 rounded-l-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-300" />
-                <button type="submit"
-                    class="bg-yellow-500 hover:bg-yellow-600 px-8 py-4 rounded-r-lg text-gray-800 font-semibold transition-colors">
-                    Đăng ký
-                </button>
-            </div>
-        </form>
-
-        <p class="text-sm mt-4 opacity-75">
-            <i class="fas fa-users mr-2"></i>
-            Tham gia cùng @Model.NewsletterSubscribers.ToString("N0") độc giả khác
-        </p>
-    </div>
-</section>
 
 @section Scripts {
     <script>
