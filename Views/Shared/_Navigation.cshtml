@@ -23,7 +23,7 @@
                                     </h3>
                                     <ul class="space-y-2">
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book"
+                                            <a asp-action="Category" asp-controller="Books"
                                                 asp-route-category="literature-domestic"
                                                 class="bv-mega-menu-item group">
                                                 <i
@@ -32,7 +32,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book"
+                                            <a asp-action="Category" asp-controller="Books"
                                                 asp-route-category="literature-foreign"
                                                 class="bv-mega-menu-item hover:text-green-600 group">
                                                 <i
@@ -41,7 +41,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book" asp-route-category="business"
+                                            <a asp-action="Category" asp-controller="Books" asp-route-category="business"
                                                 class="bv-mega-menu-item hover:text-orange-600 group">
                                                 <i
                                                     class="fas fa-chart-line w-4 mr-2 text-orange-500 group-hover:text-orange-600"></i>
@@ -49,7 +49,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book"
+                                            <a asp-action="Category" asp-controller="Books"
                                                 asp-route-category="life-skills"
                                                 class="bv-mega-menu-item hover:text-yellow-600 group">
                                                 <i
@@ -58,7 +58,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book"
+                                            <a asp-action="Category" asp-controller="Books"
                                                 asp-route-category="parenting"
                                                 class="bv-mega-menu-item hover:text-pink-600 group">
                                                 <i
@@ -75,7 +75,7 @@
                                     </h3>
                                     <ul class="space-y-2">
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book"
+                                            <a asp-action="Category" asp-controller="Books"
                                                 asp-route-category="technology"
                                                 class="bv-mega-menu-item hover:text-secondary-600 group">
                                                 <i
@@ -84,7 +84,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book" asp-route-category="health"
+                                            <a asp-action="Category" asp-controller="Books" asp-route-category="health"
                                                 class="bv-mega-menu-item hover:text-red-500 group">
                                                 <i
                                                     class="fas fa-stethoscope w-4 mr-2 text-red-400 group-hover:text-red-500"></i>
@@ -92,7 +92,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book"
+                                            <a asp-action="Category" asp-controller="Books"
                                                 asp-route-category="education"
                                                 class="bv-mega-menu-item hover:text-indigo-600 group">
                                                 <i
@@ -101,7 +101,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book" asp-route-category="children"
+                                            <a asp-action="Category" asp-controller="Books" asp-route-category="children"
                                                 class="bv-mega-menu-item hover:text-pink-600 group">
                                                 <i
                                                     class="fas fa-child w-4 mr-2 text-pink-500 group-hover:text-pink-600"></i>
@@ -109,7 +109,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a asp-action="Category" asp-controller="Book" asp-route-category="art"
+                                            <a asp-action="Category" asp-controller="Books" asp-route-category="art"
                                                 class="bv-mega-menu-item hover:text-purple-600 group">
                                                 <i
                                                     class="fas fa-palette w-4 mr-2 text-purple-400 group-hover:text-purple-600"></i>
@@ -125,7 +125,7 @@
                                         Sale Hot
                                     </h3>
                                     <p class="text-sm text-gray-600 mb-3">Sách bestseller giảm đến 50%</p>
-                                    <a asp-action="Sale" asp-controller="Book"
+                                    <a asp-action="Index" asp-controller="Books" asp-route-filter="sale"
                                         class="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-pink-500 hover:to-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 w-full transform hover:scale-105 shadow-md hover:shadow-lg inline-block text-center">
                                         Xem ngay
                                     </a>
@@ -140,18 +140,18 @@
                     <a asp-action="Index" asp-controller="Home" class="bv-nav-link bv-nav-link-primary">
                         Trang chủ
                     </a>
-                    <a asp-action="NewBooks" asp-controller="Book" class="bv-nav-link bv-nav-link-green">
+                    <a asp-action="Index" asp-controller="Books" asp-route-filter="new" class="bv-nav-link bv-nav-link-green">
                         Sách mới
                     </a>
-                    <a asp-action="Bestseller" asp-controller="Book"
+                    <a asp-action="Index" asp-controller="Books" asp-route-filter="bestseller"
                         class="bv-nav-link bv-nav-link-yellow flex items-center">
                         Bestseller
                         <i class="fas fa-crown text-yellow-500 ml-1 text-sm"></i>
                     </a>
-                    <a asp-action="Promotions" asp-controller="Book" class="bv-nav-link bv-nav-link-orange">
+                    <a asp-action="Index" asp-controller="Books" asp-route-filter="promotion" class="bv-nav-link bv-nav-link-orange">
                         Khuyến mãi
                     </a>
-                    <a asp-action="Index" asp-controller="Blog" class="bv-nav-link bv-nav-link-primary">
+                    <a asp-action="Index" asp-controller="Home" asp-route-section="blog" class="bv-nav-link bv-nav-link-primary">
                         Blog
                     </a>
                     <a asp-action="Contact" asp-controller="Home" class="bv-nav-link bv-nav-link-primary">

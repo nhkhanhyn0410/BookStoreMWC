@@ -77,7 +77,7 @@
 
             <!-- Search Bar -->
             <div class="flex-1 max-w-2xl mx-8">
-                <form asp-action="Search" asp-controller="Book" method="get" class="relative group">
+                <form asp-action="Search" asp-controller="Books" method="get" class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i
                             class="fas fa-search text-gray-400 group-focus-within:text-primary-500 transition-colors"></i>
@@ -197,7 +197,7 @@
 
         <!-- Mobile Search Bar -->
         <div class="md:hidden pb-3">
-            <form asp-action="Search" asp-controller="Book" method="get" class="relative">
+            <form asp-action="Search" asp-controller="Books" method="get" class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search text-gray-400"></i>
                 </div>
@@ -282,27 +282,27 @@
                 Danh mục sách
             </h4>
             <div class="space-y-1">
-                <a asp-action="Category" asp-controller="Book" asp-route-category="literature-domestic"
+                <a asp-action="Category" asp-controller="Books" asp-route-category="literature-domestic"
                     class="bv-mobile-menu-item">
                     <i class="fas fa-book-open w-5 mr-3 text-primary-400"></i>
                     <span>Văn học trong nước</span>
                 </a>
-                <a asp-action="Category" asp-controller="Book" asp-route-category="literature-foreign"
+                <a asp-action="Category" asp-controller="Books" asp-route-category="literature-foreign"
                     class="bv-mobile-menu-item hover:bg-green-50 hover:text-green-600">
                     <i class="fas fa-globe w-5 mr-3 text-green-500"></i>
                     <span>Văn học nước ngoài</span>
                 </a>
-                <a asp-action="Category" asp-controller="Book" asp-route-category="business"
+                <a asp-action="Category" asp-controller="Books" asp-route-category="business"
                     class="bv-mobile-menu-item hover:bg-orange-50 hover:text-orange-600">
                     <i class="fas fa-chart-line w-5 mr-3 text-orange-500"></i>
                     <span>Kinh tế - Quản lý</span>
                 </a>
-                <a asp-action="Category" asp-controller="Book" asp-route-category="life-skills"
+                <a asp-action="Category" asp-controller="Books" asp-route-category="life-skills"
                     class="bv-mobile-menu-item hover:bg-yellow-50 hover:text-yellow-600">
                     <i class="fas fa-lightbulb w-5 mr-3 text-yellow-500"></i>
                     <span>Kỹ năng sống</span>
                 </a>
-                <a asp-action="Category" asp-controller="Book" asp-route-category="technology"
+                <a asp-action="Category" asp-controller="Books" asp-route-category="technology"
                     class="bv-mobile-menu-item hover:bg-purple-50 hover:text-secondary-600">
                     <i class="fas fa-laptop-code w-5 mr-3 text-secondary-500"></i>
                     <span>Công nghệ thông tin</span>
@@ -316,22 +316,22 @@
                 <i class="fas fa-home w-5 mr-3 text-primary-500"></i>
                 <span>Trang chủ</span>
             </a>
-            <a asp-action="NewBooks" asp-controller="Book"
+            <a asp-action="Index" asp-controller="Books" asp-route-filter="new"
                 class="bv-mobile-menu-item hover:bg-green-50 hover:text-green-600">
                 <i class="fas fa-star w-5 mr-3 text-green-500"></i>
                 <span>Sách mới</span>
             </a>
-            <a asp-action="Bestseller" asp-controller="Book"
+            <a asp-action="Index" asp-controller="Books" asp-route-filter="bestseller"
                 class="bv-mobile-menu-item hover:bg-yellow-50 hover:text-yellow-600">
                 <i class="fas fa-crown w-5 mr-3 text-yellow-500"></i>
                 <span>Bestseller</span>
             </a>
-            <a asp-action="Promotions" asp-controller="Book"
+            <a asp-action="Index" asp-controller="Books" asp-route-filter="promotion"
                 class="bv-mobile-menu-item hover:bg-orange-50 hover:text-orange-600">
                 <i class="fas fa-tags w-5 mr-3 text-orange-500"></i>
                 <span>Khuyến mãi</span>
             </a>
-            <a asp-action="Index" asp-controller="Blog"
+            <a asp-action="Index" asp-controller="Home" asp-route-section="blog"
                 class="bv-mobile-menu-item hover:bg-purple-50 hover:text-secondary-600">
                 <i class="fas fa-blog w-5 mr-3 text-secondary-500"></i>
                 <span>Blog</span>
