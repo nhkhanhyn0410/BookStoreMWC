@@ -32,7 +32,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Tổng doanh thu</p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">@Model.TotalRevenue.ToString("N0") ₫</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">@(Model?.TotalRevenue.ToString("N0") ?? "0") ₫</p>
                 <p class="text-sm text-green-600 mt-2">
                     <i class="fas fa-arrow-up mr-1"></i>+12.5% so với tháng trước
                 </p>
@@ -47,7 +47,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Tổng đơn hàng</p>
-                <p class="text-3xl font-bold text-gray-900 mt-2">@Model.TotalOrders</p>
+                <p class="text-3xl font-bold text-gray-900 mt-2">@(Model?.TotalOrders.ToString() ?? "0")</p>
                 <p class="text-sm text-blue-600 mt-2">
                     <i class="fas fa-arrow-up mr-1"></i>+8.2% so với tháng trước
                 </p>
@@ -63,7 +63,7 @@
             <div>
                 <p class="text-sm font-medium text-gray-600">Giá trị TB/Đơn</p>
                 <p class="text-3xl font-bold text-gray-900 mt-2">
-                    @((Model.TotalOrders > 0 ? Model.TotalRevenue / Model.TotalOrders : 0).ToString("N0")) ₫
+                    @((Model != null && Model.TotalOrders > 0 ? Model.TotalRevenue / Model.TotalOrders : 0).ToString("N0")) ₫
                 </p>
                 <p class="text-sm text-purple-600 mt-2">
                     <i class="fas fa-chart-line mr-1"></i>Xu hướng tăng
