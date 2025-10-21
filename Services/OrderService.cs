@@ -17,6 +17,7 @@ namespace BookStoreMVC.Services
         Task<(decimal TotalRevenue, int TotalOrders, decimal AverageOrderValue)> GetOrderStatisticsAsync();
         Task<Dictionary<string, decimal>> GetMonthlyRevenueAsync(int months = 12);
         Task<Dictionary<OrderStatus, int>> GetOrdersByStatusAsync();
+        Task<IEnumerable<BookSummaryViewModel>> GetTopSellingBooksAsync(int count = 5);
     }
 
     public class OrderService : IOrderService
@@ -323,6 +324,26 @@ namespace BookStoreMVC.Services
             return await _context.Orders
                 .GroupBy(o => o.Status)
                 .ToDictionaryAsync(g => g.Key, g => g.Count());
+        }
+
+        public async Task<IEnumerable<BookSummaryViewModel>> GetTopSellingBooksAsync(int count = 5)
+        {
+            var topBooks = await _context.OrderItems
+                .Include(oi => oi.Book)
+                .Where(oi => oi.Book != null && oi.Order.Status == OrderStatus.Delivered)
+                .GroupBy(oi => new { oi.BookId, oi.Book.Title })
+                .Select(g => new BookSummaryViewModel
+                {
+                    BookId = g.Key.BookId,
+                    Title = g.Key.Title,
+                    QuantitySold = g.Sum(oi => oi.Quantity),
+                    Revenue = g.Sum(oi => oi.Total)
+                })
+                .OrderByDescending(b => b.QuantitySold)
+                .Take(count)
+                .ToListAsync();
+
+            return topBooks;
         }
     }
 }

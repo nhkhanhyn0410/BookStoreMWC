@@ -15,6 +15,7 @@ namespace BookStoreMVC.Services
         Task<IEnumerable<User>> GetRecentUsersAsync(int count = 10);
         Task<int> GetTotalUsersCountAsync();
         Task<Dictionary<string, int>> GetUserRegistrationsAsync(int months = 12);
+        Task<IEnumerable<UserSummaryViewModel>> GetTopCustomersAsync(int count = 5);
 
 
     }
@@ -201,6 +202,26 @@ namespace BookStoreMVC.Services
                 })
                 .OrderBy(x => x.Date)
                 .ToDictionaryAsync(x => x.Date.ToString("MMM yyyy"), x => x.Count);
+        }
+
+        public async Task<IEnumerable<UserSummaryViewModel>> GetTopCustomersAsync(int count = 5)
+        {
+            var topCustomers = await _context.Orders
+                .Include(o => o.User)
+                .Where(o => o.Status == OrderStatus.Delivered && o.User != null)
+                .GroupBy(o => new { o.UserId, o.User.Name, o.User.Email })
+                .Select(g => new UserSummaryViewModel
+                {
+                    UserId = g.Key.UserId,
+                    UserName = g.Key.Name ?? g.Key.Email,
+                    OrdersCount = g.Count(),
+                    TotalSpent = g.Sum(o => o.Total)
+                })
+                .OrderByDescending(u => u.TotalSpent)
+                .Take(count)
+                .ToListAsync();
+
+            return topCustomers;
         }
     }
 }

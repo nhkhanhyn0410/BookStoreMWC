@@ -13,7 +13,7 @@ class AdminPanel {
 
     init() {
         this.initSearch();
-        this.initNotifications();
+        // this.initNotifications(); // Disabled - notification API not working
         this.initDataTables();
         this.initFormValidation();
         this.initFileUploads();
