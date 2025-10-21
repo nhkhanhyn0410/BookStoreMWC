@@ -65,9 +65,28 @@ namespace BookStoreMVC.Services
                 .Include(b => b.Category)
                 .Include(b => b.Reviews)
                     .ThenInclude(r => r.User)
+                .Include(b => b.GalleryImages) // ✅ Load gallery images từ bảng
                 .FirstOrDefaultAsync(b => b.Id == id && b.IsActive);
 
-            return book != null ? MapToViewModel(book) : null;
+            if (book == null) return null;
+
+            // ✅ Sync: Nếu AdditionalImages rỗng nhưng có GalleryImages, convert sang JSON
+            if (string.IsNullOrEmpty(book.AdditionalImages) && book.GalleryImages.Any())
+            {
+                var galleryUrls = book.GalleryImages
+                    .Where(img => img.IsActive)
+                    .OrderBy(img => img.DisplayOrder)
+                    .Select(img => img.ImageUrl)
+                    .Where(url => !string.IsNullOrEmpty(url))
+                    .ToList();
+
+                if (galleryUrls.Any())
+                {
+                    book.AdditionalImages = System.Text.Json.JsonSerializer.Serialize(galleryUrls);
+                }
+            }
+
+            return MapToViewModel(book);
         }
 
         public async Task<BookDetailsViewModel> GetBookDetailsAsync(int id, string? userId = null)
@@ -437,6 +456,7 @@ namespace BookStoreMVC.Services
                 ImageFileName = book.ImageFileName,
                 ImageContentType = book.ImageContentType,
                 ImageFileSize = book.ImageFileSize,
+                AdditionalImages = book.AdditionalImages, // ✅ FIX: Map gallery images JSON
                 Category = book.Category,
                 Reviews = book.Reviews
             };

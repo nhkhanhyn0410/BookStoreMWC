@@ -62,6 +62,15 @@ namespace BookStoreMVC.Controllers
                     return NotFound();
                 }
 
+                // ✅ Debug info for gallery images
+                _logger.LogInformation(
+                    "Book {BookId} - AdditionalImages: {AdditionalImages}, GalleryCount: {GalleryCount}, HasGallery: {HasGallery}",
+                    id,
+                    model.Book.AdditionalImages?.Substring(0, Math.Min(100, model.Book.AdditionalImages?.Length ?? 0)) ?? "null",
+                    model.Book.GalleryImageCount,
+                    model.Book.HasGalleryImages
+                );
+
                 ViewBag.PageTitle = model.Book.Title;
                 return View(model);
             }
