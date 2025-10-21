@@ -328,22 +328,31 @@ namespace BookStoreMVC.Services
 
         public async Task<IEnumerable<BookSummaryViewModel>> GetTopSellingBooksAsync(int count = 5)
         {
-            var topBooks = await _context.OrderItems
-                .Include(oi => oi.Book)
-                .Where(oi => oi.Book != null && oi.Order.Status == OrderStatus.Delivered)
-                .GroupBy(oi => new { oi.BookId, oi.Book.Title })
-                .Select(g => new BookSummaryViewModel
-                {
-                    BookId = g.Key.BookId,
-                    Title = g.Key.Title,
-                    QuantitySold = g.Sum(oi => oi.Quantity),
-                    Revenue = g.Sum(oi => oi.Total)
-                })
-                .OrderByDescending(b => b.QuantitySold)
-                .Take(count)
-                .ToListAsync();
+            try
+            {
+                var topBooks = await _context.OrderItems
+                    .Include(oi => oi.Book)
+                    .Include(oi => oi.Order)
+                    .Where(oi => oi.Book != null && oi.Order != null && oi.Order.Status == OrderStatus.Delivered)
+                    .GroupBy(oi => new { oi.BookId, oi.Book.Title })
+                    .Select(g => new BookSummaryViewModel
+                    {
+                        BookId = g.Key.BookId,
+                        Title = g.Key.Title,
+                        QuantitySold = g.Sum(oi => oi.Quantity),
+                        Revenue = g.Sum(oi => oi.Total)
+                    })
+                    .OrderByDescending(b => b.QuantitySold)
+                    .Take(count)
+                    .ToListAsync();
 
-            return topBooks;
+                return topBooks;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting top selling books");
+                return new List<BookSummaryViewModel>();
+            }
         }
     }
 }

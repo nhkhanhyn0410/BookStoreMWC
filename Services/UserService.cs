@@ -206,22 +206,30 @@ namespace BookStoreMVC.Services
 
         public async Task<IEnumerable<UserSummaryViewModel>> GetTopCustomersAsync(int count = 5)
         {
-            var topCustomers = await _context.Orders
-                .Include(o => o.User)
-                .Where(o => o.Status == OrderStatus.Delivered && o.User != null)
-                .GroupBy(o => new { o.UserId, o.User.Name, o.User.Email })
-                .Select(g => new UserSummaryViewModel
-                {
-                    UserId = g.Key.UserId,
-                    UserName = g.Key.Name ?? g.Key.Email,
-                    OrdersCount = g.Count(),
-                    TotalSpent = g.Sum(o => o.Total)
-                })
-                .OrderByDescending(u => u.TotalSpent)
-                .Take(count)
-                .ToListAsync();
+            try
+            {
+                var topCustomers = await _context.Orders
+                    .Include(o => o.User)
+                    .Where(o => o.Status == OrderStatus.Delivered && o.User != null)
+                    .GroupBy(o => new { o.UserId, UserName = o.User.Name ?? o.User.Email ?? "Unknown" })
+                    .Select(g => new UserSummaryViewModel
+                    {
+                        UserId = g.Key.UserId,
+                        UserName = g.Key.UserName,
+                        OrdersCount = g.Count(),
+                        TotalSpent = g.Sum(o => o.Total)
+                    })
+                    .OrderByDescending(u => u.TotalSpent)
+                    .Take(count)
+                    .ToListAsync();
 
-            return topCustomers;
+                return topCustomers;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting top customers");
+                return new List<UserSummaryViewModel>();
+            }
         }
     }
 }
