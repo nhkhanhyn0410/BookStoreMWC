@@ -20422,3 +20422,1511 @@ ORDER BY [c].[CreatedAt], [c].[Id], [b].[Id], [c0].[Id]
 2025-10-21 01:43:59.105 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.OrdersController.Checkout (BookStoreMVC)'
 2025-10-21 01:43:59.106 +07:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/Orders/Checkout - 200 null text/html; charset=utf-8 98.0772ms
 2025-10-21 01:44:28.404 +07:00 [INF] Application is shutting down...
+2025-10-21 10:59:29.702 +07:00 [INF] User profile is available. Using 'C:\Users\admin\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-10-21 10:59:31.042 +07:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-10-21 10:59:31.051 +07:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2025-10-21 10:59:31.076 +07:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2025-10-21 10:59:31.121 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2025-10-21 10:59:31.134 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-10-21 10:59:31.136 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-10-21 10:59:31.141 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-10-21 10:59:31.150 +07:00 [INF] No migrations were applied. The database is already up to date.
+2025-10-21 10:59:31.157 +07:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2025-10-21 10:59:31.338 +07:00 [INF] Executed DbCommand (12ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2025-10-21 10:59:31.387 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-10-21 10:59:31.421 +07:00 [INF] ✅ Database initialized with admin user only.
+2025-10-21 10:59:31.424 +07:00 [INF] Database initialized successfully
+2025-10-21 10:59:31.490 +07:00 [INF] ==========================================
+2025-10-21 10:59:31.490 +07:00 [INF] BookStore Application Starting...
+2025-10-21 10:59:31.490 +07:00 [INF] Environment: Production
+2025-10-21 10:59:31.490 +07:00 [INF] Session Timeout: 7 days
+2025-10-21 10:59:31.490 +07:00 [INF] Guest Cart: Enabled
+2025-10-21 10:59:31.490 +07:00 [INF] ==========================================
+2025-10-21 10:59:31.554 +07:00 [INF] Now listening on: http://localhost:5000
+2025-10-21 10:59:31.554 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-10-21 10:59:31.554 +07:00 [INF] Hosting environment: Production
+2025-10-21 10:59:31.554 +07:00 [INF] Content root path: E:\BookStoreMWCv2\BookStoreMWC
+2025-10-21 10:59:31.988 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard - null null
+2025-10-21 10:59:31.993 +07:00 [WRN] Failed to determine the https port for redirect.
+2025-10-21 10:59:32.061 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 10:59:32.070 +07:00 [INF] Route matched with {action = "Dashboard", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Dashboard() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 10:59:32.119 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 10:59:32.124 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 10:59:32.129 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 10:59:32.134 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Categories] AS [c]
+WHERE [c].[IsActive] = CAST(1 AS bit)
+2025-10-21 10:59:32.147 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 10:59:32.154 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 0
+2025-10-21 10:59:32.162 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 10:59:32.169 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 10:59:32.214 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [o0].[Id], [o0].[UserId], [o0].[Status], [o0].[Total], [o0].[CreatedAt], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM (
+    SELECT TOP(@__p_0) [o].[Id], [o].[CreatedAt], [o].[Status], [o].[Total], [o].[UserId]
+    FROM [Orders] AS [o]
+    ORDER BY [o].[CreatedAt] DESC
+) AS [o0]
+INNER JOIN [AspNetUsers] AS [a] ON [o0].[UserId] = [a].[Id]
+ORDER BY [o0].[CreatedAt] DESC
+2025-10-21 10:59:32.228 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [r0].[Id], [r0].[Rating], [r0].[Comment], [r0].[CreatedAt], [r0].[IsApproved], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName], [b].[Id], [b].[AdditionalImages], [b].[Author], [b].[CategoryId], [b].[CreatedAt], [b].[Description], [b].[DiscountPrice], [b].[ImageContentType], [b].[ImageFileName], [b].[ImageFileSize], [b].[ImageUrl], [b].[IsActive], [b].[Language], [b].[PageCount], [b].[Price], [b].[PublishDate], [b].[Publisher], [b].[StockQuantity], [b].[Title], [b].[UpdatedAt]
+FROM (
+    SELECT TOP(@__p_0) [r].[Id], [r].[BookId], [r].[Comment], [r].[CreatedAt], [r].[IsApproved], [r].[Rating], [r].[UserId]
+    FROM [Reviews] AS [r]
+    ORDER BY [r].[CreatedAt] DESC
+) AS [r0]
+INNER JOIN [AspNetUsers] AS [a] ON [r0].[UserId] = [a].[Id]
+INNER JOIN [Books] AS [b] ON [r0].[BookId] = [b].[Id]
+ORDER BY [r0].[CreatedAt] DESC
+2025-10-21 10:59:32.237 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_0) [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+ORDER BY [a].[CreatedAt] DESC
+2025-10-21 10:59:32.241 +07:00 [WRN] The query uses a row limiting operator ('Skip'/'Take') without an 'OrderBy' operator. This may lead to unpredictable results. If the 'Distinct' operator is used after 'OrderBy', then make sure to use the 'OrderBy' operator after 'Distinct' as the ordering would otherwise get erased.
+2025-10-21 10:59:32.249 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Title], [b0].[Author], [b0].[StockQuantity], [c].[Id], [c].[CreatedAt], [c].[Description], [c].[ImageUrl], [c].[IsActive], [c].[Name], [c].[ParentCategoryId]
+FROM (
+    SELECT TOP(@__p_0) [b].[Id], [b].[Author], [b].[CategoryId], [b].[StockQuantity], [b].[Title]
+    FROM [Books] AS [b]
+    WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+) AS [b0]
+INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+2025-10-21 10:59:32.291 +07:00 [ERR] Error loading admin dashboard
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Services.DashboardService.GetAdminDashboardAsync() in E:\BookStoreMWCv2\BookStoreMWC\Services\DashboardService.cs:line 105
+   at BookStoreMVC.Controllers.AdminController.Dashboard() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 59
+2025-10-21 10:59:32.311 +07:00 [INF] Executing ViewResult, running view Dashboard.
+2025-10-21 10:59:32.438 +07:00 [INF] Executed ViewResult - view Dashboard executed in 128.2633ms.
+2025-10-21 10:59:32.444 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC) in 373.5694ms
+2025-10-21 10:59:32.445 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 10:59:32.459 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard - 200 null text/html; charset=utf-8 472.1593ms
+2025-10-21 10:59:32.468 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 10:59:32.484 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 16.4636ms
+2025-10-21 10:59:32.486 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 10:59:32.495 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 10:59:32.499 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 4.3206ms
+2025-10-21 10:59:32.736 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 10:59:32.753 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 10:59:32.757 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 10:59:32.761 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - null null
+2025-10-21 10:59:32.763 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 10:59:32.767 +07:00 [INF] Route matched with {action = "GetDashboardStats", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetDashboardStats() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 10:59:32.818 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 10:59:32.823 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 10:59:32.826 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 10:59:32.826 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 10:59:32.827 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 10:59:32.829 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 10:59:32.853 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 10:59:32.853 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 10:59:32.884 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 10:59:32.884 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 10:59:32.887 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 10:59:32.887 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 10:59:32.890 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 10:59:32.890 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 10:59:32.892 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 10:59:32.892 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 10:59:32.903 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 10:59:32.903 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 10:59:32.905 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 10:59:32.905 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType1`2[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 10:59:32.912 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 155.1589ms
+2025-10-21 10:59:32.913 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 10:59:32.913 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 177.3406ms
+2025-10-21 10:59:32.923 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC) in 155.0053ms
+2025-10-21 10:59:32.923 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 10:59:32.923 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - 200 null application/json; charset=utf-8 162.7238ms
+2025-10-21 10:59:37.630 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/reports - null null
+2025-10-21 10:59:37.632 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC)'
+2025-10-21 10:59:37.635 +07:00 [INF] Route matched with {action = "Reports", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Reports() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 10:59:37.641 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 10:59:37.645 +07:00 [ERR] Error loading reports page
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Controllers.AdminController.Reports() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 887
+2025-10-21 10:59:37.650 +07:00 [INF] Executing ViewResult, running view Reports.
+2025-10-21 10:59:37.666 +07:00 [INF] Executed ViewResult - view Reports executed in 17.5643ms.
+2025-10-21 10:59:37.667 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC) in 31.1321ms
+2025-10-21 10:59:37.667 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC)'
+2025-10-21 10:59:37.667 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/reports - 200 null text/html; charset=utf-8 37.055ms
+2025-10-21 10:59:37.696 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 10:59:37.700 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 3.7042ms
+2025-10-21 10:59:37.700 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 10:59:37.703 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 10:59:37.704 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.5955ms
+2025-10-21 10:59:37.905 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 10:59:37.907 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 10:59:37.907 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 10:59:37.908 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 10:59:37.909 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 10:59:37.910 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 10:59:37.912 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 10:59:37.914 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 10:59:37.916 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 10:59:37.917 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 10:59:37.920 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 10:59:37.924 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 10:59:37.925 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 10:59:37.926 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 18.6944ms
+2025-10-21 10:59:37.926 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 10:59:37.927 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 22.119ms
+2025-10-21 11:00:07.612 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard - null null
+2025-10-21 11:00:07.612 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 11:00:07.613 +07:00 [INF] Route matched with {action = "Dashboard", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Dashboard() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:00:07.615 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:00:07.616 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:00:07.617 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:00:07.618 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Categories] AS [c]
+WHERE [c].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:00:07.619 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:00:07.621 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 0
+2025-10-21 11:00:07.623 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:00:07.625 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:00:07.630 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [o0].[Id], [o0].[UserId], [o0].[Status], [o0].[Total], [o0].[CreatedAt], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM (
+    SELECT TOP(@__p_0) [o].[Id], [o].[CreatedAt], [o].[Status], [o].[Total], [o].[UserId]
+    FROM [Orders] AS [o]
+    ORDER BY [o].[CreatedAt] DESC
+) AS [o0]
+INNER JOIN [AspNetUsers] AS [a] ON [o0].[UserId] = [a].[Id]
+ORDER BY [o0].[CreatedAt] DESC
+2025-10-21 11:00:07.633 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [r0].[Id], [r0].[Rating], [r0].[Comment], [r0].[CreatedAt], [r0].[IsApproved], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName], [b].[Id], [b].[AdditionalImages], [b].[Author], [b].[CategoryId], [b].[CreatedAt], [b].[Description], [b].[DiscountPrice], [b].[ImageContentType], [b].[ImageFileName], [b].[ImageFileSize], [b].[ImageUrl], [b].[IsActive], [b].[Language], [b].[PageCount], [b].[Price], [b].[PublishDate], [b].[Publisher], [b].[StockQuantity], [b].[Title], [b].[UpdatedAt]
+FROM (
+    SELECT TOP(@__p_0) [r].[Id], [r].[BookId], [r].[Comment], [r].[CreatedAt], [r].[IsApproved], [r].[Rating], [r].[UserId]
+    FROM [Reviews] AS [r]
+    ORDER BY [r].[CreatedAt] DESC
+) AS [r0]
+INNER JOIN [AspNetUsers] AS [a] ON [r0].[UserId] = [a].[Id]
+INNER JOIN [Books] AS [b] ON [r0].[BookId] = [b].[Id]
+ORDER BY [r0].[CreatedAt] DESC
+2025-10-21 11:00:07.634 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_0) [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+ORDER BY [a].[CreatedAt] DESC
+2025-10-21 11:00:07.635 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Title], [b0].[Author], [b0].[StockQuantity], [c].[Id], [c].[CreatedAt], [c].[Description], [c].[ImageUrl], [c].[IsActive], [c].[Name], [c].[ParentCategoryId]
+FROM (
+    SELECT TOP(@__p_0) [b].[Id], [b].[Author], [b].[CategoryId], [b].[StockQuantity], [b].[Title]
+    FROM [Books] AS [b]
+    WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+) AS [b0]
+INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+2025-10-21 11:00:07.640 +07:00 [ERR] Error loading admin dashboard
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider.ExecuteAsync[TResult](Expression expression, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Services.DashboardService.GetAdminDashboardAsync() in E:\BookStoreMWCv2\BookStoreMWC\Services\DashboardService.cs:line 105
+   at BookStoreMVC.Controllers.AdminController.Dashboard() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 59
+2025-10-21 11:00:07.642 +07:00 [INF] Executing ViewResult, running view Dashboard.
+2025-10-21 11:00:07.651 +07:00 [INF] Executed ViewResult - view Dashboard executed in 9.2911ms.
+2025-10-21 11:00:07.651 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC) in 38.2268ms
+2025-10-21 11:00:07.651 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 11:00:07.651 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard - 200 null text/html; charset=utf-8 39.3919ms
+2025-10-21 11:00:07.690 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 11:00:07.691 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.3657ms
+2025-10-21 11:00:07.691 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 11:00:07.692 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 1.475ms
+2025-10-21 11:00:07.692 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 11:00:07.839 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:00:07.840 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:00:07.840 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:00:07.841 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:00:07.843 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:00:07.844 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:00:07.845 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:00:07.847 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:00:07.849 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:00:07.849 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:00:07.850 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:00:07.851 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:00:07.852 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:00:07.852 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 12.2899ms
+2025-10-21 11:00:07.852 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:00:07.853 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 13.8622ms
+2025-10-21 11:00:07.870 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - null null
+2025-10-21 11:00:07.871 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 11:00:07.871 +07:00 [INF] Route matched with {action = "GetDashboardStats", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetDashboardStats() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:00:07.872 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:00:07.873 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:00:07.874 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:00:07.875 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:00:07.877 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:00:07.879 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:00:07.881 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:00:07.884 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:00:07.886 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:00:07.887 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType1`2[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:00:07.887 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC) in 16.1538ms
+2025-10-21 11:00:07.888 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 11:00:07.888 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - 200 null application/json; charset=utf-8 18.2469ms
+2025-10-21 11:01:07.855 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:01:07.856 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:01:07.856 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:01:07.858 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:01:07.859 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:01:07.859 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:01:07.860 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:01:07.860 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:01:07.860 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:01:07.861 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:01:07.861 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:01:07.861 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:01:07.862 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:01:07.862 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 5.5172ms
+2025-10-21 11:01:07.862 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:01:07.862 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 7.2628ms
+2025-10-21 11:02:07.848 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:02:07.849 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:02:07.849 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:02:07.850 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:02:07.851 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:02:07.851 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:02:07.851 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:02:07.852 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:02:07.852 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:02:07.852 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:02:07.853 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:02:07.853 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:02:07.853 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:02:07.854 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 4.4353ms
+2025-10-21 11:02:07.854 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:02:07.854 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 5.7002ms
+2025-10-21 11:03:07.850 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:03:07.851 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:03:07.851 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:03:07.852 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:03:07.852 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:03:07.853 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:03:07.853 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:03:07.854 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:03:07.855 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:03:07.855 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:03:07.855 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:03:07.856 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:03:07.856 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:03:07.856 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 4.9888ms
+2025-10-21 11:03:07.856 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:03:07.857 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 6.4066ms
+2025-10-21 11:04:07.852 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:04:07.853 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:04:07.853 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:04:07.855 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:04:07.856 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:04:07.856 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:04:07.857 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:04:07.857 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:04:07.858 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:04:07.858 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:04:07.859 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:04:07.859 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:04:07.860 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:04:07.860 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 6.4953ms
+2025-10-21 11:04:07.860 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:04:07.861 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 8.6475ms
+2025-10-21 11:04:38.247 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/orders - null null
+2025-10-21 11:04:38.248 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Orders (BookStoreMVC)'
+2025-10-21 11:04:38.259 +07:00 [INF] Route matched with {action = "Orders", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Orders(System.String) on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:04:38.565 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:04:38.621 +07:00 [INF] Executed DbCommand (8ms) [Parameters=[@__p_0='?' (DbType = Int32), @__p_1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [o0].[Id], [o0].[CreatedAt], [o0].[Discount], [o0].[PaymentId], [o0].[ShippingInfoId], [o0].[Status], [o0].[SubTotal], [o0].[Tax], [o0].[Total], [o0].[UserId], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName], [s].[Id], [s].[Address], [s].[City], [s].[Country], [s].[FirstName], [s].[LastName], [s].[Phone], [s].[PostalCode], [p].[Id], [p].[Amount], [p].[CreatedAt], [p].[Method], [p].[OrderId], [p].[Status], [p].[TransactionId], [s0].[Id], [s0].[BookId], [s0].[OrderId], [s0].[Quantity], [s0].[Total], [s0].[UnitPrice], [s0].[Id0], [s0].[AdditionalImages], [s0].[Author], [s0].[CategoryId], [s0].[CreatedAt], [s0].[Description], [s0].[DiscountPrice], [s0].[ImageContentType], [s0].[ImageFileName], [s0].[ImageFileSize], [s0].[ImageUrl], [s0].[IsActive], [s0].[Language], [s0].[PageCount], [s0].[Price], [s0].[PublishDate], [s0].[Publisher], [s0].[StockQuantity], [s0].[Title], [s0].[UpdatedAt]
+FROM (
+    SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+    FROM [Orders] AS [o]
+    ORDER BY [o].[CreatedAt] DESC
+    OFFSET @__p_0 ROWS FETCH NEXT @__p_1 ROWS ONLY
+) AS [o0]
+INNER JOIN [AspNetUsers] AS [a] ON [o0].[UserId] = [a].[Id]
+INNER JOIN [ShippingInfos] AS [s] ON [o0].[ShippingInfoId] = [s].[Id]
+LEFT JOIN [Payments] AS [p] ON [o0].[Id] = [p].[OrderId]
+LEFT JOIN (
+    SELECT [o1].[Id], [o1].[BookId], [o1].[OrderId], [o1].[Quantity], [o1].[Total], [o1].[UnitPrice], [b].[Id] AS [Id0], [b].[AdditionalImages], [b].[Author], [b].[CategoryId], [b].[CreatedAt], [b].[Description], [b].[DiscountPrice], [b].[ImageContentType], [b].[ImageFileName], [b].[ImageFileSize], [b].[ImageUrl], [b].[IsActive], [b].[Language], [b].[PageCount], [b].[Price], [b].[PublishDate], [b].[Publisher], [b].[StockQuantity], [b].[Title], [b].[UpdatedAt]
+    FROM [OrderItems] AS [o1]
+    LEFT JOIN [Books] AS [b] ON [o1].[BookId] = [b].[Id]
+) AS [s0] ON [o0].[Id] = [s0].[OrderId]
+ORDER BY [o0].[CreatedAt] DESC, [o0].[Id], [a].[Id], [s].[Id], [p].[Id], [s0].[Id]
+2025-10-21 11:04:38.623 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:04:38.628 +07:00 [INF] Executing ViewResult, running view Orders.
+2025-10-21 11:04:38.672 +07:00 [INF] Executed ViewResult - view Orders executed in 44.8489ms.
+2025-10-21 11:04:38.673 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Orders (BookStoreMVC) in 413.5788ms
+2025-10-21 11:04:38.673 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Orders (BookStoreMVC)'
+2025-10-21 11:04:38.673 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/orders - 200 null text/html; charset=utf-8 425.3039ms
+2025-10-21 11:04:38.699 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 11:04:38.699 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 11:04:38.699 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.4129ms
+2025-10-21 11:04:38.701 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 1.9885ms
+2025-10-21 11:04:38.701 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 11:04:38.836 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:04:38.838 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:04:38.853 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:04:38.858 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:04:38.860 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:04:38.861 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:04:38.862 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:04:38.863 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:04:38.864 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:04:38.864 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:04:38.865 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:04:38.867 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:04:38.867 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:04:38.868 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 13.8696ms
+2025-10-21 11:04:38.868 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:04:38.868 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 32.2637ms
+2025-10-21 11:04:41.305 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard - null null
+2025-10-21 11:04:41.307 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 11:04:41.307 +07:00 [INF] Route matched with {action = "Dashboard", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Dashboard() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:04:41.308 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:04:41.310 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:04:41.311 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:04:41.312 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Categories] AS [c]
+WHERE [c].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:04:41.313 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:04:41.315 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 0
+2025-10-21 11:04:41.316 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:04:41.318 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:04:41.319 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [o0].[Id], [o0].[UserId], [o0].[Status], [o0].[Total], [o0].[CreatedAt], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM (
+    SELECT TOP(@__p_0) [o].[Id], [o].[CreatedAt], [o].[Status], [o].[Total], [o].[UserId]
+    FROM [Orders] AS [o]
+    ORDER BY [o].[CreatedAt] DESC
+) AS [o0]
+INNER JOIN [AspNetUsers] AS [a] ON [o0].[UserId] = [a].[Id]
+ORDER BY [o0].[CreatedAt] DESC
+2025-10-21 11:04:41.322 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [r0].[Id], [r0].[Rating], [r0].[Comment], [r0].[CreatedAt], [r0].[IsApproved], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName], [b].[Id], [b].[AdditionalImages], [b].[Author], [b].[CategoryId], [b].[CreatedAt], [b].[Description], [b].[DiscountPrice], [b].[ImageContentType], [b].[ImageFileName], [b].[ImageFileSize], [b].[ImageUrl], [b].[IsActive], [b].[Language], [b].[PageCount], [b].[Price], [b].[PublishDate], [b].[Publisher], [b].[StockQuantity], [b].[Title], [b].[UpdatedAt]
+FROM (
+    SELECT TOP(@__p_0) [r].[Id], [r].[BookId], [r].[Comment], [r].[CreatedAt], [r].[IsApproved], [r].[Rating], [r].[UserId]
+    FROM [Reviews] AS [r]
+    ORDER BY [r].[CreatedAt] DESC
+) AS [r0]
+INNER JOIN [AspNetUsers] AS [a] ON [r0].[UserId] = [a].[Id]
+INNER JOIN [Books] AS [b] ON [r0].[BookId] = [b].[Id]
+ORDER BY [r0].[CreatedAt] DESC
+2025-10-21 11:04:41.324 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_0) [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+ORDER BY [a].[CreatedAt] DESC
+2025-10-21 11:04:41.328 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Title], [b0].[Author], [b0].[StockQuantity], [c].[Id], [c].[CreatedAt], [c].[Description], [c].[ImageUrl], [c].[IsActive], [c].[Name], [c].[ParentCategoryId]
+FROM (
+    SELECT TOP(@__p_0) [b].[Id], [b].[Author], [b].[CategoryId], [b].[StockQuantity], [b].[Title]
+    FROM [Books] AS [b]
+    WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+) AS [b0]
+INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+2025-10-21 11:04:41.330 +07:00 [ERR] Error loading admin dashboard
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Services.DashboardService.GetAdminDashboardAsync() in E:\BookStoreMWCv2\BookStoreMWC\Services\DashboardService.cs:line 105
+   at BookStoreMVC.Controllers.AdminController.Dashboard() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 59
+2025-10-21 11:04:41.332 +07:00 [INF] Executing ViewResult, running view Dashboard.
+2025-10-21 11:04:41.336 +07:00 [INF] Executed ViewResult - view Dashboard executed in 4.2929ms.
+2025-10-21 11:04:41.336 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC) in 29.3124ms
+2025-10-21 11:04:41.336 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 11:04:41.337 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard - 200 null text/html; charset=utf-8 32.5903ms
+2025-10-21 11:04:41.372 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 11:04:41.374 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 1.5787ms
+2025-10-21 11:04:41.374 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 11:04:41.378 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 11:04:41.378 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.2839ms
+2025-10-21 11:04:41.493 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:04:41.495 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:04:41.496 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:04:41.498 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:04:41.499 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:04:41.500 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:04:41.501 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:04:41.502 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:04:41.503 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:04:41.504 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:04:41.505 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:04:41.506 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:04:41.507 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:04:41.507 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 11.3359ms
+2025-10-21 11:04:41.507 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:04:41.507 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 14.0078ms
+2025-10-21 11:04:41.533 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - null null
+2025-10-21 11:04:41.535 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 11:04:41.535 +07:00 [INF] Route matched with {action = "GetDashboardStats", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetDashboardStats() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:04:41.537 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:04:41.538 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:04:41.539 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:04:41.541 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:04:41.542 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:04:41.544 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:04:41.545 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:04:41.548 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:04:41.551 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:04:41.555 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType1`2[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:04:41.556 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC) in 19.9099ms
+2025-10-21 11:04:41.556 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 11:04:41.556 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - 200 null application/json; charset=utf-8 22.9309ms
+2025-10-21 11:05:41.493 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:05:41.494 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:05:41.494 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:05:41.495 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:05:41.496 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:05:41.496 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:05:41.497 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:05:41.497 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:05:41.497 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:05:41.498 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:05:41.499 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:05:41.500 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:05:41.500 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:05:41.501 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 6.4624ms
+2025-10-21 11:05:41.501 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:05:41.501 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 8.294ms
+2025-10-21 11:06:41.500 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:06:41.501 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:06:41.501 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:06:41.502 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:06:41.502 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:06:41.502 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:06:41.503 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:06:41.503 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:06:41.504 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:06:41.504 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:06:41.505 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:06:41.505 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:06:41.505 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:06:41.506 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 4.7133ms
+2025-10-21 11:06:41.506 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:06:41.506 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 6.1681ms
+2025-10-21 11:06:58.143 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:06:58.144 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:06:58.145 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:06:58.148 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:06:58.150 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:06:58.151 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:06:58.153 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:06:58.156 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:06:58.157 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:06:58.160 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:06:58.162 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:06:58.165 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:06:58.166 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:06:58.178 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 33.4623ms
+2025-10-21 11:06:58.178 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:06:58.179 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 36.0484ms
+2025-10-21 11:07:06.323 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard - null null
+2025-10-21 11:07:06.324 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 11:07:06.324 +07:00 [INF] Route matched with {action = "Dashboard", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Dashboard() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:07:06.325 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:07:06.326 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:07:06.326 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:07:06.327 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Categories] AS [c]
+WHERE [c].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:07:06.327 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:07:06.328 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 0
+2025-10-21 11:07:06.329 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:07:06.330 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:07:06.332 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [o0].[Id], [o0].[UserId], [o0].[Status], [o0].[Total], [o0].[CreatedAt], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM (
+    SELECT TOP(@__p_0) [o].[Id], [o].[CreatedAt], [o].[Status], [o].[Total], [o].[UserId]
+    FROM [Orders] AS [o]
+    ORDER BY [o].[CreatedAt] DESC
+) AS [o0]
+INNER JOIN [AspNetUsers] AS [a] ON [o0].[UserId] = [a].[Id]
+ORDER BY [o0].[CreatedAt] DESC
+2025-10-21 11:07:06.335 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [r0].[Id], [r0].[Rating], [r0].[Comment], [r0].[CreatedAt], [r0].[IsApproved], [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName], [b].[Id], [b].[AdditionalImages], [b].[Author], [b].[CategoryId], [b].[CreatedAt], [b].[Description], [b].[DiscountPrice], [b].[ImageContentType], [b].[ImageFileName], [b].[ImageFileSize], [b].[ImageUrl], [b].[IsActive], [b].[Language], [b].[PageCount], [b].[Price], [b].[PublishDate], [b].[Publisher], [b].[StockQuantity], [b].[Title], [b].[UpdatedAt]
+FROM (
+    SELECT TOP(@__p_0) [r].[Id], [r].[BookId], [r].[Comment], [r].[CreatedAt], [r].[IsApproved], [r].[Rating], [r].[UserId]
+    FROM [Reviews] AS [r]
+    ORDER BY [r].[CreatedAt] DESC
+) AS [r0]
+INNER JOIN [AspNetUsers] AS [a] ON [r0].[UserId] = [a].[Id]
+INNER JOIN [Books] AS [b] ON [r0].[BookId] = [b].[Id]
+ORDER BY [r0].[CreatedAt] DESC
+2025-10-21 11:07:06.336 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(@__p_0) [a].[Id], [a].[AccessFailedCount], [a].[ConcurrencyStamp], [a].[CreatedAt], [a].[Email], [a].[EmailConfirmed], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[Name], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [AspNetUsers] AS [a]
+ORDER BY [a].[CreatedAt] DESC
+2025-10-21 11:07:06.337 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b0].[Id], [b0].[Title], [b0].[Author], [b0].[StockQuantity], [c].[Id], [c].[CreatedAt], [c].[Description], [c].[ImageUrl], [c].[IsActive], [c].[Name], [c].[ParentCategoryId]
+FROM (
+    SELECT TOP(@__p_0) [b].[Id], [b].[Author], [b].[CategoryId], [b].[StockQuantity], [b].[Title]
+    FROM [Books] AS [b]
+    WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+) AS [b0]
+INNER JOIN [Categories] AS [c] ON [b0].[CategoryId] = [c].[Id]
+2025-10-21 11:07:06.340 +07:00 [ERR] Error loading admin dashboard
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Services.DashboardService.GetAdminDashboardAsync() in E:\BookStoreMWCv2\BookStoreMWC\Services\DashboardService.cs:line 105
+   at BookStoreMVC.Controllers.AdminController.Dashboard() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 59
+2025-10-21 11:07:06.341 +07:00 [INF] Executing ViewResult, running view Dashboard.
+2025-10-21 11:07:06.344 +07:00 [INF] Executed ViewResult - view Dashboard executed in 2.3418ms.
+2025-10-21 11:07:06.344 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC) in 19.5213ms
+2025-10-21 11:07:06.344 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Dashboard (BookStoreMVC)'
+2025-10-21 11:07:06.344 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard - 200 null text/html; charset=utf-8 21.2814ms
+2025-10-21 11:07:06.386 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 11:07:06.386 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.4298ms
+2025-10-21 11:07:06.387 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 11:07:06.388 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 1.6392ms
+2025-10-21 11:07:06.388 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 11:07:06.545 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:07:06.546 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:07:06.546 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:07:06.548 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:07:06.549 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:07:06.551 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:07:06.553 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:07:06.555 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:07:06.559 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:07:06.561 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:07:06.564 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:07:06.567 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:07:06.567 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:07:06.572 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 25.4921ms
+2025-10-21 11:07:06.572 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:07:06.573 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 27.3575ms
+2025-10-21 11:07:06.617 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - null null
+2025-10-21 11:07:06.618 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 11:07:06.618 +07:00 [INF] Route matched with {action = "GetDashboardStats", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetDashboardStats() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:07:06.620 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:07:06.621 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:07:06.622 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:07:06.623 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:07:06.626 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:07:06.629 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:07:06.632 +07:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:07:06.634 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:07:06.636 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:07:06.636 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType1`2[[System.Boolean, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:07:06.637 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC) in 18.2902ms
+2025-10-21 11:07:06.637 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetDashboardStats (BookStoreMVC)'
+2025-10-21 11:07:06.637 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/dashboard/stats - 200 null application/json; charset=utf-8 20.3661ms
+2025-10-21 11:07:10.974 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/reports - null null
+2025-10-21 11:07:10.974 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC)'
+2025-10-21 11:07:10.974 +07:00 [INF] Route matched with {action = "Reports", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Reports() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:07:10.976 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:07:10.977 +07:00 [ERR] Error loading reports page
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Controllers.AdminController.Reports() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 887
+2025-10-21 11:07:10.979 +07:00 [INF] Executing ViewResult, running view Reports.
+2025-10-21 11:07:10.982 +07:00 [INF] Executed ViewResult - view Reports executed in 3.075ms.
+2025-10-21 11:07:10.982 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC) in 7.7012ms
+2025-10-21 11:07:10.982 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC)'
+2025-10-21 11:07:10.983 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/reports - 200 null text/html; charset=utf-8 8.9192ms
+2025-10-21 11:07:11.015 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 11:07:11.015 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.2253ms
+2025-10-21 11:07:11.021 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 11:07:11.023 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 1.695ms
+2025-10-21 11:07:11.023 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 11:07:11.175 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:07:11.176 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:07:11.176 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:07:11.177 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:07:11.177 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:07:11.178 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:07:11.179 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:07:11.179 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:07:11.180 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:07:11.182 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:07:11.183 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:07:11.184 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:07:11.184 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:07:11.185 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 8.5437ms
+2025-10-21 11:07:11.185 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:07:11.185 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 10.0214ms
+2025-10-21 11:08:11.173 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:08:11.174 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:08:11.174 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:08:11.175 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:08:11.176 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:08:11.176 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:08:11.177 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:08:11.177 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:08:11.177 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:08:11.178 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:08:11.178 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:08:11.178 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:08:11.178 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:08:11.179 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 4.3954ms
+2025-10-21 11:08:11.179 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:08:11.179 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 5.6652ms
+2025-10-21 11:08:57.882 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/admin/reports - null null
+2025-10-21 11:08:57.883 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC)'
+2025-10-21 11:08:57.883 +07:00 [INF] Route matched with {action = "Reports", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Reports() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:08:57.884 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[Status], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:08:57.887 +07:00 [ERR] Error loading reports page
+System.InvalidOperationException: The LINQ expression 'DbSet<Order>()
+    .Where(o => (int)o.Status == 3 && o.CreatedAt >= __startDate_0)
+    .GroupBy(o => new { 
+        Year = o.CreatedAt.Year, 
+        Month = o.CreatedAt.Month
+     })
+    .Select(g => new { 
+        Date = new DateTime(
+            g.Key.Year, 
+            g.Key.Month, 
+            1
+        ), 
+        Revenue = g
+            .AsQueryable()
+            .Sum(e => e.Total)
+     })
+    .OrderBy(e0 => e0.Date)' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'. See https://go.microsoft.com/fwlink/?linkid=2101038 for more information.
+   at Microsoft.EntityFrameworkCore.Query.QueryableMethodTranslatingExpressionVisitor.Translate(Expression expression)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutorExpression[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Query.QueryCompilationContext.CreateQueryExecutor[TResult](Expression query)
+   at Microsoft.EntityFrameworkCore.Storage.Database.CompileQuery[TResult](Expression query, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.CompileQueryCore[TResult](IDatabase database, Expression query, IModel model, Boolean async)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.<>c__DisplayClass11_0`1.<ExecuteCore>b__0()
+   at Microsoft.EntityFrameworkCore.Query.Internal.CompiledQueryCache.GetOrAddQuery[TResult](Object cacheKey, Func`1 compiler)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteCore[TResult](Expression query, Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteAsync[TResult](Expression query, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1.GetAsyncEnumerator(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable`1.GetAsyncEnumerator()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToDictionaryAsync[TSource,TKey,TElement](IQueryable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer, CancellationToken cancellationToken)
+   at BookStoreMVC.Services.OrderService.GetMonthlyRevenueAsync(Int32 months) in E:\BookStoreMWCv2\BookStoreMWC\Services\OrderService.cs:line 307
+   at BookStoreMVC.Controllers.AdminController.Reports() in E:\BookStoreMWCv2\BookStoreMWC\Controllers\AdminController.cs:line 887
+2025-10-21 11:08:57.888 +07:00 [INF] Executing ViewResult, running view Reports.
+2025-10-21 11:08:57.890 +07:00 [INF] Executed ViewResult - view Reports executed in 2.0162ms.
+2025-10-21 11:08:57.890 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC) in 7.0708ms
+2025-10-21 11:08:57.890 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.Reports (BookStoreMVC)'
+2025-10-21 11:08:57.890 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/admin/reports - 200 null text/html; charset=utf-8 8.5534ms
+2025-10-21 11:08:57.927 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - null null
+2025-10-21 11:08:57.927 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/_framework/aspnetcore-browser-refresh.js - 200 16459 application/javascript; charset=utf-8 0.1713ms
+2025-10-21 11:08:57.932 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - null null
+2025-10-21 11:08:57.934 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json - 404 0 null 1.5375ms
+2025-10-21 11:08:57.934 +07:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/.well-known/appspecific/com.chrome.devtools.json, Response status code: 404
+2025-10-21 11:08:58.136 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:08:58.138 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:08:58.138 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:08:58.144 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:08:58.146 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:08:58.148 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:08:58.155 +07:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:08:58.158 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:08:58.159 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:08:58.161 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:08:58.162 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:08:58.163 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:08:58.164 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:08:58.164 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 26.095ms
+2025-10-21 11:08:58.164 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:08:58.164 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 28.5974ms
+2025-10-21 11:09:58.109 +07:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - null null
+2025-10-21 11:09:58.110 +07:00 [INF] Executing endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:09:58.113 +07:00 [INF] Route matched with {action = "GetUnreadNotifications", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUnreadNotifications() on controller BookStoreMVC.Controllers.AdminController (BookStoreMVC).
+2025-10-21 11:09:58.114 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [AspNetUsers] AS [a]
+2025-10-21 11:09:58.114 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit)
+2025-10-21 11:09:58.115 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Orders] AS [o]
+2025-10-21 11:09:58.115 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COALESCE(SUM([o].[Total]), 0.0)
+FROM [Orders] AS [o]
+WHERE [o].[Status] = 3
+2025-10-21 11:09:58.116 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [o].[Status], [o].[Id], [o].[CreatedAt], [o].[Discount], [o].[PaymentId], [o].[ShippingInfoId], [o].[SubTotal], [o].[Tax], [o].[Total], [o].[UserId]
+FROM [Orders] AS [o]
+ORDER BY [o].[Status]
+2025-10-21 11:09:58.116 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Books] AS [b]
+WHERE [b].[IsActive] = CAST(1 AS bit) AND [b].[StockQuantity] <= 10
+2025-10-21 11:09:58.116 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+2025-10-21 11:09:58.117 +07:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(0 AS bit)
+2025-10-21 11:09:58.118 +07:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT AVG(CAST([r].[Rating] AS float))
+FROM [Reviews] AS [r]
+WHERE [r].[IsApproved] = CAST(1 AS bit)
+2025-10-21 11:09:58.118 +07:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType12`2[[System.Int32, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-10-21 11:09:58.120 +07:00 [INF] Executed action BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC) in 6.4125ms
+2025-10-21 11:09:58.120 +07:00 [INF] Executed endpoint 'BookStoreMVC.Controllers.AdminController.GetUnreadNotifications (BookStoreMVC)'
+2025-10-21 11:09:58.120 +07:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Notifications/GetUnread - 200 null application/json; charset=utf-8 11.0061ms
+2025-10-21 11:10:54.030 +07:00 [INF] Application is shutting down...
